@@ -28,9 +28,9 @@ patchesStrategicMerge:
             # we increase the memory limit because we have more rules than the default from upstream and they use slightly more memory in the adapter's container.
             resources:
               requests:
-                memory: 512Mi
+                memory: 3072Mi
               limits:
-                memory: 512Mi
+                memory: 4096Mi
 
 patchesJson6902:
   - target:
