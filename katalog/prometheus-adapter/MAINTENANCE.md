@@ -17,4 +17,4 @@ Replace `KUBE_PROMETHEUS_RELEASE` with the current upstream release.
 
 4. Update the `kustomization.yaml` file with the new image.
 
-5. Make sure the `config.yaml` for the prometheus adapter is up to date and with the full metrics `rules` `externalRules` `resourceRules` enabled. 
+5. Make sure the `config.yaml` for the prometheus adapter is up to date and with the full metrics `rules` `externalRules` `resourceRules` enabled.
