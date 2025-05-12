@@ -58,7 +58,6 @@ resources:
   - clusterRoleBinding.yaml
   - clusterRoleBindingDelegator.yaml
   - clusterRoleServerResources.yaml
-  - configMap.yaml
   - deployment.yaml
   - roleBindingAuthReader.yaml
   - service.yaml
