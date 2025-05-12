@@ -16,3 +16,5 @@ Replace `KUBE_PROMETHEUS_RELEASE` with the current upstream release.
 3. Sync the new image to our registry in the [`monitoring` images.yaml file fury-distribution-container-image-sync repository](https://github.com/sighupio/fury-distribution-container-image-sync/blob/main/modules/monitoring/images.yml).
 
 4. Update the `kustomization.yaml` file with the new image.
+
+5. Make sure the `config.yaml` for the prometheus adapter is up to date and with the full metrics `rules` `externalRules` `resourceRules` enabled. 
