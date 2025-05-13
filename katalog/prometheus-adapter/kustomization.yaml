@@ -44,6 +44,12 @@ patchesJson6902:
         path: /metadata/namespace
         value: kube-system
 
+configMapGenerator:
+  - name: adapter-config
+    namespace: monitoring
+    files:
+      - config.yaml=config.yaml
+
 resources:
   - apiService.yaml
   - clusterRole.yaml
@@ -52,7 +58,6 @@ resources:
   - clusterRoleBinding.yaml
   - clusterRoleBindingDelegator.yaml
   - clusterRoleServerResources.yaml
-  - configMap.yaml
   - deployment.yaml
   - roleBindingAuthReader.yaml
   - service.yaml
