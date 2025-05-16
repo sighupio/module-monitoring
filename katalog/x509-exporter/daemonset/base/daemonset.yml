@@ -35,6 +35,25 @@ spec:
             - --listen-address=:9793
             - --trim-path-components=2
             - --max-cache-duration=300s
+            - --watch-file=/var/lib/kubelet/pki/kubelet-client-current.pem
+            - --watch-file=/var/lib/kubelet/pki/kubelet.crt
+            - --watch-kubeconf=/etc/kubernetes/kubelet.conf
           ports:
             - name: metrics
               containerPort: 9793
+          volumeMounts:
+            - name: etc-kubernetes
+              mountPath: /etc/kubernetes
+              readOnly: true
+            - name: var-lib-kubelet-pki
+              mountPath: /var/lib/kubelet/pki
+              readOnly: true
+      volumes:
+        - name: etc-kubernetes
+          hostPath:
+            path: /etc/kubernetes
+            type: Directory
+        - name: var-lib-kubelet-pki
+          hostPath:
+            path: /var/lib/kubelet/pki
+            type: Directory

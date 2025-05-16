@@ -15,6 +15,7 @@
 | v3.3.0                              |                    |                    |                    |                    |                    |                    |                    |                    | :white_check_mark: | :white_check_mark: |:white_check_mark: |:white_check_mark: |:white_check_mark: |
 | v3.3.1                              |                    |                    |                    |                    |                    |                    |                    |                    | :white_check_mark: | :white_check_mark: |:white_check_mark: |:white_check_mark: |:white_check_mark: |
 | v3.4.0                              |                    |                    |                    |                    |                    |                    |                    |                    |                    | :white_check_mark: |:white_check_mark: |:white_check_mark: |:white_check_mark: (tech preview) |
+| v3.5.0                              |                    |                    |                    |                    |                    |                    |                    |                    |                    | :white_check_mark: |:white_check_mark: |:white_check_mark: |:white_check_mark: |
 
 - :white_check_mark: Compatible
 - :warning: Has issues
