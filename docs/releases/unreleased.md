@@ -1,0 +1,44 @@
+# Monitoring Module Release vTBD
+
+Welcome to the latest release of the `monitoring` core module of the [`SIGHUP Distribution`](https://github.com/sighupio/fury-distribution), maintained by team SIGHUP by ReeVo.
+
+## Component Images 🚢
+
+| Component             | Supported Version                                                                                          | Previous Version |
+| --------------------- | ---------------------------------------------------------------------------------------------------------- | ---------------- |
+| `alertmanager`        | [`v0.27.0`](https://github.com/prometheus/alertmanager/releases/tag/v0.27.0)                               | No update        |
+| `blackbox-exporter`   | [`v0.25.0`](https://github.com/prometheus/blackbox_exporter/releases/tag/v0.25.0)                          | No update        |
+| `grafana`             | [`v11.3.0`](https://github.com/grafana/grafana/releases/tag/v11.3.0)                                       | No update        |
+| `kube-rbac-proxy`     | [`v0.18.1`](https://github.com/brancz/kube-rbac-proxy/releases/tag/v0.18.1)                                | No update        |
+| `kube-state-metrics`  | [`v2.13.0`](https://github.com/kubernetes/kube-state-metrics/releases/tag/v2.13.0)                         | No update        |
+| `node-exporter`       | [`v1.8.2`](https://github.com/prometheus/node_exporter/releases/tag/v1.8.2)                                | No update        |
+| `prometheus-adapter`  | [`v0.12.0`](https://github.com/kubernetes-sigs/prometheus-adapter/releases/tag/v0.12.0)                    | No update        |
+| `prometheus-operator` | [`v0.76.2`](https://github.com/prometheus-operator/prometheus-operator/releases/tag/v0.76.2)               | No update        |
+| `prometheus`          | [`v2.54.1`](https://github.com/prometheus/prometheus/releases/tag/v2.54.1)                                 | No update        |
+| `thanos`              | **REMOVED**                                                                                                | No update        |
+| `x509-exporter`       | [`v3.18.1`](https://github.com/enix/x509-certificate-exporter/releases/tag/v3.18.1)                        | No update        |
+| `karma`               | [`v0.113`](https://github.com/prymitive/karma/releases/tag/v0.113)                                         | No update        |
+| `mimir`               | [`v2.15.0`](https://github.com/grafana/mimir/releases/tag/mimir-2.15.0)                                    | No update        |
+| `minio-ha`            | [`RELEASE.2025-02-28T09-55-16Z`](https://github.com/minio/minio/releases/tag/RELEASE.2025-02-28T09-55-16Z) | No update        |
+
+> Please refer the individual release notes to get a detailed info on the releases.
+
+## Breaking Changes 🚨
+
+Thanos package has been removed. It has been deprecated since v3.3.0, refer to the Mimir package as a replacement.
+
+## New Features 🎉
+
+TBD
+
+## Update Guide 🦮
+
+Modules installations and upgrades are now managed by the furyctl tool. Instructions below are left for reference when using the legacy version of furyctl.
+
+### Process
+
+To upgrade this core module from `v3.5.0` to `vTBD`, execute the following:
+
+```bash
+kustomize build <your-project-path> | kubectl apply -f - --server-side
+```

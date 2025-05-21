@@ -38,12 +38,10 @@ spec:
             - |
               set -e
               mc --config-dir=/config config host add monitoring http://minio-monitoring.monitoring.svc.cluster.local:9000 ${rootUser} ${rootPassword}
-              mc --config-dir=/config mb -p monitoring/thanos
               mc --config-dir=/config mb -p monitoring/mimir
           volumeMounts:
             - name: config
               mountPath: "/config"
-# mc --config-dir=/config ilm add --expiry-days "7" monitoring/thanos
 ---
 apiVersion: v1
 kind: ServiceAccount
