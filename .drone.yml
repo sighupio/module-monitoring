@@ -61,7 +61,6 @@ steps:
       - kustomize build katalog/prometheus-adapter > prometheus-adapter.yml
       - kustomize build katalog/prometheus-operated > prometheus-operated.yml
       - kustomize build katalog/prometheus-operator > prometheus-operator.yml
-      - kustomize build katalog/thanos/thanos-minio/single > thanos.yml
       - kustomize build katalog/x509-exporter > x509-exporter.yml
       - kustomize build katalog/mimir > mimir.yml
 
@@ -136,11 +135,6 @@ steps:
     name: check-deprecated-apis-prometheus-operator
     environment:
       KUBERNETES_MANIFESTS: prometheus-operator.yml
-
-  - <<: *check-deprecated-apis
-    name: check-deprecated-apis-thanos
-    environment:
-      KUBERNETES_MANIFESTS: thanos.yml
 
   - <<: *check-deprecated-apis
     name: check-deprecated-apis-x509-exporter
@@ -495,6 +489,8 @@ trigger:
   ref:
     include:
       - refs/tags/**
+    exclude:
+      - refs/tags/e2e-*
 
 steps:
   - name: prepare-tar-gz
