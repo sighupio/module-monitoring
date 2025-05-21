@@ -489,6 +489,8 @@ trigger:
   ref:
     include:
       - refs/tags/**
+    exclude:
+      - refs/tags/e2e-*
 
 steps:
   - name: prepare-tar-gz
