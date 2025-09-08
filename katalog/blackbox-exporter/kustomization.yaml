@@ -11,13 +11,10 @@ namespace: monitoring
 images:
   - name: quay.io/prometheus/blackbox-exporter
     newName: registry.sighup.io/fury/prometheus/blackbox-exporter
-    newTag: v0.25.0
   - name: jimmidyson/configmap-reload
     newName: registry.sighup.io/fury/jimmidyson/configmap-reload
-    newTag: v0.5.0
   - name: quay.io/brancz/kube-rbac-proxy
     newName: registry.sighup.io/fury/brancz/kube-rbac-proxy
-    newTag: v0.18.1
   - name: ghcr.io/jimmidyson/configmap-reload
     newName: registry.sighup.io/fury/jimmidyson/configmap-reload
 resources:
