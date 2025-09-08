@@ -8,23 +8,23 @@ kind: Kustomization
 
 namespace: monitoring
 
-patchesStrategicMerge:
-  - |-
-    apiVersion: monitoring.coreos.com/v1
-    kind: Alertmanager
-    metadata:
-      name: main
-      namespace: monitoring
-    spec:
-      alertmanagerConfigSelector: {}
-      # We set the matcher strategy to None, because otherwise the Prometheus
-      # Operator will add a matcher to all routes checking for a namespace label
-      # with the namespace where alertmanager is running:
-      # https://github.com/sighupio/module-monitoring/issues/132
-      alertmanagerConfigMatcherStrategy:
-        type: None
-      image: registry.sighup.io/fury/prometheus/alertmanager:v0.28.1
-      replicas: 1
+patches:
+  - patch: |-
+      apiVersion: monitoring.coreos.com/v1
+      kind: Alertmanager
+      metadata:
+        name: main
+        namespace: monitoring
+      spec:
+        alertmanagerConfigSelector: {}
+        # We set the matcher strategy to None, because otherwise the Prometheus
+        # Operator will add a matcher to all routes checking for a namespace label
+        # with the namespace where alertmanager is running:
+        # https://github.com/sighupio/module-monitoring/issues/132
+        alertmanagerConfigMatcherStrategy:
+          type: None
+        image: registry.sighup.io/fury/prometheus/alertmanager:v0.28.1
+        replicas: 1
 
 resources:
   - dashboards
