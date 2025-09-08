@@ -54,9 +54,7 @@ function populate_package {
 
 trap cleanup EXIT
 
-git clone "${UPSTREAM_REPO}" "${WORK_DIR}"
-
-git -C "${WORK_DIR}" checkout "${UPSTREAM_RELEASE}"
+git clone "${UPSTREAM_REPO}" "${WORK_DIR}" -b "${UPSTREAM_RELEASE}" --single-branch --depth 1
 
 rm -rf "${WORK_DIR}"/manifests/*-podDisruptionBudget.yaml \
   "${WORK_DIR}"/manifests/*-networkPolicy.yaml
@@ -144,6 +142,14 @@ case "${FURY_MODULE}" in
 
     rm -f "${KATALOG_PATH}/${FURY_MODULE}/dashboardDefinitions.yaml" \
       "${KATALOG_PATH}/${FURY_MODULE}/dashboardDatasources.yaml"
+    
+    # We don't support Windows and AIX nodes, so we remove the related dashboards
+    rm -f "${KATALOG_PATH}/${FURY_MODULE}/dashboards/k8s-resources-windows-cluster.json" \
+      "${KATALOG_PATH}/${FURY_MODULE}/dashboards/k8s-resources-windows-namespace.json" \
+      "${KATALOG_PATH}/${FURY_MODULE}/dashboards/k8s-resources-windows-pod.json" \
+      "${KATALOG_PATH}/${FURY_MODULE}/dashboards/k8s-windows-cluster-rsrc-use.json" \
+      "${KATALOG_PATH}/${FURY_MODULE}/dashboards/k8s-windows-node-rsrc-use.json" \
+      "${KATALOG_PATH}/${FURY_MODULE}/dashboards/nodes-aix.json"
     ;;
   "kube-state-metrics")
     populate_package "kubeStateMetrics"
