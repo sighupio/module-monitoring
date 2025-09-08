@@ -9,7 +9,7 @@
 </h1>
 <!-- markdownlint-enable MD033 -->
 
-![Release](https://img.shields.io/badge/Latest%20Release-v3.5.0-blue)
+![Release](https://img.shields.io/badge/Latest%20Release-v3.6.0-blue)
 ![License](https://img.shields.io/github/license/sighupio/module-monitoring?label=License)
 ![Slack](https://img.shields.io/badge/slack-@kubernetes/fury-yellow.svg?logo=slack&label=Slack)
 
@@ -54,7 +54,7 @@ Monitoring Module provides the following packages:
 | ------------------------------------------------------ | -------- | ------------------------------------------------------------------------------------------------------------------------- |
 | [prometheus-operator](katalog/prometheus-operator)     | `0.76.2` | Operator to deploy and manage Prometheus and related resources                                                            |
 | [prometheus-operated](katalog/prometheus-operated)     | `2.54.1` | Prometheus instance deployed with Prometheus Operator's CRD                                                               |
-| [alertmanager-operated](katalog/alertmanager-operated) | `0.27.0` | Alertmanager instance deployed with Prometheus Operator's CRD                                                             |
+| [alertmanager-operated](katalog/alertmanager-operated) | `0.28.1` | Alertmanager instance deployed with Prometheus Operator's CRD                                                             |
 | [blackbox-exporter](katalog/blackbox-exporter)         | `0.25.0` | Prometheus exporter that allows blackbox probing of endpoints over HTTP, HTTPS, DNS, TCP, ICMP and gRPC.                  |
 | [grafana](katalog/grafana)                             | `11.3.0` | Grafana deployment to query and visualize metrics collected by Prometheus                                                 |
 | [karma](katalog/karma)                                 | `0.113`  | Karma deployment to visualize alerts sent by AlertManager                                                                 |
@@ -64,7 +64,7 @@ Monitoring Module provides the following packages:
 | [prometheus-adapter](katalog/prometheus-adapter)       | `0.12.0` | Kubernetes resource metrics, custom metrics, and external metrics APIs implementation.                                    |
 | [x509-exporter](katalog/x509-exporter)                 | `3.18.1` | Provides monitoring for certificates                                                                                      |
 | [mimir](katalog/mimir)                                 | `2.15.0` | Mimir is an open source, horizontally scalable, highly available, multi-tenant TSDB for long-term storage for Prometheus. |
-| [haproxy](katalog/haproxy)                             | `N.A.`   | Grafana dashboards and prometheus rules (alerts) for HAproxy.                                                             |
+| [haproxy](katalog/haproxy)                             | `N.A.`   | Grafana dashboards and Prometheus rules (alerts) for HAproxy.                                                             |
 
 ### Integration with cloud providers
 
@@ -87,7 +87,8 @@ Please refer to the individual package documentation for further details.
 | `1.29.x`           | :white_check_mark: | No known issues |
 | `1.30.x`           | :white_check_mark: | No known issues |
 | `1.31.x`           | :white_check_mark: | No known issues |
-| `1.32.x`           | :white_check_mark: | Tech preview |
+| `1.32.x`           | :white_check_mark: | No known issues |
+| `1.33.x`           | :white_check_mark: | No known issues |
 
 Check the [compatibility matrix][compatibility-matrix] for additional information about previous releases of the modules.
 
@@ -97,7 +98,7 @@ Check the [compatibility matrix][compatibility-matrix] for additional informatio
 
 | Tool                        | Version    | Description                                                                                                                                                    |
 | --------------------------- | ---------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| [furyctl][furyctl-repo]     | `>=0.25.0` | The recommended tool to download and manage SD modules and their packages. To learn more about `furyctl` read the [official documentation][furyctl-repo].     |
+| [furyctl][furyctl-repo]     | `>=0.32.5` | The recommended tool to download and manage SD modules and their packages. To learn more about `furyctl` read the [official documentation][furyctl-repo].      |
 | [kustomize][kustomize-repo] | `>=5.6.0`  | Packages are customized using `kustomize`. To learn how to create your customization layer with `kustomize`, please refer to the [repository][kustomize-repo]. |
 
 ### Deployment with furyctl legacy
