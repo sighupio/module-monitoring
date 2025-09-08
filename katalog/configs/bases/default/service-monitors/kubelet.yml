@@ -1,11 +1,8 @@
-# Copyright (c) 2017-present SIGHUP s.r.l All rights reserved.
-# Use of this source code is governed by a BSD-style
-# license that can be found in the LICENSE file.
-
 apiVersion: monitoring.coreos.com/v1
 kind: ServiceMonitor
 metadata:
   labels:
+    app.kubernetes.io/component: kubernetes
     app.kubernetes.io/name: kubelet
     app.kubernetes.io/part-of: kube-prometheus
   name: kubelet
@@ -103,6 +100,11 @@ spec:
   - bearerTokenFile: /var/run/secrets/kubernetes.io/serviceaccount/token
     honorLabels: true
     interval: 5s
+    metricRelabelings:
+    - action: drop
+      regex: process_start_time_seconds
+      sourceLabels:
+      - __name__
     path: /metrics/slis
     port: https-metrics
     relabelings:
@@ -110,10 +112,6 @@ spec:
       sourceLabels:
       - __metrics_path__
       targetLabel: metrics_path
-    - action: drop
-      regex: process_start_time_seconds
-      sourceLabels:
-      - __name__
     scheme: https
     tlsConfig:
       insecureSkipVerify: true
