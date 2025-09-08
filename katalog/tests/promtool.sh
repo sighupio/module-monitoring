@@ -4,14 +4,14 @@
 # license that can be found in the LICENSE file.
 
 
-set -x
+# set -x
 set -e
 set -u
 set -o pipefail
 
 # Check prometheus rules
 grep -ril "kind: PrometheusRule" . | \
-grep -v "$0" | \
+grep -v "$(basename "$0")" | \
 grep -v "kustomization.yaml" | \
 grep -v "crds" | \
 while read -r rules_file; do
