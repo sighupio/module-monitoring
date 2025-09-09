@@ -60,7 +60,7 @@ Monitoring Module provides the following packages:
 | [karma](katalog/karma)                                 | `0.113`  | Karma deployment to visualize alerts sent by AlertManager                                                                 |
 | [kube-proxy-metrics](katalog/kube-proxy-metrics)       | `0.19.1` | RBAC proxy to securely expose kube-proxy metrics                                                                          |
 | [kube-state-metrics](katalog/kube-state-metrics)       | `2.16.0` | Service that generates metrics from Kubernetes API objects                                                                |
-| [node-exporter](katalog/node-exporter)                 | `1.8.2`  | Prometheus exporter for hardware and OS metrics exposed by \*NIX kernels                                                  |
+| [node-exporter](katalog/node-exporter)                 | `1.9.1`  | Prometheus exporter for hardware and OS metrics exposed by \*NIX kernels                                                  |
 | [prometheus-adapter](katalog/prometheus-adapter)       | `0.12.0` | Kubernetes resource metrics, custom metrics, and external metrics APIs implementation.                                    |
 | [x509-exporter](katalog/x509-exporter)                 | `3.18.1` | Provides monitoring for certificates                                                                                      |
 | [mimir](katalog/mimir)                                 | `2.15.0` | Mimir is an open source, horizontally scalable, highly available, multi-tenant TSDB for long-term storage for Prometheus. |
