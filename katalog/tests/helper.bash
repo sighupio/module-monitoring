@@ -23,7 +23,8 @@ kaction(){
 apply (){
   APP_NAME=${2:-$(basename $1)}  # Use second parameter or directory basename
   kustomize build $1 >&2
-  kustomize build $1 | kapp deploy -a "$APP_NAME" -f - --yes 2>&3
+  # We need to steal ownership of existing resources because Mimir deploys prometheus-operated too
+  kustomize build $1 | kapp deploy -a "$APP_NAME" -f - --yes --dangerous-override-ownership-of-existing-resources --apply-default-update-strategy=fallback-on-replace 2>&3
 }
 
 delete (){

@@ -1,0 +1,54 @@
+# This Validating Admission Policy ensures that only images from allowed registries are used in Deployments, Pods, and CronJobs.
+# In this case, we only allow images from 'registry.sighup.io'.
+# The policy is applied to all namespaces except 'kube-system' and 'local-path-storage'.
+apiVersion: admissionregistration.k8s.io/v1
+kind: ValidatingAdmissionPolicy
+metadata:
+  name: "allowed-registries"
+spec:
+  failurePolicy: Fail
+  matchConstraints:
+    resourceRules:
+      - apiGroups: ["apps"]
+        apiVersions: ["v1"]
+        operations: ["CREATE", "UPDATE"]
+        resources:
+          [
+            "deployments",
+            "daemonsets",
+            "replicasets",
+            "statefulsets",
+            "jobs",
+            "cronjobs",
+          ]
+      - apiGroups: [""]
+        apiVersions: ["v1"]
+        operations: ["CREATE", "UPDATE"]
+        resources: ["pods"]
+      - apiGroups: ["batch"]
+        apiVersions: ["v1"]
+        operations: ["CREATE", "UPDATE"]
+        resources: ["jobs", "cronjobs"]
+  validations:
+    - expression: "!(object.kind in ['Deployment','ReplicaSet','DaemonSet','StatefulSet','Job']) || object.spec.template.spec.containers.all(c, c.image.startsWith('registry.sighup.io'))"
+      message: "Deployment containers can only pull images from allowed registries."
+    - expression: "!(object.kind in ['Pod']) || object.spec.containers.all(c, c.image.startsWith('registry.sighup.io'))"
+      message: "Pod containers can only pull images from allowed registries."
+    - expression: "!(object.kind in ['CronJob']) || object.spec.jobTemplate.spec.template.spec.containers.all(c, c.image.startsWith('registry.sighup.io'))"
+      message: "CronJob containers can only pull images from allowed registries."
+---
+apiVersion: admissionregistration.k8s.io/v1
+kind: ValidatingAdmissionPolicyBinding
+metadata:
+  name: "allowed-registries-global"
+spec:
+  policyName: "allowed-registries"
+  validationActions: [Deny]
+  matchResources:
+    namespaceSelector:
+      matchExpressions:
+        - key: kubernetes.io/metadata.name
+          operator: NotIn
+          values:
+            - kube-system
+            - local-path-storage

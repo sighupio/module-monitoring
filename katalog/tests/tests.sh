@@ -6,6 +6,15 @@
 
 load ./helper
 
+@test "Deploy VAP to check only images from SIGHUP's registry are used" {
+  info
+  deploy() {
+    kubectl apply --server-side -f katalog/tests/vap-registry.yaml
+  }
+  run deploy
+  [ "$status" -eq 0 ]
+}
+
 @test "Applying PrometheusRule and ServiceMonitor CRDs" {
   info
   setup() {
@@ -48,7 +57,7 @@ load ./helper
 @test "prometheus-operated is Running" {
   info
   test() {
-    check_sts_ready "prometheus-prometheus" "monitoring"
+    check_sts_ready "prometheus-k8s" "monitoring"
   }
   loop_it test 30 5
   status=${loop_it_result:?}
@@ -67,7 +76,7 @@ load ./helper
 @test "alertmanager-operated is Running" {
   info
   test() {
-    check_sts_ready "alertmanager-alertmanager" "monitoring"
+    check_sts_ready "alertmanager-main" "monitoring"
   }
   loop_it test 30 5
   status=${loop_it_result:?}
@@ -206,10 +215,20 @@ load ./helper
   [ "$status" -eq 0 ]
 }
 
-@test "x509-exporter is Running" {
+@test "x509-certificate-exporter-control-plane is Running" {
   info
   test() {
-    check_ds_ready "x509-certificate-exporter" "monitoring"
+    check_ds_ready "x509-certificate-exporter-control-plane" "monitoring"
+  }
+  loop_it test 30 5
+  status=${loop_it_result:?}
+  [ "$status" -eq 0 ]
+}
+
+@test "x509-certificate-exporter-data-plane is Running" {
+  info
+  test() {
+    check_ds_ready "x509-certificate-exporter-data-plane" "monitoring"
   }
   loop_it test 30 5
   status=${loop_it_result:?}
@@ -228,7 +247,7 @@ load ./helper
 @test "Minio is Running" {
   info
   test() {
-    check_sts_ready "minio" "monitoring"
+    check_sts_ready "minio-monitoring" "monitoring"
   }
   loop_it test 30 5
   status=${loop_it_result:?}
@@ -247,7 +266,12 @@ load ./helper
 @test "Mimir is Running" {
   info
   test() {
-    check_sts_ready "mimir" "monitoring"
+    check_deploy_ready "mimir-distributed-continuous-test" "monitoring"
+    check_deploy_ready "mimir-distributed-distributor" "monitoring"
+    check_deploy_ready "mimir-distributed-gateway" "monitoring"
+    check_deploy_ready "mimir-distributed-querier" "monitoring"
+    check_deploy_ready "mimir-distributed-query-frontend" "monitoring"
+    check_deploy_ready "mimir-distributed-query-scheduler" "monitoring"
   }
   loop_it test 30 5
   status=${loop_it_result:?}
