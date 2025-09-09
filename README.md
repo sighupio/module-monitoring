@@ -107,7 +107,7 @@ Check the [compatibility matrix][compatibility-matrix] for additional informatio
 
 ```yaml
 versions:
-  monitoring: v3.5.0
+  monitoring: v4.0.0
 
 bases:
     - name: monitoring/prometheus-operator
