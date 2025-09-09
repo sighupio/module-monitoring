@@ -655,9 +655,9 @@ clone:
   depth: 1
 depends_on:
   - E2E Tests on kind clusters version 1.29.0
-  - E2E Tests on kind clusters version 1.30.4
-  - E2E Tests on kind clusters version 1.31.1
-  - E2E Tests on kind clusters version 1.32.2
+  - E2E Tests on kind clusters version 1.30.0
+  - E2E Tests on kind clusters version 1.31.0
+  - E2E Tests on kind clusters version 1.32.0
   - E2E Tests on kind clusters version 1.33.0
 platform:
   os: linux
