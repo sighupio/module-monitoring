@@ -8,30 +8,61 @@ kind: Kustomization
 
 namespace: monitoring
 
+resources:
+  - apiService.yaml
+  - apiService-EnhancedHPAMetrics.yaml
+  - clusterRole.yaml
+  - clusterRoleAggregatedMetricsReader.yaml
+  - clusterRoleBindingHpaController.yaml
+  - clusterRoleBinding.yaml
+  - clusterRoleBindingDelegator.yaml
+  - clusterRoleServerResources.yaml
+  - deployment.yaml
+  - roleBindingAuthReader.yaml
+  - service.yaml
+  - serviceAccount.yaml
+  - serviceMonitor.yaml
+
 images:
   - name: registry.k8s.io/prometheus-adapter/prometheus-adapter
     newName: registry.sighup.io/fury/prometheus-adapter/prometheus-adapter
 
-patchesStrategicMerge:
-- |-
-  apiVersion: apps/v1
-  kind: Deployment
-  metadata:
-    name: prometheus-adapter
-    namespace: monitoring
-  spec:
-    replicas: 1
-    template:
+patches:
+  - patch: |-
+      apiVersion: apps/v1
+      kind: Deployment
+      metadata:
+        name: prometheus-adapter
+        namespace: monitoring
       spec:
-        containers:
-          - name: prometheus-adapter
-            # we increase the memory limit because we have more rules than the default from upstream and they use slightly more memory in the adapter's container.
-            resources:
-              requests:
-                memory: 3072Mi
-              limits:
-                memory: 4096Mi
+        replicas: 1
+        template:
+          spec:
+            containers:
+              - name: prometheus-adapter
+                # we increase the memory limit because we have more rules than the default from upstream and they use slightly more memory in the adapter's container.
+                resources:
+                  requests:
+                    memory: 3072Mi
+                  limits:
+                    memory: 4096Mi
+  # Needed for the Horizontal Pod Autoscaler to work with custom metrics
+  - target:
+      group: rbac.authorization.k8s.io
+      version: v1
+      kind: ClusterRole
+      name: resource-metrics-server-resources
+    patch: |-
+      - op: add
+        path: /rules/0/apiGroups/-
+        value: "custom.metrics.k8s.io"
+      - op: add
+        path: /rules/0/apiGroups/-
+        value: "external.metrics.k8s.io"
 
+# We can't do a normal patch here because we need to change the namespace of an existing object
+# and `patches` does not support that, the JsonPatch gets applied before the namespace transformer.
+# See: https://github.com/kubernetes-sigs/kustomize/issues/5626
 patchesJson6902:
   - target:
       group: rbac.authorization.k8s.io
@@ -49,17 +80,3 @@ configMapGenerator:
     namespace: monitoring
     files:
       - config.yaml=config.yaml
-
-resources:
-  - apiService.yaml
-  - clusterRole.yaml
-  - clusterRoleAggregatedMetricsReader.yaml
-  - clusterRoleBindingHpaController.yaml
-  - clusterRoleBinding.yaml
-  - clusterRoleBindingDelegator.yaml
-  - clusterRoleServerResources.yaml
-  - deployment.yaml
-  - roleBindingAuthReader.yaml
-  - service.yaml
-  - serviceAccount.yaml
-  - serviceMonitor.yaml
