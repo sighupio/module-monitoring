@@ -1,3 +1,7 @@
+# Copyright (c) 2017-present SIGHUP s.r.l All rights reserved.
+# Use of this source code is governed by a BSD-style
+# license that can be found in the LICENSE file.
+
 # This Validating Admission Policy ensures that only images from allowed registries are used in Deployments, Pods, and CronJobs.
 # In this case, we only allow images from 'registry.sighup.io'.
 # The policy is applied to all namespaces except 'kube-system' and 'local-path-storage'.
