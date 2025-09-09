@@ -196,7 +196,7 @@ steps:
         - tag
 
 ---
-name: E2E Tests on kind clusters version 1.29.0
+name: E2E Tests on kind clusters version 1.29.8
 kind: pipeline
 type: docker
 platform:
@@ -218,7 +218,7 @@ environment:
   KIND_VERSION: "0.29.0"
   KUBECTL_VERSION: "1.29.1"
   BATS_VERSION: "1.11.0"
-  CLUSTER_VERSION: "1.29.0"
+  CLUSTER_VERSION: "1.29.8"
 
 volumes:
   - name: dockersock
@@ -286,7 +286,7 @@ steps:
       - ./scripts/cleanup-e2e-cluster.sh || true
 
 ---
-name: E2E Tests on kind clusters version 1.30.0
+name: E2E Tests on kind clusters version 1.30.4
 kind: pipeline
 type: docker
 platform:
@@ -306,9 +306,9 @@ environment:
   MISE_DATA_DIR: "/mise-data"
   MISE_OVERRIDE_CONFIG_FILENAMES: "mise.ci.toml"
   KIND_VERSION: "0.29.0"
-  KUBECTL_VERSION: "1.30.5"
+  KUBECTL_VERSION: "1.30.4"
   BATS_VERSION: "1.11.0"
-  CLUSTER_VERSION: "1.30.0"
+  CLUSTER_VERSION: "1.30.4"
 
 volumes:
   - name: dockersock
@@ -376,7 +376,7 @@ steps:
       - ./scripts/cleanup-e2e-cluster.sh || true
 
 ---
-name: E2E Tests on kind clusters version 1.31.0
+name: E2E Tests on kind clusters version 1.31.1
 kind: pipeline
 type: docker
 platform:
@@ -398,7 +398,7 @@ environment:
   KIND_VERSION: "0.29.0"
   KUBECTL_VERSION: "1.31.1"
   BATS_VERSION: "1.11.0"
-  CLUSTER_VERSION: "1.31.0"
+  CLUSTER_VERSION: "1.31.1"
 
 volumes:
   - name: dockersock
@@ -466,7 +466,7 @@ steps:
       - ./scripts/cleanup-e2e-cluster.sh || true
 
 ---
-name: E2E Tests on kind clusters version 1.32.0
+name: E2E Tests on kind clusters version 1.32.2
 kind: pipeline
 type: docker
 platform:
@@ -488,7 +488,7 @@ environment:
   KIND_VERSION: "0.29.0"
   KUBECTL_VERSION: "1.32.2"
   BATS_VERSION: "1.11.0"
-  CLUSTER_VERSION: "1.32.0"
+  CLUSTER_VERSION: "1.32.2"
 
 volumes:
   - name: dockersock
@@ -654,10 +654,10 @@ node:
 clone:
   depth: 1
 depends_on:
-  - E2E Tests on kind clusters version 1.29.0
-  - E2E Tests on kind clusters version 1.30.0
-  - E2E Tests on kind clusters version 1.31.0
-  - E2E Tests on kind clusters version 1.32.0
+  - E2E Tests on kind clusters version 1.29.8
+  - E2E Tests on kind clusters version 1.30.4
+  - E2E Tests on kind clusters version 1.31.1
+  - E2E Tests on kind clusters version 1.32.2
   - E2E Tests on kind clusters version 1.33.0
 platform:
   os: linux
