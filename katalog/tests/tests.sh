@@ -6,11 +6,15 @@
 
 load ./helper
 
+# VAP is not available on Kubernetes versions 1.29 and below
 @test "Deploy VAP to check only images from SIGHUP's registry are used" {
   info
   deploy() {
     kubectl apply --server-side -f katalog/tests/vap-registry.yaml
   }
+  if [[ $(kubectl version --short | grep Server | awk '{print $3}' | cut -d. -f2) -le 29 ]]; then
+    skip "Skipping VAP deployment on Kubernetes versions 1.29 and below"
+  fi
   run deploy
   [ "$status" -eq 0 ]
 }
@@ -102,7 +106,7 @@ load ./helper
   [ "$status" -eq 0 ]
 }
 
-@test "Deploy grafana" {
+@test "Deploy Grafana" {
   info
   deploy() {
     apply katalog/grafana
@@ -111,7 +115,7 @@ load ./helper
   [ "$status" -eq 0 ]
 }
 
-@test "grafana is Running" {
+@test "Grafana is Running" {
   info
   test() {
     check_deploy_ready "grafana" "monitoring"
@@ -235,7 +239,7 @@ load ./helper
   [ "$status" -eq 0 ]
 }
 
-@test "Deploy minio for mimir" {
+@test "Deploy minIO for Mimir" {
   info
   deploy() {
     apply katalog/minio-ha
@@ -244,7 +248,7 @@ load ./helper
   [ "$status" -eq 0 ]
 }
 
-@test "Minio is Running" {
+@test "minIO is Running" {
   info
   test() {
     check_sts_ready "minio-monitoring" "monitoring"
@@ -254,7 +258,7 @@ load ./helper
   [ "$status" -eq 0 ]
 }
 
-@test "Deploy mimir" {
+@test "Deploy Mimir" {
   info
   deploy() {
     apply katalog/mimir
