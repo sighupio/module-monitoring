@@ -15,12 +15,10 @@ by kube-proxy.
 - Kustomize = `5.6.0`
 - [prometheus-operator](../prometheus-operator)
 
-
 ## Image repository and tag
 
-- kube-rbac-proxy image: `registry.sighup.io/fury/brancz/kube-rbac-proxy:v0.18.1`
+- kube-rbac-proxy image: `registry.sighup.io/fury/brancz/kube-rbac-proxy:v0.19.1`
 - kube-rbac-proxy repository: [kube-rbac-proxy on Github][krp-gh]
-
 
 ## Configuration
 
@@ -31,7 +29,6 @@ Fury distribution kube-proxy-metrics is deployed with the following configuratio
 - Metrics are scraped by Prometheus with `15s` intervals
 - Requires `hostNetwork: true` and `hostPID: true`
 - Runs as non-root user.
-
 
 ## Deployment
 
