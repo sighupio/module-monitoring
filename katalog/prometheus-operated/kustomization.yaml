@@ -31,7 +31,7 @@ patches:
         name: k8s
         namespace: monitoring
       spec:
-        image: registry.sighup.io/fury/prometheus/prometheus:v2.54.1
+        image: registry.sighup.io/fury/prometheus/prometheus:v3.5.0
         replicas: 1
         resources:
           requests:
