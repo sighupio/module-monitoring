@@ -54,10 +54,6 @@ kind create cluster \
 
 echo "📋 Step 2: Setting up kubeconfig..."
 kind get kubeconfig --name "${CLUSTER_NAME}" > "${KUBECONFIG_PATH}"
-if [[ "${DRONE_BUILD_NUMBER}" != "9999" ]]; then
-  # If we are running in CI 0.0.0.0 is unreachable from within the containers, so we change to the Host's IP on the Docker network
-  yq -i '.clusters[0].cluster.server |= sub("(https?://)(.+):(.+)", "${1}172.17.0.1:${3}")' "${KUBECONFIG_PATH}"
-fi
 export KUBECONFIG="${KUBECONFIG_PATH}"
 
 echo "⏳ Step 3: Waiting for cluster to be ready..."

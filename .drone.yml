@@ -232,6 +232,7 @@ steps:
   - name: Create Kind Cluster
     image: quay.io/sighup/mise:v2025.4.4
     pull: always
+    network_mode: host
     environment:
       GITHUB_TOKEN:
         from_secret: github_token
@@ -250,6 +251,7 @@ steps:
   - name: Run E2E Tests
     image: quay.io/sighup/mise:v2025.4.4
     pull: always
+    network_mode: host
     environment:
       GITHUB_TOKEN:
         from_secret: github_token
@@ -266,6 +268,7 @@ steps:
   - name: Delete Kind Cluster
     image: quay.io/sighup/mise:v2025.4.4
     pull: always
+    network_mode: host
     environment:
       GITHUB_TOKEN:
         from_secret: github_token
@@ -322,6 +325,7 @@ steps:
   - name: Create Kind Cluster
     image: quay.io/sighup/mise:v2025.4.4
     pull: always
+    network_mode: host
     environment:
       GITHUB_TOKEN:
         from_secret: github_token
@@ -340,6 +344,7 @@ steps:
   - name: Run E2E Tests
     image: quay.io/sighup/mise:v2025.4.4
     pull: always
+    network_mode: host
     environment:
       GITHUB_TOKEN:
         from_secret: github_token
@@ -356,6 +361,7 @@ steps:
   - name: Delete Kind Cluster
     image: quay.io/sighup/mise:v2025.4.4
     pull: always
+    network_mode: host
     environment:
       GITHUB_TOKEN:
         from_secret: github_token
@@ -412,6 +418,7 @@ steps:
   - name: Create Kind Cluster
     image: quay.io/sighup/mise:v2025.4.4
     pull: always
+    network_mode: host
     environment:
       GITHUB_TOKEN:
         from_secret: github_token
@@ -430,6 +437,7 @@ steps:
   - name: Run E2E Tests
     image: quay.io/sighup/mise:v2025.4.4
     pull: always
+    network_mode: host
     environment:
       GITHUB_TOKEN:
         from_secret: github_token
@@ -446,6 +454,7 @@ steps:
   - name: Delete Kind Cluster
     image: quay.io/sighup/mise:v2025.4.4
     pull: always
+    network_mode: host
     environment:
       GITHUB_TOKEN:
         from_secret: github_token
@@ -502,6 +511,7 @@ steps:
   - name: Create Kind Cluster
     image: quay.io/sighup/mise:v2025.4.4
     pull: always
+    network_mode: host
     environment:
       GITHUB_TOKEN:
         from_secret: github_token
@@ -520,6 +530,7 @@ steps:
   - name: Run E2E Tests
     image: quay.io/sighup/mise:v2025.4.4
     pull: always
+    network_mode: host
     environment:
       GITHUB_TOKEN:
         from_secret: github_token
@@ -536,6 +547,7 @@ steps:
   - name: Delete Kind Cluster
     image: quay.io/sighup/mise:v2025.4.4
     pull: always
+    network_mode: host
     environment:
       GITHUB_TOKEN:
         from_secret: github_token
@@ -592,6 +604,7 @@ steps:
   - name: Create Kind Cluster
     image: quay.io/sighup/mise:v2025.4.4
     pull: always
+    network_mode: host
     environment:
       GITHUB_TOKEN:
         from_secret: github_token
@@ -610,6 +623,7 @@ steps:
   - name: Run E2E Tests
     image: quay.io/sighup/mise:v2025.4.4
     pull: always
+    network_mode: host
     environment:
       GITHUB_TOKEN:
         from_secret: github_token
@@ -626,6 +640,7 @@ steps:
   - name: Delete Kind Cluster
     image: quay.io/sighup/mise:v2025.4.4
     pull: always
+    network_mode: host
     environment:
       GITHUB_TOKEN:
         from_secret: github_token
