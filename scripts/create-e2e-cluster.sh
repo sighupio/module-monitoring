@@ -57,7 +57,7 @@ kind get kubeconfig --name "${CLUSTER_NAME}" > "${KUBECONFIG_PATH}"
 export KUBECONFIG="${KUBECONFIG_PATH}"
 
 echo "⏳ Step 3: Waiting for cluster to be ready..."
-until kubectl get serviceaccount default > /dev/null 2>&1; do 
+until kubectl get serviceaccount default; do 
   echo "   Waiting for control-plane..." 
   sleep 2
 done
