@@ -15,6 +15,7 @@ nodes:
     apiServer:
       certSANs:
       - host.docker.internal
+      - 0.0.0.0
       extraArgs:
         enable-admission-plugins: "NamespaceLifecycle,LimitRanger,PodNodeSelector,ServiceAccount,DefaultStorageClass,DefaultTolerationSeconds,MutatingAdmissionWebhook,ValidatingAdmissionWebhook,ResourceQuota"
     etcd:
