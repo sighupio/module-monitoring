@@ -243,7 +243,7 @@ steps:
     depends_on:
       - clone
     commands:
-      - mise use kind@$${KIND_VERSION} kubectl@$${KUBECTL_VERSION} kustomize@5.6.0
+      - mise use kind@$${KIND_VERSION} kubectl@$${KUBECTL_VERSION} kustomize@5.6.0 yq@4.43.1
       - eval "$(mise activate bash --shims)"
       - ./scripts/create-e2e-cluster.sh $${CLUSTER_VERSION}
 
@@ -333,7 +333,7 @@ steps:
     depends_on:
       - clone
     commands:
-      - mise use kind@$${KIND_VERSION} kubectl@$${KUBECTL_VERSION} kustomize@5.6.0
+      - mise use kind@$${KIND_VERSION} kubectl@$${KUBECTL_VERSION} kustomize@5.6.0 yq@4.43.1
       - eval "$(mise activate bash --shims)"
       - ./scripts/create-e2e-cluster.sh $${CLUSTER_VERSION}
 
@@ -423,7 +423,7 @@ steps:
     depends_on:
       - clone
     commands:
-      - mise use kind@$${KIND_VERSION} kubectl@$${KUBECTL_VERSION} kustomize@5.6.0
+      - mise use kind@$${KIND_VERSION} kubectl@$${KUBECTL_VERSION} kustomize@5.6.0 yq@4.43.1
       - eval "$(mise activate bash --shims)"
       - ./scripts/create-e2e-cluster.sh $${CLUSTER_VERSION}
 
@@ -513,7 +513,7 @@ steps:
     depends_on:
       - clone
     commands:
-      - mise use kind@$${KIND_VERSION} kubectl@$${KUBECTL_VERSION} kustomize@5.6.0
+      - mise use kind@$${KIND_VERSION} kubectl@$${KUBECTL_VERSION} kustomize@5.6.0 yq@4.43.1
       - eval "$(mise activate bash --shims)"
       - ./scripts/create-e2e-cluster.sh $${CLUSTER_VERSION}
 
@@ -603,7 +603,7 @@ steps:
     depends_on:
       - clone
     commands:
-      - mise use kind@$${KIND_VERSION} kubectl@$${KUBECTL_VERSION} kustomize@5.6.0
+      - mise use kind@$${KIND_VERSION} kubectl@$${KUBECTL_VERSION} kustomize@5.6.0 yq@4.43.1
       - eval "$(mise activate bash --shims)"
       - ./scripts/create-e2e-cluster.sh $${CLUSTER_VERSION}
 

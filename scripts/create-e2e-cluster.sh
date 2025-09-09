@@ -56,7 +56,7 @@ echo "📋 Step 2: Setting up kubeconfig..."
 kind get kubeconfig --name "${CLUSTER_NAME}" > "${KUBECONFIG_PATH}"
 if [[ "${DRONE_BUILD_NUMBER}" != "9999" ]]; then
   # If we are running in CI 0.0.0.0 is unreachable from within the containers, so we change to the Host's internal hostname
-  sed -i -E -e 's/0\.0\.0\.0/host.docker.internal/g' "${KUBECONFIG}"
+  yq -i '.clusters[0].cluster.server |= sub("(https?://)(.+):(.+)", "${1}host.docker.internal:${3}")' "${KUBECONFIG_PATH}"
 fi
 export KUBECONFIG="${KUBECONFIG_PATH}"
 
