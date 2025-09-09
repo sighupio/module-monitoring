@@ -12,8 +12,10 @@ go = "1.23"
 bats = "1.11.0"
 dyff = "1.9.0"
 drone = "1.9.0"
+kapp = "0.64.2"     # For GitOps-style deployments
 "ubi:google/addlicense" = "v1.1.1"
 promtool = "2.54.1"
+stern = "1.33.0"    # For log monitoring during tests
 
 # Development task definitions
 [tasks.add-license]
@@ -62,43 +64,22 @@ description = "Run complete E2E test suite with Kind cluster (K8s 1.33)"
 run = '''
 #!/bin/bash
 set -e
-
-echo "🚀 Starting E2E Test Suite for Module Monitoring"
-echo "============================================="
-
-# Configuration
-KUBE_VERSION="1.33.0"
-export DRONE_BUILD_NUMBER="${DRONE_BUILD_NUMBER:-9999}"
-export DRONE_REPO_NAME="${DRONE_REPO_NAME:-module-logging}"
-CLUSTER_NAME="${DRONE_REPO_NAME}-${DRONE_BUILD_NUMBER}-${KUBE_VERSION}"
-KUBECONFIG_PATH="$(pwd)/kubeconfig-e2e"
-
-# Cleanup function
-cleanup() {
-  echo "🧹 Cleaning up..."
-  kind delete cluster --name "${CLUSTER_NAME}" 2>/dev/null || true
-  rm -f "${KUBECONFIG_PATH}"
-}
-
-# Trap to ensure cleanup on exit (success or failure)
-trap cleanup EXIT
-
-echo "📦 Step 1: Creating Kind cluster (K8s ${KUBE_VERSION})..."
-kind create cluster --name "${CLUSTER_NAME}" --config "./katalog/tests/kind/config.yml"
-
-echo "📋 Step 2: Setting up kubeconfig..."
-kind get kubeconfig --name "${CLUSTER_NAME}" > "${KUBECONFIG_PATH}"
-export KUBECONFIG="${KUBECONFIG_PATH}"
-
-echo "⏳ Step 3: Waiting for cluster to be ready..."
-until kubectl get serviceaccount default > /dev/null 2>&1; do 
-  echo "   Waiting for control-plane..." 
-  sleep 2
-done
-
-echo "🧪 Step 4: Running BATS E2E tests..."
-bats -t ./katalog/tests/tests.sh
-bats -t ./katalog/tests/grafana-ldap.sh
-
-echo "✅ E2E tests completed successfully!"
+echo "🚀 Running Monitoring E2E workflow..."
+./scripts/create-e2e-cluster.sh 1.33.0
+./scripts/run-monitoring-tests.sh
+./scripts/cleanup-e2e-cluster.sh
+echo "✅ Monitoring E2E workflow completed!"
 '''
+
+# Individual E2E workflow components
+[tasks.e2e-create-cluster]
+description = "Create Kind cluster for monitoring E2E testing"
+run = "./scripts/create-e2e-cluster.sh 1.33.0"
+
+[tasks.e2e-run-tests]
+description = "Run monitoring E2E tests on existing cluster"
+run = "./scripts/run-monitoring-tests.sh"
+
+[tasks.e2e-cleanup]
+description = "Clean up E2E test cluster and artifacts"
+run = "./scripts/cleanup-e2e-cluster.sh"
