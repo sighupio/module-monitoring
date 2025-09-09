@@ -200,8 +200,7 @@ load ./helper
 @test "Deploy x509-exporter" {
   info
   deploy() {
-    apply katalog/x509-exporter
-    kubectl patch ds x509-certificate-exporter-control-plane -n monitoring --patch-file katalog/tests/x509-exporter/volume-patch.yml
+    apply katalog/tests/x509-exporter
   }
   run deploy
   [ "$status" -eq 0 ]
