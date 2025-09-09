@@ -29,9 +29,9 @@ load ./helper
 @test "prometheus-operator is Running" {
   info
   test() {
-    kubectl get pods -l app.kubernetes.io/name=prometheus-operator -o json -n monitoring | jq '.items[].status.containerStatuses[].ready' | uniq | grep -q true
+    check_deploy_ready "prometheus-operator" "monitoring"
   }
-  loop_it test 10 10
+  loop_it test 30 5
   status=${loop_it_result:?}
   [ "$status" -eq 0 ]
 }
@@ -48,9 +48,9 @@ load ./helper
 @test "prometheus-operated is Running" {
   info
   test() {
-    kubectl get pods -l app.kubernetes.io/name=prometheus -o json -n monitoring | jq '.items[].status.containerStatuses[].ready' | uniq | grep -q true
+    check_sts_ready "prometheus-prometheus" "monitoring"
   }
-  loop_it test 10 10
+  loop_it test 30 5
   status=${loop_it_result:?}
   [ "$status" -eq 0 ]
 }
@@ -67,9 +67,9 @@ load ./helper
 @test "alertmanager-operated is Running" {
   info
   test() {
-    kubectl get pods -l app.kubernetes.io/name=alertmanager -o json -n monitoring | jq '.items[].status.containerStatuses[].ready' | uniq | grep -q true
+    check_sts_ready "alertmanager-alertmanager" "monitoring"
   }
-  loop_it test 10 10
+  loop_it test 30 5
   status=${loop_it_result:?}
   [ "$status" -eq 0 ]
 }
@@ -86,9 +86,9 @@ load ./helper
 @test "blackbox-exporter is Running" {
   info
   test() {
-    kubectl get pods -l app.kubernetes.io/name=blackbox-exporter -o json -n monitoring | jq '.items[].status.containerStatuses[].ready' | uniq | grep -q true
+    check_deploy_ready "blackbox-exporter" "monitoring"
   }
-  loop_it test 10 10
+  loop_it test 30 5
   status=${loop_it_result:?}
   [ "$status" -eq 0 ]
 }
@@ -105,9 +105,9 @@ load ./helper
 @test "grafana is Running" {
   info
   test() {
-    kubectl get pods -l app.kubernetes.io/name=grafana -o json -n monitoring | jq '.items[].status.containerStatuses[].ready' | uniq | grep -q true
+    check_deploy_ready "grafana" "monitoring"
   }
-  loop_it test 10 10
+  loop_it test 30 5
   status=${loop_it_result:?}
   [ "$status" -eq 0 ]
 }
@@ -124,9 +124,9 @@ load ./helper
 @test "kube-state-metrics is Running" {
   info
   test() {
-    kubectl get pods -l app.kubernetes.io/name=kube-state-metrics -o json -n monitoring | jq '.items[].status.containerStatuses[].ready' | uniq | grep -q true
+    check_deploy_ready "kube-state-metrics" "monitoring"
   }
-  loop_it test 10 10
+  loop_it test 30 5
   status=${loop_it_result:?}
   [ "$status" -eq 0 ]
 }
@@ -152,9 +152,9 @@ load ./helper
 @test "node-exporter is Running" {
   info
   test() {
-    kubectl get pods -l app.kubernetes.io/name=node-exporter -o json -n monitoring | jq '.items[].status.containerStatuses[].ready' | uniq | grep -q true
+    check_ds_ready "node-exporter" "monitoring"
   }
-  loop_it test 10 10
+  loop_it test 30 5
   status=${loop_it_result:?}
   [ "$status" -eq 0 ]
 }
@@ -171,9 +171,9 @@ load ./helper
 @test "prometheus-adapter is Running" {
   info
   test() {
-    kubectl get pods -l app.kubernetes.io/name=prometheus-adapter -o json -n monitoring | jq '.items[].status.containerStatuses[].ready' | uniq | grep -q true
+    check_deploy_ready "prometheus-adapter" "monitoring"
   }
-  loop_it test 10 10
+  loop_it test 30 5
   status=${loop_it_result:?}
   [ "$status" -eq 0 ]
 }
@@ -190,9 +190,9 @@ load ./helper
 @test "kube-proxy-metrics is Running" {
   info
   test() {
-    kubectl get pods -l k8s-app=kube-proxy-metrics -o json -n monitoring | jq '.items[].status.containerStatuses[].ready' | uniq | grep -q true
+    check_ds_ready "kube-proxy-metrics" "monitoring"
   }
-  loop_it test 10 10
+  loop_it test 30 5
   status=${loop_it_result:?}
   [ "$status" -eq 0 ]
 }
@@ -210,9 +210,9 @@ load ./helper
 @test "x509-exporter is Running" {
   info
   test() {
-    kubectl get pods -l app=x509-certificate-exporter -o json -n monitoring | jq '.items[].status.containerStatuses[].ready' | uniq | grep -q true
+    check_ds_ready "x509-certificate-exporter" "monitoring"
   }
-  loop_it test 10 10
+  loop_it test 30 5
   status=${loop_it_result:?}
   [ "$status" -eq 0 ]
 }
@@ -229,9 +229,9 @@ load ./helper
 @test "Minio is Running" {
   info
   test() {
-    kubectl get pods -l app=minio -o json -n monitoring | jq '.items[].status.containerStatuses[].ready' | uniq | grep -q true
+    check_sts_ready "minio" "monitoring"
   }
-  loop_it test 10 10
+  loop_it test 30 5
   status=${loop_it_result:?}
   [ "$status" -eq 0 ]
 }
@@ -248,9 +248,9 @@ load ./helper
 @test "Mimir is Running" {
   info
   test() {
-    kubectl get pods -l app.kubernetes.io/name=mimir -o json -n monitoring | jq '.items[].status.containerStatuses[].ready' | uniq | grep -q true
+    check_sts_ready "mimir" "monitoring"
   }
-  loop_it test 20 10
+  loop_it test 30 5
   status=${loop_it_result:?}
   [ "$status" -eq 0 ]
 }
