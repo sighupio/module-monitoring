@@ -15,8 +15,7 @@ spec:
         kubectl.kubernetes.io/default-container: grafana
     spec:
       containers:
-        - image: grafana/grafana
-          name: grafana
+        - name: grafana
           env:
             - name: GF_AUTH_ANONYMOUS_ENABLED
               value: "true"
