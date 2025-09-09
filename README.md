@@ -53,7 +53,7 @@ Monitoring Module provides the following packages:
 | Package                                                | Version  | Description                                                                                                               |
 | ------------------------------------------------------ | -------- | ------------------------------------------------------------------------------------------------------------------------- |
 | [prometheus-operator](katalog/prometheus-operator)     | `0.76.2` | Operator to deploy and manage Prometheus and related resources                                                            |
-| [prometheus-operated](katalog/prometheus-operated)     | `2.54.1` | Prometheus instance deployed with Prometheus Operator's CRD                                                               |
+| [prometheus-operated](katalog/prometheus-operated)     | `3.5.0`  | Prometheus instance deployed with Prometheus Operator's CRD                                                               |
 | [alertmanager-operated](katalog/alertmanager-operated) | `0.28.1` | Alertmanager instance deployed with Prometheus Operator's CRD                                                             |
 | [blackbox-exporter](katalog/blackbox-exporter)         | `0.27.0` | Prometheus exporter that allows blackbox probing of endpoints over HTTP, HTTPS, DNS, TCP, ICMP and gRPC.                  |
 | [grafana](katalog/grafana)                             | `12.1.0` | Grafana deployment to query and visualize metrics collected by Prometheus                                                 |

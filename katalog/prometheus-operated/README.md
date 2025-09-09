@@ -15,13 +15,13 @@ Grafana. Grafana integration is provided in Fury monitoring katalog, please see
 
 ## Requirements
 
-- Kubernetes >= `1.29.0`
+- Kubernetes >= `1.31.0`
 - Kustomize = `5.6.0`
 - [prometheus-operator](../prometheus-operator)
 
 ## Image repository and tag
 
-- Prometheus image: `registry.sighup.io/prometheus/prometheus:v2.54.1`
+- Prometheus image: `registry.sighup.io/prometheus/prometheus:v3.5.0`
 - Prometheus repository: [Prometheus on Github][prom-gh]
 - Prometheus documentation: [Prometheus documentation site][prom-doc]
 
