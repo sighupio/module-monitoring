@@ -19,6 +19,8 @@ spec:
       labels:
         app: x509-certificate-exporter
     spec:
+      securityContext:
+        runAsNonRoot: true
       restartPolicy: Always
       serviceAccountName: x509-certificate-exporter
       containers:
@@ -30,22 +32,33 @@ spec:
                 - ALL
             readOnlyRootFilesystem: true
             runAsGroup: 65534
-            runAsNonRoot: true
             runAsUser: 65534
           resources:
             limits:
               cpu: 200m
               memory: 100Mi
             requests:
-              cpu: 10m
+              cpu: 20m
               memory: 20Mi
           image: docker.io/enix/x509-certificate-exporter
           imagePullPolicy: IfNotPresent
           args:
             - --watch-kube-secrets
             - --secret-type=kubernetes.io/tls:tls.crt
+            - --max-cache-duration=300s
             - --listen-address=:9793
-            - --max-cache-duration=24h
           ports:
             - name: metrics
               containerPort: 9793
+          readinessProbe:
+            initialDelaySeconds: 5
+            periodSeconds: 3
+            httpGet:
+              path: /healthz
+              port: metrics
+          livenessProbe:
+            initialDelaySeconds: 5
+            periodSeconds: 3
+            httpGet:
+              path: /healthz
+              port: metrics

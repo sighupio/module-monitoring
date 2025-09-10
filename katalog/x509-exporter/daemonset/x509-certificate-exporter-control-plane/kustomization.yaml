@@ -10,58 +10,59 @@ namespace: monitoring
 
 nameSuffix: -control-plane
 
-patchesStrategicMerge:
-- |-
-  apiVersion: apps/v1
-  kind: DaemonSet
-  metadata:
-    name: x509-certificate-exporter
-    namespace: monitoring
-  spec:
-    template:
-      spec:
-        affinity:
-            nodeAffinity:
-              requiredDuringSchedulingIgnoredDuringExecution:
-                nodeSelectorTerms:
-                - matchExpressions:
-                  - key: node-role.kubernetes.io/control-plane
-                    operator: Exists
-                - matchExpressions:
-                  - key: node-role.kubernetes.io/master
-                    operator: Exists
-        containers:
-          - name: x509-certificate-exporter
-            volumeMounts:
-              - name: etc-etcd-pki
-                mountPath: /etc/etcd/pki
-                readOnly: true
-              - name: etc-kubernetes
-                mountPath: /etc/kubernetes
-                readOnly: true
-        tolerations:
-          - key: node-role.kubernetes.io/master
-            operator: Exists
-            effect: NoSchedule
-          - key: node-role.kubernetes.io/control-plane
-            operator: Exists
-            effect: NoSchedule
-        volumes:
-          - name: etc-etcd-pki
-            hostPath:
-              path: /etc/etcd/pki
-              type: Directory
-          - name: etc-kubernetes
-            hostPath:
-              path: /etc/kubernetes
-              type: Directory
+resources:
+  - ../base
 
-patchesJSON6902:
+patches:
+  - patch: |-
+      apiVersion: apps/v1
+      kind: DaemonSet
+      metadata:
+        name: x509-certificate-exporter
+        namespace: monitoring
+      spec:
+        template:
+          spec:
+            affinity:
+                nodeAffinity:
+                  requiredDuringSchedulingIgnoredDuringExecution:
+                    nodeSelectorTerms:
+                    - matchExpressions:
+                      - key: node-role.kubernetes.io/control-plane
+                        operator: Exists
+                    - matchExpressions:
+                      - key: node-role.kubernetes.io/master
+                        operator: Exists
+            containers:
+              - name: x509-certificate-exporter
+                volumeMounts:
+                  - name: etc-etcd-pki
+                    mountPath: /etc/etcd/pki
+                    readOnly: true
+                  - name: etc-kubernetes
+                    mountPath: /etc/kubernetes
+                    readOnly: true
+            tolerations:
+              - key: node-role.kubernetes.io/master
+                operator: Exists
+                effect: NoSchedule
+              - key: node-role.kubernetes.io/control-plane
+                operator: Exists
+                effect: NoSchedule
+            volumes:
+              - name: etc-etcd-pki
+                hostPath:
+                  path: /etc/etcd/pki
+                  type: Directory
+              - name: etc-kubernetes
+                hostPath:
+                  path: /etc/kubernetes
+                  type: Directory
   - target:
       group: apps
       version: v1
       kind: DaemonSet
-      name: x509-certificate-exporter-control-plane
+      name: x509-certificate-exporter # the nameSuffix get's applied after the patch
       namespace: monitoring
     patch: |-
       - op: add
@@ -96,10 +97,10 @@ patchesJSON6902:
         value: --watch-kubeconf=/etc/kubernetes/admin.conf
       - op: add
         path: /spec/template/spec/containers/0/args/-
+        value: --watch-kubeconf=/etc/kubernetes/super-admin.conf
+      - op: add
+        path: /spec/template/spec/containers/0/args/-
         value: --watch-kubeconf=/etc/kubernetes/controller-manager.conf
       - op: add
         path: /spec/template/spec/containers/0/args/-
         value: --watch-kubeconf=/etc/kubernetes/scheduler.conf
-
-resources:
-  - ../base
