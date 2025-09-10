@@ -60,7 +60,6 @@ steps:
       - kustomize build katalog/gke-sm > gke-sm.yml
       - kustomize build katalog/grafana > grafana.yml
       - kustomize build katalog/haproxy > haproxy.yml
-      - kustomize build katalog/karma > karma.yml
       - kustomize build katalog/kube-proxy-metrics > kube-proxy-metrics.yml
       - kustomize build katalog/kube-state-metrics > kube-state-metrics.yml
       - kustomize build katalog/kubeadm-sm > kubeadm-sm.yml
@@ -118,11 +117,6 @@ steps:
     name: check-deprecated-apis-haproxy
     environment:
       KUBERNETES_MANIFESTS: haproxy.yml
-
-  - <<: *check-deprecated-apis
-    name: check-deprecated-apis-karma
-    environment:
-      KUBERNETES_MANIFESTS: karma.yml
 
   - <<: *check-deprecated-apis
     name: check-deprecated-apis-kube-proxy-metrics
