@@ -1,68 +1,76 @@
-# Copyright (c) 2022 SIGHUP s.r.l All rights reserved.
+# Copyright (c) 2017-present SIGHUP s.r.l All rights reserved.
 # Use of this source code is governed by a BSD-style
 # license that can be found in the LICENSE file.
 
 name: license
 kind: pipeline
 type: docker
-
+node:
+  performance: low
+clone:
+  depth: 1
 steps:
   - name: check
-    image: docker.io/library/golang:1.20
+    image: docker.io/library/golang:1.21
     pull: always
     commands:
       - go install github.com/google/addlicense@v1.1.1
-      - addlicense -c "SIGHUP s.r.l" -v -l bsd -y "2017-present" --check .
+      - addlicense -c "SIGHUP s.r.l" -v -l bsd --check .
+
 ---
-name: policeman
+name: linting
 kind: pipeline
 type: docker
-
+node:
+  performance: low
 depends_on:
   - license
-
+clone:
+  depth: 1
 platform:
   os: linux
   arch: amd64
-
+volumes:
+  - name: mise-cache
+    host:
+      path: /root/mise_data_dir
 steps:
-  - name: lint
-    image: quay.io/sighup/policeman
+  - name: render
+    image: quay.io/sighup/mise:v2025.4.4
     pull: always
     environment:
-      FILTER_REGEX_EXCLUDE: (\.github)
-      # Identifies false positives like missing 'selector'. On Kustomize is common to don't set them
-      VALIDATE_KUBERNETES_KUBEVAL: "false"
-      # We use a lot of copy paste in our code, is intended. So it important to don't use this linter
-      VALIDATE_JSCPD: "false"
-      VALIDATE_TERRAFORM_TFLINT: "false"
-      # hadolint already validated dockerfiles
-      VALIDATE_DOCKERFILE: "false"
-      VALIDATE_NATURAL_LANGUAGE: "false"
-    depends_on:
-      - clone
-
-  - name: render
-    image: quay.io/sighup/e2e-testing:1.1.0_0.7.0_3.1.1_1.9.4_1.21.12_3.8.7_4.21.1
-    pull: always
+      MISE_DATA_DIR: /mise-data
+      MISE_OVERRIDE_CONFIG_FILENAMES: "mise.ci.toml"
+      GITHUB_TOKEN:
+        from_secret: github_token
+    volumes:
+      - name: mise-cache
+        path: /mise-data
     depends_on:
       - clone
     commands:
+      - |
+        mise use kustomize@5.6.0
+        eval "$(mise activate bash --shims)"
       - kustomize build katalog/aks-sm > aks-sm.yml
       - kustomize build katalog/alertmanager-operated > alertmanager-operated.yml
       - kustomize build katalog/blackbox-exporter > blackbox-exporter.yml
+      - kustomize build katalog/configs > configs.yml
       - kustomize build katalog/eks-sm > eks-sm.yml
       - kustomize build katalog/gke-sm > gke-sm.yml
       - kustomize build katalog/grafana > grafana.yml
+      - kustomize build katalog/haproxy > haproxy.yml
+      - kustomize build katalog/karma > karma.yml
       - kustomize build katalog/kube-proxy-metrics > kube-proxy-metrics.yml
       - kustomize build katalog/kube-state-metrics > kube-state-metrics.yml
       - kustomize build katalog/kubeadm-sm > kubeadm-sm.yml
+      - kustomize build katalog/mimir > mimir.yml
+      - kustomize build katalog/minio-ha > minio-ha.yml
       - kustomize build katalog/node-exporter > node-exporter.yml
       - kustomize build katalog/prometheus-adapter > prometheus-adapter.yml
       - kustomize build katalog/prometheus-operated > prometheus-operated.yml
       - kustomize build katalog/prometheus-operator > prometheus-operator.yml
       - kustomize build katalog/x509-exporter > x509-exporter.yml
-      - kustomize build katalog/mimir > mimir.yml
 
   - &check-deprecated-apis
     name: check-deprecated-apis-alertmanager-operated
@@ -72,7 +80,7 @@ steps:
       - render
     commands:
       # we use --ignore-deprecations because we don't want the CI to fail when the API has not been removed yet.
-      - /pluto detect $${KUBERNETES_MANIFESTS} --ignore-deprecations --target-versions=k8s=v1.31.0
+      - /pluto detect $${KUBERNETES_MANIFESTS} --ignore-deprecations --target-versions=k8s=v1.33.0
     environment:
       KUBERNETES_MANIFESTS: alertmanager-operated.yml
 
@@ -85,6 +93,11 @@ steps:
     name: check-deprecated-apis-blackbox-exporter
     environment:
       KUBERNETES_MANIFESTS: blackbox-exporter.yml
+
+  - <<: *check-deprecated-apis
+    name: check-deprecated-apis-configs
+    environment:
+      KUBERNETES_MANIFESTS: configs.yml
 
   - <<: *check-deprecated-apis
     name: check-deprecated-apis-eks-sm
@@ -102,6 +115,16 @@ steps:
       KUBERNETES_MANIFESTS: grafana.yml
 
   - <<: *check-deprecated-apis
+    name: check-deprecated-apis-haproxy
+    environment:
+      KUBERNETES_MANIFESTS: haproxy.yml
+
+  - <<: *check-deprecated-apis
+    name: check-deprecated-apis-karma
+    environment:
+      KUBERNETES_MANIFESTS: karma.yml
+
+  - <<: *check-deprecated-apis
     name: check-deprecated-apis-kube-proxy-metrics
     environment:
       KUBERNETES_MANIFESTS: kube-proxy-metrics.yml
@@ -117,6 +140,16 @@ steps:
       KUBERNETES_MANIFESTS: kubeadm-sm.yml
 
   - <<: *check-deprecated-apis
+    name: check-deprecated-apis-mimir
+    environment:
+      KUBERNETES_MANIFESTS: mimir.yml
+
+  - <<: *check-deprecated-apis
+    name: check-deprecated-apis-minio-ha
+    environment:
+      KUBERNETES_MANIFESTS: minio-ha.yml
+
+  - <<: *check-deprecated-apis
     name: check-deprecated-apis-node-exporter
     environment:
       KUBERNETES_MANIFESTS: node-exporter.yml
@@ -127,43 +160,35 @@ steps:
       KUBERNETES_MANIFESTS: prometheus-adapter.yml
 
   - <<: *check-deprecated-apis
-    name: check-deprecated-apis-prometheus-operated
-    environment:
-      KUBERNETES_MANIFESTS: prometheus-operated.yml
-
-  - <<: *check-deprecated-apis
     name: check-deprecated-apis-prometheus-operator
     environment:
       KUBERNETES_MANIFESTS: prometheus-operator.yml
+
+  - <<: *check-deprecated-apis
+    name: check-deprecated-apis-prometheus-operated
+    environment:
+      KUBERNETES_MANIFESTS: prometheus-operated.yml
 
   - <<: *check-deprecated-apis
     name: check-deprecated-apis-x509-exporter
     environment:
       KUBERNETES_MANIFESTS: x509-exporter.yml
 
-  - <<: *check-deprecated-apis
-    name: check-deprecated-apis-mimir
-    environment:
-      KUBERNETES_MANIFESTS: mimir.yml
-
----
-name: check-prometheus-rules
-kind: pipeline
-type: docker
-
-depends_on:
-  - policeman
-
-platform:
-  os: linux
-  arch: amd64
-
-steps:
-  - name: prom-rules
-    image: quay.io/sighup/prom-rules:3.16_2.54.1_4.27.2
+  - name: Prometheus Rules Linting
+    image: quay.io/sighup/mise:v2025.4.4
     pull: always
-    depends_on: [clone]
+    environment:
+      MISE_DATA_DIR: /mise-data
+      MISE_OVERRIDE_CONFIG_FILENAMES: "mise.ci.toml"
+      GITHUB_TOKEN:
+        from_secret: github_token
+    volumes:
+      - name: mise-cache
+        path: /mise-data
     commands:
+      - |
+        mise use promtool@2.54.1 yq@4.43.1
+        eval "$(mise activate bash --shims)"
       - bash katalog/tests/promtool.sh
     when:
       event:
@@ -171,327 +196,493 @@ steps:
         - tag
 
 ---
-name: e2e-kubernetes-1.29
+name: E2E Tests on kind clusters version 1.29.8
 kind: pipeline
 type: docker
-
-clone:
-  depth: 1
-
-depends_on:
-  - policeman
-
 platform:
   os: linux
   arch: amd64
-
+depends_on:
+  - linting
+clone:
+  depth: 1
 trigger:
   ref:
     include:
       - refs/tags/**
 
-steps:
-  - name: create-kind-cluster
-    image: quay.io/sighup/dind-kind-kubectl-kustomize:0.20.0_1.29.1_3.10.0
-    pull: always
-    volumes:
-      - name: dockersock
-        path: /var/run/docker.sock
-    depends_on: [clone]
-    environment:
-      CLUSTER_VERSION: v1.29.0
-      CLUSTER_NAME: ${DRONE_REPO_NAME}-${DRONE_BUILD_NUMBER}-129
-      # /drone/src is the default workdir for the pipeline
-      # using this folder we don't need to mount another
-      # shared volume between the steps
-      KUBECONFIG: /drone/src/kubeconfig-129
-    commands:
-      # NOTE: kind's `--wait` flag that waits for the control-plane ot be ready
-      # does not work when disabling the default CNI. It will always go in timeout.
-      - kind create cluster --name $${CLUSTER_NAME} --image registry.sighup.io/fury/kindest/node:$${CLUSTER_VERSION} --config katalog/tests/kind-config.yml
-      # save the kubeconfig so we can use it from other steps.
-      - kind get kubeconfig --name $${CLUSTER_NAME} > $${KUBECONFIG}
-
-  - name: e2e
-    # KUBECTL 1.29.1 - KUSTOMIZE 3.5.3 - HELM 3.1.1 - YQ 4.21.1 - ISTIOCTL 1.9.4 - FURYCTL 0.9.0 - BATS 1.1.0
-    image: quay.io/sighup/e2e-testing:1.1.0_0.11.0_3.12.0_1.9.4_1.29.1_3.5.3_4.33.3
-    pull: always
-    network_mode: host
-    environment:
-      CLUSTER_NAME: ${DRONE_REPO_NAME}-${DRONE_BUILD_NUMBER}-129
-      KUBECONFIG: /drone/src/kubeconfig-129
-    depends_on: [create-kind-cluster]
-    commands:
-      - bats -t katalog/tests/tests.sh
-      - bats -t katalog/tests/grafana-ldap.sh
-
-  - name: delete-kind-cluster
-    image: quay.io/sighup/dind-kind-kubectl-kustomize:0.20.0_1.29.1_3.10.0
-    volumes:
-      - name: dockersock
-        path: /var/run/docker.sock
-    pull: always
-    depends_on: [e2e]
-    environment:
-      CLUSTER_NAME: ${DRONE_REPO_NAME}-${DRONE_BUILD_NUMBER}-129
-    commands:
-      # does not matter if the command fails
-      - kind delete cluster --name $${CLUSTER_NAME} || true
-    when:
-      status:
-        - success
-        - failure
+environment:
+  # Mise configuration
+  MISE_DATA_DIR: "/mise-data"
+  MISE_OVERRIDE_CONFIG_FILENAMES: "mise.ci.toml"
+  KIND_VERSION: "0.29.0"
+  KUBECTL_VERSION: "1.29.1"
+  BATS_VERSION: "1.11.0"
+  CLUSTER_VERSION: "1.29.8"
 
 volumes:
   - name: dockersock
     host:
       path: /var/run/docker.sock
+  - name: mise-cache
+    host:
+      path: /root/mise_data_dir
+
+steps:
+  - name: Create Kind Cluster
+    image: quay.io/sighup/mise:v2025.4.4
+    pull: always
+    network_mode: host
+    environment:
+      GITHUB_TOKEN:
+        from_secret: github_token
+    volumes:
+      - name: dockersock
+        path: /var/run/docker.sock
+      - name: mise-cache
+        path: /mise-data
+    depends_on:
+      - clone
+    commands:
+      - mise use kind@$${KIND_VERSION} kubectl@$${KUBECTL_VERSION} kustomize@5.6.0 yq@4.43.1
+      - eval "$(mise activate bash --shims)"
+      - ./scripts/create-e2e-cluster.sh $${CLUSTER_VERSION}
+
+  - name: Run E2E Tests
+    image: quay.io/sighup/mise:v2025.4.4
+    pull: always
+    network_mode: host
+    environment:
+      GITHUB_TOKEN:
+        from_secret: github_token
+    volumes:
+      - name: mise-cache
+        path: /mise-data
+    depends_on:
+      - Create Kind Cluster
+    commands:
+      - mise use bats@$${BATS_VERSION} kubectl@$${KUBECTL_VERSION} kustomize@5.6.0 kapp@0.64.2
+      - eval "$(mise activate bash --shims)"
+      - ./scripts/run-monitoring-tests.sh
+
+  - name: Delete Kind Cluster
+    image: quay.io/sighup/mise:v2025.4.4
+    pull: always
+    network_mode: host
+    environment:
+      GITHUB_TOKEN:
+        from_secret: github_token
+    volumes:
+      - name: dockersock
+        path: /var/run/docker.sock
+      - name: mise-cache
+        path: /mise-data
+    depends_on:
+      - Run E2E Tests
+    when:
+      status:
+        - success
+        - failure
+    commands:
+      - mise use kind@$${KIND_VERSION}
+      - eval "$(mise activate bash --shims)"
+      - ./scripts/cleanup-e2e-cluster.sh || true
+
 ---
-name: e2e-kubernetes-1.30
+name: E2E Tests on kind clusters version 1.30.4
 kind: pipeline
 type: docker
-
-clone:
-  depth: 1
-
-depends_on:
-  - policeman
-
 platform:
   os: linux
   arch: amd64
-
+depends_on:
+  - linting
+clone:
+  depth: 1
 trigger:
   ref:
     include:
       - refs/tags/**
 
-steps:
-  - name: create-kind-cluster
-    image: quay.io/sighup/dind-kind-kubectl-kustomize:0.24.0_1.30.5_3.10.0
-    pull: always
-    volumes:
-      - name: dockersock
-        path: /var/run/docker.sock
-    depends_on: [clone]
-    environment:
-      CLUSTER_VERSION: v1.30.4
-      CLUSTER_NAME: ${DRONE_REPO_NAME}-${DRONE_BUILD_NUMBER}-130
-      # /drone/src is the default workdir for the pipeline
-      # using this folder we don't need to mount another
-      # shared volume between the steps
-      KUBECONFIG: /drone/src/kubeconfig-130
-    commands:
-      # NOTE: kind's `--wait` flag that waits for the control-plane ot be ready
-      # does not work when disabling the default CNI. It will always go in timeout.
-      - kind create cluster --name $${CLUSTER_NAME} --image registry.sighup.io/fury/kindest/node:$${CLUSTER_VERSION} --config katalog/tests/kind-config.yml
-      # save the kubeconfig so we can use it from other steps.
-      - kind get kubeconfig --name $${CLUSTER_NAME} > $${KUBECONFIG}
-
-  - name: e2e
-    image: quay.io/sighup/e2e-testing:1.1.0_1.30.5_3.10.0_4.33.3
-    pull: always
-    network_mode: host
-    environment:
-      CLUSTER_NAME: ${DRONE_REPO_NAME}-${DRONE_BUILD_NUMBER}-130
-      KUBECONFIG: /drone/src/kubeconfig-130
-    depends_on: [create-kind-cluster]
-    commands:
-      - bats -t katalog/tests/tests.sh
-      - bats -t katalog/tests/grafana-ldap.sh
-
-  - name: delete-kind-cluster
-    image: quay.io/sighup/dind-kind-kubectl-kustomize:0.24.0_1.30.5_3.10.0
-    volumes:
-      - name: dockersock
-        path: /var/run/docker.sock
-    pull: always
-    depends_on: [e2e]
-    environment:
-      CLUSTER_NAME: ${DRONE_REPO_NAME}-${DRONE_BUILD_NUMBER}-130
-    commands:
-      # does not matter if the command fails
-      - kind delete cluster --name $${CLUSTER_NAME} || true
-    when:
-      status:
-        - success
-        - failure
+environment:
+  # Mise configuration
+  MISE_DATA_DIR: "/mise-data"
+  MISE_OVERRIDE_CONFIG_FILENAMES: "mise.ci.toml"
+  KIND_VERSION: "0.29.0"
+  KUBECTL_VERSION: "1.30.4"
+  BATS_VERSION: "1.11.0"
+  CLUSTER_VERSION: "1.30.4"
 
 volumes:
   - name: dockersock
     host:
       path: /var/run/docker.sock
+  - name: mise-cache
+    host:
+      path: /root/mise_data_dir
+
+steps:
+  - name: Create Kind Cluster
+    image: quay.io/sighup/mise:v2025.4.4
+    pull: always
+    network_mode: host
+    environment:
+      GITHUB_TOKEN:
+        from_secret: github_token
+    volumes:
+      - name: dockersock
+        path: /var/run/docker.sock
+      - name: mise-cache
+        path: /mise-data
+    depends_on:
+      - clone
+    commands:
+      - mise use kind@$${KIND_VERSION} kubectl@$${KUBECTL_VERSION} kustomize@5.6.0 yq@4.43.1
+      - eval "$(mise activate bash --shims)"
+      - ./scripts/create-e2e-cluster.sh $${CLUSTER_VERSION}
+
+  - name: Run E2E Tests
+    image: quay.io/sighup/mise:v2025.4.4
+    pull: always
+    network_mode: host
+    environment:
+      GITHUB_TOKEN:
+        from_secret: github_token
+    volumes:
+      - name: mise-cache
+        path: /mise-data
+    depends_on:
+      - Create Kind Cluster
+    commands:
+      - mise use bats@$${BATS_VERSION} kubectl@$${KUBECTL_VERSION} kustomize@5.6.0 kapp@0.64.2
+      - eval "$(mise activate bash --shims)"
+      - ./scripts/run-monitoring-tests.sh
+
+  - name: Delete Kind Cluster
+    image: quay.io/sighup/mise:v2025.4.4
+    pull: always
+    network_mode: host
+    environment:
+      GITHUB_TOKEN:
+        from_secret: github_token
+    volumes:
+      - name: dockersock
+        path: /var/run/docker.sock
+      - name: mise-cache
+        path: /mise-data
+    depends_on:
+      - Run E2E Tests
+    when:
+      status:
+        - success
+        - failure
+    commands:
+      - mise use kind@$${KIND_VERSION}
+      - eval "$(mise activate bash --shims)"
+      - ./scripts/cleanup-e2e-cluster.sh || true
+
 ---
-name: e2e-kubernetes-1.31
+name: E2E Tests on kind clusters version 1.31.1
 kind: pipeline
 type: docker
-
-clone:
-  depth: 1
-
-depends_on:
-  - policeman
-
 platform:
   os: linux
   arch: amd64
-
+depends_on:
+  - linting
+clone:
+  depth: 1
 trigger:
   ref:
     include:
       - refs/tags/**
 
-steps:
-  - name: create-kind-cluster
-    image: quay.io/sighup/dind-kind-kubectl-kustomize:0.24.0_1.31.1_3.10.0
-    pull: always
-    volumes:
-      - name: dockersock
-        path: /var/run/docker.sock
-    depends_on: [clone]
-    environment:
-      CLUSTER_VERSION: v1.31.1
-      CLUSTER_NAME: ${DRONE_REPO_NAME}-${DRONE_BUILD_NUMBER}-131
-      # /drone/src is the default workdir for the pipeline
-      # using this folder we don't need to mount another
-      # shared volume between the steps
-      KUBECONFIG: /drone/src/kubeconfig-131
-    commands:
-      # NOTE: kind's `--wait` flag that waits for the control-plane ot be ready
-      # does not work when disabling the default CNI. It will always go in timeout.
-      - kind create cluster --name $${CLUSTER_NAME} --image registry.sighup.io/fury/kindest/node:$${CLUSTER_VERSION} --config katalog/tests/kind-config.yml
-      # save the kubeconfig so we can use it from other steps.
-      - kind get kubeconfig --name $${CLUSTER_NAME} > $${KUBECONFIG}
-
-  - name: e2e
-    image: quay.io/sighup/e2e-testing:1.1.0_1.31.1_3.10.0_4.33.3
-    pull: always
-    network_mode: host
-    environment:
-      CLUSTER_NAME: ${DRONE_REPO_NAME}-${DRONE_BUILD_NUMBER}-131
-      KUBECONFIG: /drone/src/kubeconfig-131
-    depends_on: [create-kind-cluster]
-    commands:
-      - bats -t katalog/tests/tests.sh
-      - bats -t katalog/tests/grafana-ldap.sh
-
-  - name: delete-kind-cluster
-    image: quay.io/sighup/dind-kind-kubectl-kustomize:0.24.0_1.31.1_3.10.0
-    volumes:
-      - name: dockersock
-        path: /var/run/docker.sock
-    pull: always
-    depends_on: [e2e]
-    environment:
-      CLUSTER_NAME: ${DRONE_REPO_NAME}-${DRONE_BUILD_NUMBER}-131
-    commands:
-      # does not matter if the command fails
-      - kind delete cluster --name $${CLUSTER_NAME} || true
-    when:
-      status:
-        - success
-        - failure
+environment:
+  # Mise configuration
+  MISE_DATA_DIR: "/mise-data"
+  MISE_OVERRIDE_CONFIG_FILENAMES: "mise.ci.toml"
+  KIND_VERSION: "0.29.0"
+  KUBECTL_VERSION: "1.31.1"
+  BATS_VERSION: "1.11.0"
+  CLUSTER_VERSION: "1.31.1"
 
 volumes:
   - name: dockersock
     host:
       path: /var/run/docker.sock
+  - name: mise-cache
+    host:
+      path: /root/mise_data_dir
+
+steps:
+  - name: Create Kind Cluster
+    image: quay.io/sighup/mise:v2025.4.4
+    pull: always
+    network_mode: host
+    environment:
+      GITHUB_TOKEN:
+        from_secret: github_token
+    volumes:
+      - name: dockersock
+        path: /var/run/docker.sock
+      - name: mise-cache
+        path: /mise-data
+    depends_on:
+      - clone
+    commands:
+      - mise use kind@$${KIND_VERSION} kubectl@$${KUBECTL_VERSION} kustomize@5.6.0 yq@4.43.1
+      - eval "$(mise activate bash --shims)"
+      - ./scripts/create-e2e-cluster.sh $${CLUSTER_VERSION}
+
+  - name: Run E2E Tests
+    image: quay.io/sighup/mise:v2025.4.4
+    pull: always
+    network_mode: host
+    environment:
+      GITHUB_TOKEN:
+        from_secret: github_token
+    volumes:
+      - name: mise-cache
+        path: /mise-data
+    depends_on:
+      - Create Kind Cluster
+    commands:
+      - mise use bats@$${BATS_VERSION} kubectl@$${KUBECTL_VERSION} kustomize@5.6.0 kapp@0.64.2
+      - eval "$(mise activate bash --shims)"
+      - ./scripts/run-monitoring-tests.sh
+
+  - name: Delete Kind Cluster
+    image: quay.io/sighup/mise:v2025.4.4
+    pull: always
+    network_mode: host
+    environment:
+      GITHUB_TOKEN:
+        from_secret: github_token
+    volumes:
+      - name: dockersock
+        path: /var/run/docker.sock
+      - name: mise-cache
+        path: /mise-data
+    depends_on:
+      - Run E2E Tests
+    when:
+      status:
+        - success
+        - failure
+    commands:
+      - mise use kind@$${KIND_VERSION}
+      - eval "$(mise activate bash --shims)"
+      - ./scripts/cleanup-e2e-cluster.sh || true
+
 ---
-name: e2e-kubernetes-1.32
+name: E2E Tests on kind clusters version 1.32.2
 kind: pipeline
 type: docker
-
-clone:
-  depth: 1
-
-depends_on:
-  - policeman
-
 platform:
   os: linux
   arch: amd64
-
+depends_on:
+  - linting
+clone:
+  depth: 1
 trigger:
   ref:
     include:
       - refs/tags/**
 
-steps:
-  - name: create-kind-cluster
-    image: quay.io/sighup/dind-kind-kubectl-kustomize:0.27.0_1.32.2_5.6.0
-    pull: always
-    volumes:
-      - name: dockersock
-        path: /var/run/docker.sock
-    depends_on: [clone]
-    environment:
-      CLUSTER_VERSION: v1.32.2
-      CLUSTER_NAME: ${DRONE_REPO_NAME}-${DRONE_BUILD_NUMBER}-132
-      # /drone/src is the default workdir for the pipeline
-      # using this folder we don't need to mount another
-      # shared volume between the steps
-      KUBECONFIG: /drone/src/kubeconfig-132
-    commands:
-      # NOTE: kind's `--wait` flag that waits for the control-plane ot be ready
-      # does not work when disabling the default CNI. It will always go in timeout.
-      - kind create cluster --name $${CLUSTER_NAME} --image registry.sighup.io/fury/kindest/node:$${CLUSTER_VERSION} --config katalog/tests/kind-config.yml
-      # save the kubeconfig so we can use it from other steps.
-      - kind get kubeconfig --name $${CLUSTER_NAME} > $${KUBECONFIG}
-
-  - name: e2e
-    image: quay.io/sighup/e2e-testing:2.24.17_1.1.0_3.12.0_1.32.2_5.6.0_4.33.3
-    pull: always
-    network_mode: host
-    environment:
-      CLUSTER_NAME: ${DRONE_REPO_NAME}-${DRONE_BUILD_NUMBER}-132
-      KUBECONFIG: /drone/src/kubeconfig-132
-    depends_on: [create-kind-cluster]
-    commands:
-      - bats -t katalog/tests/tests.sh
-      - bats -t katalog/tests/grafana-ldap.sh
-
-  - name: delete-kind-cluster
-    image: quay.io/sighup/dind-kind-kubectl-kustomize:0.27.0_1.32.2_5.6.0
-    volumes:
-      - name: dockersock
-        path: /var/run/docker.sock
-    pull: always
-    depends_on: [e2e]
-    environment:
-      CLUSTER_NAME: ${DRONE_REPO_NAME}-${DRONE_BUILD_NUMBER}-132
-    commands:
-      # does not matter if the command fails
-      - kind delete cluster --name $${CLUSTER_NAME} || true
-    when:
-      status:
-        - success
-        - failure
+environment:
+  # Mise configuration
+  MISE_DATA_DIR: "/mise-data"
+  MISE_OVERRIDE_CONFIG_FILENAMES: "mise.ci.toml"
+  KIND_VERSION: "0.29.0"
+  KUBECTL_VERSION: "1.32.2"
+  BATS_VERSION: "1.11.0"
+  CLUSTER_VERSION: "1.32.2"
 
 volumes:
   - name: dockersock
     host:
       path: /var/run/docker.sock
+  - name: mise-cache
+    host:
+      path: /root/mise_data_dir
+
+steps:
+  - name: Create Kind Cluster
+    image: quay.io/sighup/mise:v2025.4.4
+    pull: always
+    network_mode: host
+    environment:
+      GITHUB_TOKEN:
+        from_secret: github_token
+    volumes:
+      - name: dockersock
+        path: /var/run/docker.sock
+      - name: mise-cache
+        path: /mise-data
+    depends_on:
+      - clone
+    commands:
+      - mise use kind@$${KIND_VERSION} kubectl@$${KUBECTL_VERSION} kustomize@5.6.0 yq@4.43.1
+      - eval "$(mise activate bash --shims)"
+      - ./scripts/create-e2e-cluster.sh $${CLUSTER_VERSION}
+
+  - name: Run E2E Tests
+    image: quay.io/sighup/mise:v2025.4.4
+    pull: always
+    network_mode: host
+    environment:
+      GITHUB_TOKEN:
+        from_secret: github_token
+    volumes:
+      - name: mise-cache
+        path: /mise-data
+    depends_on:
+      - Create Kind Cluster
+    commands:
+      - mise use bats@$${BATS_VERSION} kubectl@$${KUBECTL_VERSION} kustomize@5.6.0 kapp@0.64.2
+      - eval "$(mise activate bash --shims)"
+      - ./scripts/run-monitoring-tests.sh
+
+  - name: Delete Kind Cluster
+    image: quay.io/sighup/mise:v2025.4.4
+    pull: always
+    network_mode: host
+    environment:
+      GITHUB_TOKEN:
+        from_secret: github_token
+    volumes:
+      - name: dockersock
+        path: /var/run/docker.sock
+      - name: mise-cache
+        path: /mise-data
+    depends_on:
+      - Run E2E Tests
+    when:
+      status:
+        - success
+        - failure
+    commands:
+      - mise use kind@$${KIND_VERSION}
+      - eval "$(mise activate bash --shims)"
+      - ./scripts/cleanup-e2e-cluster.sh || true
+
+---
+name: E2E Tests on kind clusters version 1.33.0
+kind: pipeline
+type: docker
+platform:
+  os: linux
+  arch: amd64
+depends_on:
+  - linting
+clone:
+  depth: 1
+trigger:
+  ref:
+    include:
+      - refs/tags/**
+
+environment:
+  # Mise configuration
+  MISE_DATA_DIR: "/mise-data"
+  MISE_OVERRIDE_CONFIG_FILENAMES: "mise.ci.toml"
+  KIND_VERSION: "0.29.0"
+  KUBECTL_VERSION: "1.33.4"
+  BATS_VERSION: "1.11.0"
+  CLUSTER_VERSION: "1.33.0"
+
+volumes:
+  - name: dockersock
+    host:
+      path: /var/run/docker.sock
+  - name: mise-cache
+    host:
+      path: /root/mise_data_dir
+
+steps:
+  - name: Create Kind Cluster
+    image: quay.io/sighup/mise:v2025.4.4
+    pull: always
+    network_mode: host
+    environment:
+      GITHUB_TOKEN:
+        from_secret: github_token
+    volumes:
+      - name: dockersock
+        path: /var/run/docker.sock
+      - name: mise-cache
+        path: /mise-data
+    depends_on:
+      - clone
+    commands:
+      - mise use kind@$${KIND_VERSION} kubectl@$${KUBECTL_VERSION} kustomize@5.6.0 yq@4.43.1
+      - eval "$(mise activate bash --shims)"
+      - ./scripts/create-e2e-cluster.sh $${CLUSTER_VERSION}
+
+  - name: Run E2E Tests
+    image: quay.io/sighup/mise:v2025.4.4
+    pull: always
+    network_mode: host
+    environment:
+      GITHUB_TOKEN:
+        from_secret: github_token
+    volumes:
+      - name: mise-cache
+        path: /mise-data
+    depends_on:
+      - Create Kind Cluster
+    commands:
+      - mise use bats@$${BATS_VERSION} kubectl@$${KUBECTL_VERSION} kustomize@5.6.0 kapp@0.64.2
+      - eval "$(mise activate bash --shims)"
+      - ./scripts/run-monitoring-tests.sh
+
+  - name: Delete Kind Cluster
+    image: quay.io/sighup/mise:v2025.4.4
+    pull: always
+    network_mode: host
+    environment:
+      GITHUB_TOKEN:
+        from_secret: github_token
+    volumes:
+      - name: dockersock
+        path: /var/run/docker.sock
+      - name: mise-cache
+        path: /mise-data
+    depends_on:
+      - Run E2E Tests
+    when:
+      status:
+        - success
+        - failure
+    commands:
+      - mise use kind@$${KIND_VERSION}
+      - eval "$(mise activate bash --shims)"
+      - ./scripts/cleanup-e2e-cluster.sh || true
+
 ---
 name: release
 kind: pipeline
 type: docker
-
+node:
+  performance: low
+clone:
+  depth: 1
 depends_on:
-  - e2e-kubernetes-1.29
-  - e2e-kubernetes-1.30
-  - e2e-kubernetes-1.31
-  - e2e-kubernetes-1.32
+  - E2E Tests on kind clusters version 1.29.8
+  - E2E Tests on kind clusters version 1.30.4
+  - E2E Tests on kind clusters version 1.31.1
+  - E2E Tests on kind clusters version 1.32.2
+  - E2E Tests on kind clusters version 1.33.0
 platform:
   os: linux
   arch: amd64
-
 trigger:
   ref:
     include:
       - refs/tags/**
     exclude:
-      - refs/tags/e2e-*
-
+      - refs/tags/e2e-**
 steps:
   - name: prepare-tar-gz
     image: alpine:latest
