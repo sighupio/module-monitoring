@@ -21,21 +21,15 @@ configMapGenerator:
     files:
       - config/mimir.yaml
 
-patchesStrategicMerge:
-  - |-
-    apiVersion: monitoring.coreos.com/v1
-    kind: Prometheus
-    metadata:
-      name: k8s
-      namespace: monitoring
-    spec:
-      remoteWrite:
-        - url: http://mimir-distributed-gateway/api/v1/push
-          headers:
-            "X-Scope-OrgID": "fury"
-
-images:
-  - name: docker.io/nginxinc/nginx-unprivileged
-    newName: registry.sighup.io/fury/nginxinc/nginx-unprivileged
-  - name: grafana/mimir
-    newName: registry.sighup.io/fury/grafana/mimir
+patches:
+  - patch: |-
+      apiVersion: monitoring.coreos.com/v1
+      kind: Prometheus
+      metadata:
+        name: k8s
+        namespace: monitoring
+      spec:
+        remoteWrite:
+          - url: http://mimir-distributed-gateway/api/v1/push
+            headers:
+              "X-Scope-OrgID": "fury"
