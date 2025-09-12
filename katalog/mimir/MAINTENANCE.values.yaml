@@ -6,15 +6,15 @@
 # This is useful when using `helm template`, because then helm will use the client version of kubectl as the Kubernetes version,
 # which may or may not match your cluster's server version. Example: 'v1.24.4'. Set to null to use the version that helm
 # devises.
-kubeVersionOverride: 1.29.0
+kubeVersionOverride: 1.33.0
 
 useExternalConfig: true
 
 image:
   # -- Grafana Mimir container image repository. Note: for Grafana Enterprise Metrics use the value 'enterprise.image.repository'
-  repository: grafana/mimir
+  repository: registry.sighup.io/fury/grafana/mimir
   # -- Grafana Mimir container image tag. Note: for Grafana Enterprise Metrics use the value 'enterprise.image.tag'
-  tag: 2.15.0
+  tag: 2.17.0
   # -- Container pull policy - shared between Grafana Mimir and Grafana Enterprise Metrics
   pullPolicy: IfNotPresent
   # -- Optionally specify an array of imagePullSecrets - shared between Grafana Mimir and Grafana Enterprise Metrics
@@ -247,10 +247,11 @@ compactor:
 
 memcached:
   image:
+    registry: registry.sighup.io/fury
     # -- Memcached Docker image repository
     repository: memcached
     # -- Memcached Docker image tag
-    tag: 1.6.33-alpine
+    tag: 1.6.38-alpine
     # -- Memcached Docker image pull policy
     pullPolicy: IfNotPresent
 
@@ -259,8 +260,9 @@ memcachedExporter:
   enabled: true
 
   image:
+    registry: registry.sighup.io/fury
     repository: prom/memcached-exporter
-    tag: v0.15.0
+    tag: v0.15.3
     pullPolicy: IfNotPresent
 
   resources:
@@ -331,11 +333,11 @@ gateway:
     # -- Image for the nginx. pullPolicy and optional pullSecrets are set in toplevel 'image' section, not here.
     image:
       # -- The Docker registry for nginx image
-      registry: docker.io
+      registry: registry.sighup.io/fury
       # -- The nginx image repository
       repository: nginxinc/nginx-unprivileged
       # -- The nginx image tag
-      tag: 1.27-alpine
+      tag: 1.28-alpine
 
 metaMonitoring:
   # Dashboard configuration for deploying Grafana dashboards for Mimir
