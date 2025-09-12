@@ -38,7 +38,6 @@ kustomize build {{config_root}}/katalog/eks-sm > /dev/null && echo "  ✅ eks-sm
 kustomize build {{config_root}}/katalog/gke-sm > /dev/null && echo "  ✅ gke-sm"
 kustomize build {{config_root}}/katalog/grafana > /dev/null && echo "  ✅ grafana"
 kustomize build {{config_root}}/katalog/haproxy > /dev/null && echo "  ✅ haproxy"
-kustomize build {{config_root}}/katalog/karma > /dev/null && echo "  ✅ karma"
 kustomize build {{config_root}}/katalog/kube-proxy-metrics > /dev/null && echo "  ✅ kube-proxy-metrics"
 kustomize build {{config_root}}/katalog/kube-state-metrics > /dev/null && echo "  ✅ kube-state-metrics"
 kustomize build {{config_root}}/katalog/kubeadm-sm > /dev/null && echo "  ✅ kubeadm-sm"
