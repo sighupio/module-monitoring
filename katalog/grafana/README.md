@@ -7,7 +7,7 @@ numeric time-series data with Prometheus integration.
 
 ## Image repository and tag
 
-- Grafana image: `grafana/grafana:11.3.0`
+- Grafana image: `grafana/grafana:12.1.0`
 - Grafana repository: [https://github.com/grafana/grafana](https://github.com/grafana/grafana)
 - Grafana documentation: [https://docs.grafana.org](https://docs.grafana.org)
 - k8s-sidecar image: `kiwigrid/k8s-sidecar`
@@ -16,7 +16,7 @@ numeric time-series data with Prometheus integration.
 
 ## Requirements
 
-- Kubernetes >= `1.29.0`
+- Kubernetes >= `1.31.0`
 - Kustomize = `5.6.0`
 
 ## Configuration

@@ -5,7 +5,7 @@ To prepare a new release of this package:
 1. Get the current upstream release
 
 ```bash
-export KUBE_PROMETHEUS_RELEASE=v0.14.0
+export KUBE_PROMETHEUS_RELEASE=v0.16.0
 ../../utils/pull-upstream.sh ${KUBE_PROMETHEUS_RELEASE} grafana
 ```
 
@@ -19,9 +19,12 @@ Replace `KUBE_PROMETHEUS_RELEASE` with the current upstream release.
 
 ## Customizations
 
-- We've changed the json file inside grafana-dashboardSources, dropping the folder name and enbling the option to use subfolders.
-- Added `FOLDER_ANNOTATION` environment variable to the dashboards sidecar.
-- Added custom grafana dashboard (`fury-cluster-overview.json`), which shows an overview of the status of the resources present in the cluster.
+- We've changed the json file inside grafana-dashboardSources, dropping the folder name and enabling the option to use subfolders. This is done via a kustomize patch.
+- Added `FOLDER_ANNOTATION` environment variable to the dashboards sidecar. This is done via a kustomize patch.
+- Added custom grafana dashboard (`fury-cluster-overview.json`), which shows an overview of the status of the resources present in the cluster. This is done via a kustomize patch.
+- Windows and AIX dashboards are removed, we don't support these platforms. **This must be manually done when comparing the changes**:
+  - The related json dashboards are deleted automatically by the pull script, no need to do it.
+  - Edit the `grafana/deployment.yaml` file and remove the lines that mount the Windows and AIX dashboards from the configmaps.
 
 ## Considerations
 

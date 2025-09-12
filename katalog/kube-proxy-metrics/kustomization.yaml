@@ -9,9 +9,9 @@ kind: Kustomization
 namespace: monitoring
 
 images:
-- name: kube-rbac-proxy
-  newName: registry.sighup.io/fury/brancz/kube-rbac-proxy
-  newTag: v0.18.1
+  - name: kube-rbac-proxy
+    newName: registry.sighup.io/fury/brancz/kube-rbac-proxy
+    newTag: v0.19.1
 
 resources:
   - dashboards

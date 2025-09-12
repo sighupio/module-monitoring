@@ -7,14 +7,14 @@ The Prometheus adapter provides an implementation of Kubernetes
 [custom metrics](https://github.com/kubernetes/design-proposals-archive/blob/main/instrumentation/custom-metrics-api.md), and
 [external metrics](https://github.com/kubernetes/design-proposals-archive/blob/main/instrumentation/external-metrics-api.md) APIs.
 
-This adapter is therefore suitable for use with the autoscaling/v2 Horizontal Pod Autoscaler in Kubernetes 1.6+.
+This adapter is therefore suitable for use with the autoscaling/v2 Horizontal Pod Auto-scaler in Kubernetes 1.6+.
 It can also replace the [metrics server](https://github.com/kubernetes-incubator/metrics-server) on clusters that already run Prometheus and collect the appropriate metrics.
 
 *Source:* [kubernetes-sigs/prometheus-adapter][pa-gh]
 
 ## Requirements
 
-- Kubernetes >= `1.29.0`
+- Kubernetes >= `1.31.0`
 - Kustomize = `5.6.0`
 - [prometheus-operator](../prometheus-operator)
 - [prometheus-operated](../prometheus-operated)
@@ -28,11 +28,13 @@ It can also replace the [metrics server](https://github.com/kubernetes-incubator
 
 Fury distribution Prometheus adapter is deployed with the following
 configuration:
+
 - Resource limits are `250m` for CPU and `1024Mi` for memory
 - Listens on port 6443
 - Metrics are scraped from Prometheus every `1m`
 
 ## Deployment
+
 You can deploy prometheus-adapter by running the following command:
 
 ```shell

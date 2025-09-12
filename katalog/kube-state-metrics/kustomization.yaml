@@ -14,21 +14,21 @@ images:
   - name: quay.io/brancz/kube-rbac-proxy
     newName: registry.sighup.io/fury/brancz/kube-rbac-proxy
 
-patchesStrategicMerge:
-- |-
-  apiVersion: apps/v1
-  kind: Deployment
-  metadata:
-    name: kube-state-metrics
-    namespace: monitoring
-  spec:
-    template:
+patches:
+  - patch: |-
+      apiVersion: apps/v1
+      kind: Deployment
+      metadata:
+        name: kube-state-metrics
+        namespace: monitoring
       spec:
-        containers:
-          - name: kube-state-metrics
-            securityContext:
-              runAsNonRoot: true
-              runAsGroup: 65534
+        template:
+          spec:
+            containers:
+              - name: kube-state-metrics
+                securityContext:
+                  runAsNonRoot: true
+                  runAsGroup: 65534
 
 resources:
   - dashboards

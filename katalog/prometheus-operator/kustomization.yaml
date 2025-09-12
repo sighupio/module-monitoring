@@ -13,20 +13,18 @@ images:
   - name: quay.io/brancz/kube-rbac-proxy
     newName: registry.sighup.io/fury/brancz/kube-rbac-proxy
 
-patchesStrategicMerge:
-- |-
-  apiVersion: apps/v1
-  kind: Deployment
-  metadata:
-    name: prometheus-operator
-    namespace: monitoring
-  spec:
-    template:
+patches:
+  - patch: |-
+      apiVersion: apps/v1
+      kind: Deployment
+      metadata:
+        name: prometheus-operator
+        namespace: monitoring
       spec:
-        securityContext:
-          runAsGroup: 65534
-
-patchesJSON6902:
+        template:
+          spec:
+            securityContext:
+              runAsGroup: 65534
   - target:
       group: apps
       version: v1
@@ -36,7 +34,7 @@ patchesJSON6902:
     patch: |-
       - op: replace
         path: /spec/template/spec/containers/0/args/1
-        value: --prometheus-config-reloader=registry.sighup.io/fury/prometheus-operator/prometheus-config-reloader:v0.76.2
+        value: --prometheus-config-reloader=registry.sighup.io/fury/prometheus-operator/prometheus-config-reloader:v0.85.0
 
 resources:
   - clusterRole.yaml

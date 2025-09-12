@@ -6,8 +6,8 @@ apiVersion: apiextensions.k8s.io/v1
 kind: CustomResourceDefinition
 metadata:
   annotations:
-    controller-gen.kubebuilder.io/version: v0.15.0
-    operator.prometheus.io/version: 0.76.2
+    controller-gen.kubebuilder.io/version: v0.18.0
+    operator.prometheus.io/version: 0.85.0
   name: probes.monitoring.coreos.com
 spec:
   group: monitoring.coreos.com
@@ -28,11 +28,9 @@ spec:
         description: |-
           The `Probe` custom resource definition (CRD) defines how to scrape metrics from prober exporters such as the [blackbox exporter](https://github.com/prometheus/blackbox_exporter).
 
-
           The `Probe` resource needs 2 pieces of information:
           * The list of probed addresses which can be defined statically or by discovering Kubernetes Ingress objects.
           * The prober which exposes the availability of probed endpoints (over various protocols such HTTP, TCP, ICMP, ...) as Prometheus metrics.
-
 
           `Prometheus` and `PrometheusAgent` objects select `Probe` objects using label and namespace selectors.
         properties:
@@ -72,9 +70,7 @@ spec:
                           This field is effectively required, but due to backwards compatibility is
                           allowed to be empty. Instances of this type with an empty value here are
                           almost certainly wrong.
-                          TODO: Add other useful fields. apiVersion, kind, uid?
                           More info: https://kubernetes.io/docs/concepts/overview/working-with-objects/names/#names
-                          TODO: Drop `kubebuilder:default` when controller-gen doesn't need it https://github.com/kubernetes-sigs/kubebuilder/issues/3896.
                         type: string
                       optional:
                         description: Specify whether the Secret or its key must be defined
@@ -87,9 +83,7 @@ spec:
                     description: |-
                       Defines the authentication type. The value is case-insensitive.
 
-
                       "Basic" is not a supported value.
-
 
                       Default: "Bearer"
                     type: string
@@ -114,9 +108,7 @@ spec:
                           This field is effectively required, but due to backwards compatibility is
                           allowed to be empty. Instances of this type with an empty value here are
                           almost certainly wrong.
-                          TODO: Add other useful fields. apiVersion, kind, uid?
                           More info: https://kubernetes.io/docs/concepts/overview/working-with-objects/names/#names
-                          TODO: Drop `kubebuilder:default` when controller-gen doesn't need it https://github.com/kubernetes-sigs/kubebuilder/issues/3896.
                         type: string
                       optional:
                         description: Specify whether the Secret or its key must be defined
@@ -140,9 +132,7 @@ spec:
                           This field is effectively required, but due to backwards compatibility is
                           allowed to be empty. Instances of this type with an empty value here are
                           almost certainly wrong.
-                          TODO: Add other useful fields. apiVersion, kind, uid?
                           More info: https://kubernetes.io/docs/concepts/overview/working-with-objects/names/#names
-                          TODO: Drop `kubebuilder:default` when controller-gen doesn't need it https://github.com/kubernetes-sigs/kubebuilder/issues/3896.
                         type: string
                       optional:
                         description: Specify whether the Secret or its key must be defined
@@ -168,9 +158,7 @@ spec:
                       This field is effectively required, but due to backwards compatibility is
                       allowed to be empty. Instances of this type with an empty value here are
                       almost certainly wrong.
-                      TODO: Add other useful fields. apiVersion, kind, uid?
                       More info: https://kubernetes.io/docs/concepts/overview/working-with-objects/names/#names
-                      TODO: Drop `kubebuilder:default` when controller-gen doesn't need it https://github.com/kubernetes-sigs/kubebuilder/issues/3896.
                     type: string
                   optional:
                     description: Specify whether the Secret or its key must be defined
@@ -179,6 +167,23 @@ spec:
                 - key
                 type: object
                 x-kubernetes-map-type: atomic
+              convertClassicHistogramsToNHCB:
+                description: |-
+                  Whether to convert all scraped classic histograms into a native histogram with custom buckets.
+                  It requires Prometheus >= v3.0.0.
+                type: boolean
+              fallbackScrapeProtocol:
+                description: |-
+                  The protocol to use if a scrape returns blank, unparseable, or otherwise invalid Content-Type.
+
+                  It requires Prometheus >= v3.0.0.
+                enum:
+                - PrometheusProto
+                - OpenMetricsText0.0.1
+                - OpenMetricsText1.0.0
+                - PrometheusText0.0.4
+                - PrometheusText1.0.0
+                type: string
               interval:
                 description: |-
                   Interval at which targets are probed using the configured prober.
@@ -192,7 +197,6 @@ spec:
                 description: |-
                   Per-scrape limit on the number of targets dropped by relabeling
                   that will be kept in memory. 0 means no limit.
-
 
                   It requires Prometheus >= v2.47.0.
                 format: int64
@@ -222,7 +226,6 @@ spec:
                     RelabelConfig allows dynamic rewriting of the label set for targets, alerts,
                     scraped samples and remote write samples.
 
-
                     More info: https://prometheus.io/docs/prometheus/latest/configuration/configuration/#relabel_config
                   properties:
                     action:
@@ -230,10 +233,8 @@ spec:
                       description: |-
                         Action to perform based on the regex matching.
 
-
                         `Uppercase` and `Lowercase` actions require Prometheus >= v2.36.0.
                         `DropEqual` and `KeepEqual` actions require Prometheus >= v2.41.0.
-
 
                         Default: "Replace"
                       enum:
@@ -264,7 +265,6 @@ spec:
                       description: |-
                         Modulus to take of the hash of the source label values.
 
-
                         Only applicable when the action is `HashMod`.
                       format: int64
                       type: integer
@@ -275,7 +275,6 @@ spec:
                       description: |-
                         Replacement value against which a Replace action is performed if the
                         regular expression matches.
-
 
                         Regex capture groups are available.
                       type: string
@@ -298,10 +297,8 @@ spec:
                       description: |-
                         Label to which the resulting string is written in a replacement.
 
-
                         It is mandatory for `Replace`, `HashMod`, `Lowercase`, `Uppercase`,
                         `KeepEqual` and `DropEqual` actions.
-
 
                         Regex capture groups are available.
                       type: string
@@ -313,6 +310,23 @@ spec:
                   Example module configuring in the blackbox exporter:
                   https://github.com/prometheus/blackbox_exporter/blob/master/example.yml
                 type: string
+              nativeHistogramBucketLimit:
+                description: |-
+                  If there are more than this many buckets in a native histogram,
+                  buckets will be merged to stay within the limit.
+                  It requires Prometheus >= v2.45.0.
+                format: int64
+                type: integer
+              nativeHistogramMinBucketFactor:
+                anyOf:
+                - type: integer
+                - type: string
+                description: |-
+                  If the growth factor of one bucket to the next is smaller than this,
+                  buckets will be merged to increase the factor sufficiently.
+                  It requires Prometheus >= v2.50.0.
+                pattern: ^(\+|-)?(([0-9]+(\.[0-9]*)?)|(\.[0-9]+))(([KMGTPE]i)|[numkMGTPE]|([eE](\+|-)?(([0-9]+(\.[0-9]*)?)|(\.[0-9]+))))?$
+                x-kubernetes-int-or-string: true
               oauth2:
                 description: OAuth2 for the URL. Only valid in Prometheus versions 2.27.0 and newer.
                 properties:
@@ -334,9 +348,7 @@ spec:
                               This field is effectively required, but due to backwards compatibility is
                               allowed to be empty. Instances of this type with an empty value here are
                               almost certainly wrong.
-                              TODO: Add other useful fields. apiVersion, kind, uid?
                               More info: https://kubernetes.io/docs/concepts/overview/working-with-objects/names/#names
-                              TODO: Drop `kubebuilder:default` when controller-gen doesn't need it https://github.com/kubernetes-sigs/kubebuilder/issues/3896.
                             type: string
                           optional:
                             description: Specify whether the ConfigMap or its key must be defined
@@ -358,9 +370,7 @@ spec:
                               This field is effectively required, but due to backwards compatibility is
                               allowed to be empty. Instances of this type with an empty value here are
                               almost certainly wrong.
-                              TODO: Add other useful fields. apiVersion, kind, uid?
                               More info: https://kubernetes.io/docs/concepts/overview/working-with-objects/names/#names
-                              TODO: Drop `kubebuilder:default` when controller-gen doesn't need it https://github.com/kubernetes-sigs/kubebuilder/issues/3896.
                             type: string
                           optional:
                             description: Specify whether the Secret or its key must be defined
@@ -385,9 +395,7 @@ spec:
                           This field is effectively required, but due to backwards compatibility is
                           allowed to be empty. Instances of this type with an empty value here are
                           almost certainly wrong.
-                          TODO: Add other useful fields. apiVersion, kind, uid?
                           More info: https://kubernetes.io/docs/concepts/overview/working-with-objects/names/#names
-                          TODO: Drop `kubebuilder:default` when controller-gen doesn't need it https://github.com/kubernetes-sigs/kubebuilder/issues/3896.
                         type: string
                       optional:
                         description: Specify whether the Secret or its key must be defined
@@ -409,8 +417,7 @@ spec:
                       that should be excluded from proxying. IP and domain names can
                       contain port numbers.
 
-
-                      It requires Prometheus >= v2.43.0.
+                      It requires Prometheus >= v2.43.0, Alertmanager >= v0.25.0 or Thanos >= v0.32.0.
                     type: string
                   proxyConnectHeader:
                     additionalProperties:
@@ -427,9 +434,7 @@ spec:
                               This field is effectively required, but due to backwards compatibility is
                               allowed to be empty. Instances of this type with an empty value here are
                               almost certainly wrong.
-                              TODO: Add other useful fields. apiVersion, kind, uid?
                               More info: https://kubernetes.io/docs/concepts/overview/working-with-objects/names/#names
-                              TODO: Drop `kubebuilder:default` when controller-gen doesn't need it https://github.com/kubernetes-sigs/kubebuilder/issues/3896.
                             type: string
                           optional:
                             description: Specify whether the Secret or its key must be defined
@@ -443,25 +448,18 @@ spec:
                       ProxyConnectHeader optionally specifies headers to send to
                       proxies during CONNECT requests.
 
-
-                      It requires Prometheus >= v2.43.0.
+                      It requires Prometheus >= v2.43.0, Alertmanager >= v0.25.0 or Thanos >= v0.32.0.
                     type: object
                     x-kubernetes-map-type: atomic
                   proxyFromEnvironment:
                     description: |-
                       Whether to use the proxy configuration defined by environment variables (HTTP_PROXY, HTTPS_PROXY, and NO_PROXY).
-                      If unset, Prometheus uses its default value.
 
-
-                      It requires Prometheus >= v2.43.0.
+                      It requires Prometheus >= v2.43.0, Alertmanager >= v0.25.0 or Thanos >= v0.32.0.
                     type: boolean
                   proxyUrl:
-                    description: |-
-                      `proxyURL` defines the HTTP proxy server to use.
-
-
-                      It requires Prometheus >= v2.43.0.
-                    pattern: ^http(s)?://.+$
+                    description: '`proxyURL` defines the HTTP proxy server to use.'
+                    pattern: ^(http|https|socks5)://.+$
                     type: string
                   scopes:
                     description: '`scopes` defines the OAuth2 scopes used for the token request.'
@@ -489,9 +487,7 @@ spec:
                                   This field is effectively required, but due to backwards compatibility is
                                   allowed to be empty. Instances of this type with an empty value here are
                                   almost certainly wrong.
-                                  TODO: Add other useful fields. apiVersion, kind, uid?
                                   More info: https://kubernetes.io/docs/concepts/overview/working-with-objects/names/#names
-                                  TODO: Drop `kubebuilder:default` when controller-gen doesn't need it https://github.com/kubernetes-sigs/kubebuilder/issues/3896.
                                 type: string
                               optional:
                                 description: Specify whether the ConfigMap or its key must be defined
@@ -513,9 +509,7 @@ spec:
                                   This field is effectively required, but due to backwards compatibility is
                                   allowed to be empty. Instances of this type with an empty value here are
                                   almost certainly wrong.
-                                  TODO: Add other useful fields. apiVersion, kind, uid?
                                   More info: https://kubernetes.io/docs/concepts/overview/working-with-objects/names/#names
-                                  TODO: Drop `kubebuilder:default` when controller-gen doesn't need it https://github.com/kubernetes-sigs/kubebuilder/issues/3896.
                                 type: string
                               optional:
                                 description: Specify whether the Secret or its key must be defined
@@ -541,9 +535,7 @@ spec:
                                   This field is effectively required, but due to backwards compatibility is
                                   allowed to be empty. Instances of this type with an empty value here are
                                   almost certainly wrong.
-                                  TODO: Add other useful fields. apiVersion, kind, uid?
                                   More info: https://kubernetes.io/docs/concepts/overview/working-with-objects/names/#names
-                                  TODO: Drop `kubebuilder:default` when controller-gen doesn't need it https://github.com/kubernetes-sigs/kubebuilder/issues/3896.
                                 type: string
                               optional:
                                 description: Specify whether the ConfigMap or its key must be defined
@@ -565,9 +557,7 @@ spec:
                                   This field is effectively required, but due to backwards compatibility is
                                   allowed to be empty. Instances of this type with an empty value here are
                                   almost certainly wrong.
-                                  TODO: Add other useful fields. apiVersion, kind, uid?
                                   More info: https://kubernetes.io/docs/concepts/overview/working-with-objects/names/#names
-                                  TODO: Drop `kubebuilder:default` when controller-gen doesn't need it https://github.com/kubernetes-sigs/kubebuilder/issues/3896.
                                 type: string
                               optional:
                                 description: Specify whether the Secret or its key must be defined
@@ -593,9 +583,7 @@ spec:
                               This field is effectively required, but due to backwards compatibility is
                               allowed to be empty. Instances of this type with an empty value here are
                               almost certainly wrong.
-                              TODO: Add other useful fields. apiVersion, kind, uid?
                               More info: https://kubernetes.io/docs/concepts/overview/working-with-objects/names/#names
-                              TODO: Drop `kubebuilder:default` when controller-gen doesn't need it https://github.com/kubernetes-sigs/kubebuilder/issues/3896.
                             type: string
                           optional:
                             description: Specify whether the Secret or its key must be defined
@@ -608,8 +596,7 @@ spec:
                         description: |-
                           Maximum acceptable TLS version.
 
-
-                          It requires Prometheus >= v2.41.0.
+                          It requires Prometheus >= v2.41.0 or Thanos >= v0.31.0.
                         enum:
                         - TLS10
                         - TLS11
@@ -620,8 +607,7 @@ spec:
                         description: |-
                           Minimum acceptable TLS version.
 
-
-                          It requires Prometheus >= v2.35.0.
+                          It requires Prometheus >= v2.35.0 or Thanos >= v0.28.0.
                         enum:
                         - TLS10
                         - TLS11
@@ -641,19 +627,93 @@ spec:
                 - clientSecret
                 - tokenUrl
                 type: object
+              params:
+                description: |-
+                  The list of HTTP query parameters for the scrape.
+                  Please note that the `.spec.module` field takes precedence over the `module` parameter from this list when both are defined.
+                  The module name must be added using Module under ProbeSpec.
+                items:
+                  description: ProbeParam defines specification of extra parameters for a Probe.
+                  properties:
+                    name:
+                      description: The parameter name
+                      minLength: 1
+                      type: string
+                    values:
+                      description: The parameter values
+                      items:
+                        minLength: 1
+                        type: string
+                      minItems: 1
+                      type: array
+                  required:
+                  - name
+                  type: object
+                minItems: 1
+                type: array
+                x-kubernetes-list-map-keys:
+                - name
+                x-kubernetes-list-type: map
               prober:
                 description: |-
                   Specification for the prober to use for probing targets.
                   The prober.URL parameter is required. Targets cannot be probed if left empty.
                 properties:
+                  noProxy:
+                    description: |-
+                      `noProxy` is a comma-separated string that can contain IPs, CIDR notation, domain names
+                      that should be excluded from proxying. IP and domain names can
+                      contain port numbers.
+
+                      It requires Prometheus >= v2.43.0, Alertmanager >= v0.25.0 or Thanos >= v0.32.0.
+                    type: string
                   path:
                     default: /probe
                     description: |-
                       Path to collect metrics from.
                       Defaults to `/probe`.
                     type: string
+                  proxyConnectHeader:
+                    additionalProperties:
+                      items:
+                        description: SecretKeySelector selects a key of a Secret.
+                        properties:
+                          key:
+                            description: The key of the secret to select from.  Must be a valid secret key.
+                            type: string
+                          name:
+                            default: ""
+                            description: |-
+                              Name of the referent.
+                              This field is effectively required, but due to backwards compatibility is
+                              allowed to be empty. Instances of this type with an empty value here are
+                              almost certainly wrong.
+                              More info: https://kubernetes.io/docs/concepts/overview/working-with-objects/names/#names
+                            type: string
+                          optional:
+                            description: Specify whether the Secret or its key must be defined
+                            type: boolean
+                        required:
+                        - key
+                        type: object
+                        x-kubernetes-map-type: atomic
+                      type: array
+                    description: |-
+                      ProxyConnectHeader optionally specifies headers to send to
+                      proxies during CONNECT requests.
+
+                      It requires Prometheus >= v2.43.0, Alertmanager >= v0.25.0 or Thanos >= v0.32.0.
+                    type: object
+                    x-kubernetes-map-type: atomic
+                  proxyFromEnvironment:
+                    description: |-
+                      Whether to use the proxy configuration defined by environment variables (HTTP_PROXY, HTTPS_PROXY, and NO_PROXY).
+
+                      It requires Prometheus >= v2.43.0, Alertmanager >= v0.25.0 or Thanos >= v0.32.0.
+                    type: boolean
                   proxyUrl:
-                    description: Optional ProxyURL.
+                    description: '`proxyURL` defines the HTTP proxy server to use.'
+                    pattern: ^(http|https|socks5)://.+$
                     type: string
                   scheme:
                     description: |-
@@ -678,14 +738,19 @@ spec:
                 description: The scrape class to apply.
                 minLength: 1
                 type: string
+              scrapeClassicHistograms:
+                description: |-
+                  Whether to scrape a classic histogram that is also exposed as a native histogram.
+                  It requires Prometheus >= v2.45.0.
+
+                  Notice: `scrapeClassicHistograms` corresponds to the `always_scrape_classic_histograms` field in the Prometheus configuration.
+                type: boolean
               scrapeProtocols:
                 description: |-
                   `scrapeProtocols` defines the protocols to negotiate during a scrape. It tells clients the
                   protocols supported by Prometheus in order of preference (from most to least preferred).
 
-
                   If unset, Prometheus uses its default value.
-
 
                   It requires Prometheus >= v2.49.0.
                 items:
@@ -696,11 +761,13 @@ spec:
                     * `OpenMetricsText1.0.0`
                     * `PrometheusProto`
                     * `PrometheusText0.0.4`
+                    * `PrometheusText1.0.0`
                   enum:
                   - PrometheusProto
                   - OpenMetricsText0.0.1
                   - OpenMetricsText1.0.0
                   - PrometheusText0.0.4
+                  - PrometheusText1.0.0
                   type: string
                 type: array
                 x-kubernetes-list-type: set
@@ -708,6 +775,7 @@ spec:
                 description: |-
                   Timeout for scraping metrics from the Prometheus exporter.
                   If not specified, the Prometheus global scrape timeout is used.
+                  The value cannot be greater than the scrape interval otherwise the operator will reject the resource.
                 pattern: ^(0|(([0-9]+)y)?(([0-9]+)w)?(([0-9]+)d)?(([0-9]+)h)?(([0-9]+)m)?(([0-9]+)s)?(([0-9]+)ms)?)$
                 type: string
               targetLimit:
@@ -751,7 +819,6 @@ spec:
                             RelabelConfig allows dynamic rewriting of the label set for targets, alerts,
                             scraped samples and remote write samples.
 
-
                             More info: https://prometheus.io/docs/prometheus/latest/configuration/configuration/#relabel_config
                           properties:
                             action:
@@ -759,10 +826,8 @@ spec:
                               description: |-
                                 Action to perform based on the regex matching.
 
-
                                 `Uppercase` and `Lowercase` actions require Prometheus >= v2.36.0.
                                 `DropEqual` and `KeepEqual` actions require Prometheus >= v2.41.0.
-
 
                                 Default: "Replace"
                               enum:
@@ -793,7 +858,6 @@ spec:
                               description: |-
                                 Modulus to take of the hash of the source label values.
 
-
                                 Only applicable when the action is `HashMod`.
                               format: int64
                               type: integer
@@ -804,7 +868,6 @@ spec:
                               description: |-
                                 Replacement value against which a Replace action is performed if the
                                 regular expression matches.
-
 
                                 Regex capture groups are available.
                               type: string
@@ -827,10 +890,8 @@ spec:
                               description: |-
                                 Label to which the resulting string is written in a replacement.
 
-
                                 It is mandatory for `Replace`, `HashMod`, `Lowercase`, `Uppercase`,
                                 `KeepEqual` and `DropEqual` actions.
-
 
                                 Regex capture groups are available.
                               type: string
@@ -903,7 +964,6 @@ spec:
                             RelabelConfig allows dynamic rewriting of the label set for targets, alerts,
                             scraped samples and remote write samples.
 
-
                             More info: https://prometheus.io/docs/prometheus/latest/configuration/configuration/#relabel_config
                           properties:
                             action:
@@ -911,10 +971,8 @@ spec:
                               description: |-
                                 Action to perform based on the regex matching.
 
-
                                 `Uppercase` and `Lowercase` actions require Prometheus >= v2.36.0.
                                 `DropEqual` and `KeepEqual` actions require Prometheus >= v2.41.0.
-
 
                                 Default: "Replace"
                               enum:
@@ -945,7 +1003,6 @@ spec:
                               description: |-
                                 Modulus to take of the hash of the source label values.
 
-
                                 Only applicable when the action is `HashMod`.
                               format: int64
                               type: integer
@@ -956,7 +1013,6 @@ spec:
                               description: |-
                                 Replacement value against which a Replace action is performed if the
                                 regular expression matches.
-
 
                                 Regex capture groups are available.
                               type: string
@@ -979,10 +1035,8 @@ spec:
                               description: |-
                                 Label to which the resulting string is written in a replacement.
 
-
                                 It is mandatory for `Replace`, `HashMod`, `Lowercase`, `Uppercase`,
                                 `KeepEqual` and `DropEqual` actions.
-
 
                                 Regex capture groups are available.
                               type: string
@@ -1014,9 +1068,7 @@ spec:
                               This field is effectively required, but due to backwards compatibility is
                               allowed to be empty. Instances of this type with an empty value here are
                               almost certainly wrong.
-                              TODO: Add other useful fields. apiVersion, kind, uid?
                               More info: https://kubernetes.io/docs/concepts/overview/working-with-objects/names/#names
-                              TODO: Drop `kubebuilder:default` when controller-gen doesn't need it https://github.com/kubernetes-sigs/kubebuilder/issues/3896.
                             type: string
                           optional:
                             description: Specify whether the ConfigMap or its key must be defined
@@ -1038,9 +1090,7 @@ spec:
                               This field is effectively required, but due to backwards compatibility is
                               allowed to be empty. Instances of this type with an empty value here are
                               almost certainly wrong.
-                              TODO: Add other useful fields. apiVersion, kind, uid?
                               More info: https://kubernetes.io/docs/concepts/overview/working-with-objects/names/#names
-                              TODO: Drop `kubebuilder:default` when controller-gen doesn't need it https://github.com/kubernetes-sigs/kubebuilder/issues/3896.
                             type: string
                           optional:
                             description: Specify whether the Secret or its key must be defined
@@ -1066,9 +1116,7 @@ spec:
                               This field is effectively required, but due to backwards compatibility is
                               allowed to be empty. Instances of this type with an empty value here are
                               almost certainly wrong.
-                              TODO: Add other useful fields. apiVersion, kind, uid?
                               More info: https://kubernetes.io/docs/concepts/overview/working-with-objects/names/#names
-                              TODO: Drop `kubebuilder:default` when controller-gen doesn't need it https://github.com/kubernetes-sigs/kubebuilder/issues/3896.
                             type: string
                           optional:
                             description: Specify whether the ConfigMap or its key must be defined
@@ -1090,9 +1138,7 @@ spec:
                               This field is effectively required, but due to backwards compatibility is
                               allowed to be empty. Instances of this type with an empty value here are
                               almost certainly wrong.
-                              TODO: Add other useful fields. apiVersion, kind, uid?
                               More info: https://kubernetes.io/docs/concepts/overview/working-with-objects/names/#names
-                              TODO: Drop `kubebuilder:default` when controller-gen doesn't need it https://github.com/kubernetes-sigs/kubebuilder/issues/3896.
                             type: string
                           optional:
                             description: Specify whether the Secret or its key must be defined
@@ -1118,9 +1164,7 @@ spec:
                           This field is effectively required, but due to backwards compatibility is
                           allowed to be empty. Instances of this type with an empty value here are
                           almost certainly wrong.
-                          TODO: Add other useful fields. apiVersion, kind, uid?
                           More info: https://kubernetes.io/docs/concepts/overview/working-with-objects/names/#names
-                          TODO: Drop `kubebuilder:default` when controller-gen doesn't need it https://github.com/kubernetes-sigs/kubebuilder/issues/3896.
                         type: string
                       optional:
                         description: Specify whether the Secret or its key must be defined
@@ -1133,8 +1177,7 @@ spec:
                     description: |-
                       Maximum acceptable TLS version.
 
-
-                      It requires Prometheus >= v2.41.0.
+                      It requires Prometheus >= v2.41.0 or Thanos >= v0.31.0.
                     enum:
                     - TLS10
                     - TLS11
@@ -1145,8 +1188,7 @@ spec:
                     description: |-
                       Minimum acceptable TLS version.
 
-
-                      It requires Prometheus >= v2.35.0.
+                      It requires Prometheus >= v2.35.0 or Thanos >= v0.28.0.
                     enum:
                     - TLS10
                     - TLS11

@@ -39,19 +39,20 @@ illustrated in this image from Prometheus Operator repository:
 
 ## Requirements
 
-- Kubernetes >= `1.29.0`
+- Kubernetes >= `1.31.0`
 - Kustomize = `5.6.0`
 
 ## Image repository and tag
 
-* Prometheus Operator image: `registry.sighup.io/prometheus-operator/prometheus-operator:v0.76.2`
-* Prometheus Operator repository: [Prometheus Operator on Github][prom-op-github]
-- kube-rbac-proxy image: `registry.sighup.io/fury/brancz/kube-rbac-proxy:v0.18.1`
+- Prometheus Operator image: `registry.sighup.io/prometheus-operator/prometheus-operator:v0.85.0`
+- Prometheus Operator repository: [Prometheus Operator on Github][prom-op-github]
+- kube-rbac-proxy image: `registry.sighup.io/fury/brancz/kube-rbac-proxy:v0.19.1`
 - kube-rbac-proxy repository: [kube-rbac-proxy on Github][krp-gh]
 
 ## Configuration
 
 Fury distribution Prometheus Operator is deployed with the following configuration:
+
 - Replica number: `1`
 - Logging to stderr is enabled
 - Resource limits are `200m` for CPU and `200Mi` for memory

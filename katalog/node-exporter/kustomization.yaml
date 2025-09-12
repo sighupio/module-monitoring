@@ -17,38 +17,41 @@ images:
   - name: quay.io/brancz/kube-rbac-proxy
     newName: registry.sighup.io/fury/brancz/kube-rbac-proxy
 
-patchesStrategicMerge:
-  - |-
-    apiVersion: apps/v1
-    kind: DaemonSet
-    metadata:
-      name: node-exporter
-      namespace: monitoring
-    spec:
-      template:
-        spec:
-          initContainers:
-            - name: machine-id
-              image: alpine
-              command: ['/bin/sh', '-c']
-              args: ['echo systemd_machine_id{id=\"$(cat /host/root/etc/machine-id)\"} 1 > /var/lib/node_exporter/machine_id.prom']
-              volumeMounts:
-                - name: textfile-collector
-                  mountPath: /var/lib/node_exporter
-                - name: root
-                  mountPath: /host/root
-                  readOnly: true
-          containers:
-            - name: node-exporter
-              env:
-                - name: "GOMAXPROCS"
-                  value: "1"
-          volumes:
-          - name: textfile-collector
-            emptyDir:
-              medium: Memory
+resources:
+  - dashboards
+  - clusterRole.yaml
+  - clusterRoleBinding.yaml
+  - daemonset.yaml
+  - prometheusRule.yaml
+  - service.yaml
+  - serviceAccount.yaml
+  - serviceMonitor.yaml
 
-patchesJSON6902:
+patches:
+  - patch: |-
+      apiVersion: apps/v1
+      kind: DaemonSet
+      metadata:
+        name: node-exporter
+        namespace: monitoring
+      spec:
+        template:
+          spec:
+            initContainers:
+              - name: machine-id
+                image: alpine
+                command: ['/bin/sh', '-c']
+                args: ['echo systemd_machine_id{id=\"$(cat /host/root/etc/machine-id)\"} 1 > /var/lib/node_exporter/machine_id.prom']
+                volumeMounts:
+                  - name: textfile-collector
+                    mountPath: /var/lib/node_exporter
+                  - name: root
+                    mountPath: /host/root
+                    readOnly: true
+            volumes:
+            - name: textfile-collector
+              emptyDir:
+                medium: Memory
   - target:
       group: monitoring.coreos.com
       version: v1
@@ -68,13 +71,3 @@ patchesJSON6902:
           for: 5m
           labels:
             severity: critical
-
-resources:
-  - dashboards
-  - clusterRole.yaml
-  - clusterRoleBinding.yaml
-  - daemonset.yaml
-  - prometheusRule.yaml
-  - service.yaml
-  - serviceAccount.yaml
-  - serviceMonitor.yaml
