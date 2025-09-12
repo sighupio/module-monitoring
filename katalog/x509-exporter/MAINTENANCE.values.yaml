@@ -1,0 +1,80 @@
+# Copyright (c) 2017-present SIGHUP s.r.l All rights reserved.
+# Use of this source code is governed by a BSD-style
+# license that can be found in the LICENSE file.
+
+# WIP: This is an attemp to set the right values to get the same result as the
+# kustomize patches and overlays we have in this repo.
+# Please adjust as needed.
+image:
+  registry: registry.sighup.io/fury
+grafana:
+  # the following will create a configmap where you can get the dashboard json file
+  createDashboard: true
+
+hostPathsExporter:
+  daemonSets:
+    data-plane:
+      watchFiles:
+        - /var/lib/kubelet/pki/kubelet.crt
+        - /var/lib/kubelet/pki/kubelet-client-current.pem
+      watchKubeconfFiles:
+        - /etc/kubernetes/kubelet.conf
+    control-plane:
+      affinity:
+        nodeAffinity:
+          requiredDuringSchedulingIgnoredDuringExecution:
+            nodeSelectorTerms:
+              - matchExpressions:
+                  - key: node-role.kubernetes.io/control-plane
+                    operator: Exists
+              - matchExpressions:
+                  - key: node-role.kubernetes.io/master
+                    operator: Exists
+      tolerations:
+        - key: node-role.kubernetes.io/master
+          operator: Exists
+          effect: NoSchedule
+        - key: node-role.kubernetes.io/control-plane
+          operator: Exists
+          effect: NoSchedule
+      watchFiles:
+        # Common kubelet files
+        - /var/lib/kubelet/pki/kubelet.crt
+        - /var/lib/kubelet/pki/kubelet-client-current.pem
+        # Control plane specific files
+        - /etc/etcd/pki/apiserver-etcd-client.crt
+        - /etc/etcd/pki/etcd/ca.crt
+        - /etc/etcd/pki/etcd/healthcheck-client.crt
+        - /etc/etcd/pki/etcd/peer.crt
+        - /etc/etcd/pki/etcd/server.crt
+        - /etc/kubernetes/pki/apiserver.crt
+        - /etc/kubernetes/pki/ca.crt
+        - /etc/kubernetes/pki/front-proxy-ca.crt
+        - /etc/kubernetes/pki/front-proxy-client.crt
+        - /etc/kubernetes/admin.conf
+        - /etc/kubernetes/controller-manager.conf
+        - /etc/kubernetes/scheduler.conf
+      watchKubeconfFiles:
+        # Common kubelet kubeconf file
+        - /etc/kubernetes/kubelet.conf
+        # Control plane specific files
+        - /etc/kubernetes/admin.conf
+        - /etc/kubernetes/super-admin.conf
+        - /etc/kubernetes/controller-manager.conf
+        - /etc/kubernetes/scheduler.conf
+      extraVolumes:
+        - name: etc-etcd-pki
+          hostPath:
+            path: /etc/etcd/pki
+            type: Directory
+        - name: etc-kubernetes
+          hostPath:
+            path: /etc/kubernetes
+            type: Directory
+      extraVolumeMounts:
+        - name: etc-etcd-pki
+          mountPath: /etc/etcd/pki
+          readOnly: true
+        - name: etc-kubernetes
+          mountPath: /etc/kubernetes
+          readOnly: true
