@@ -85,7 +85,7 @@ spec:
             severity: warning
           annotations:
             summary: HAProxy backend max active session > 80% (instance {{ $labels.instance }})
-            description: "Session limit from backend {{ $labels.proxy }} to server {{ $labels.server }} reached 80% of limit - {{ $value | printf \"%.2f\"}}%\n  VALUE = {{ $value }}\n  LABELS = {{ $labels }}"
+            description: "Session limit from backend {{ $labels.proxy }} reached 80% of limit - {{ $value | printf \"%.2f\"}}%\n  VALUE = {{ $value }}\n  LABELS = {{ $labels }}"
 
         - alert: HaproxyPendingRequests
           expr: 'sum by (proxy) (rate(haproxy_backend_current_queue[2m])) > 0'
