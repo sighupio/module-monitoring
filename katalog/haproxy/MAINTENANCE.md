@@ -22,3 +22,8 @@ In particular from here:
 <https://raw.githubusercontent.com/samber/awesome-prometheus-alerts/master/dist/rules/haproxy/embedded-exporter-v2.yml>
 
 We took the contents of the previous link and embedded it into a `PrometheusRule` object.
+
+### Alerts Customizations
+
+1. Commented out the `HaproxyHttpSlowingDown` alert
+2. Edited the `HaproxyBackendMaxActiveSession>80%` alert to use the `haproxy_backend_current_sessions` and `haproxy_backend_limit_sessions` metrics. We also [opened a PR upstream](https://github.com/samber/awesome-prometheus-alerts/pull/475) with this fix.
