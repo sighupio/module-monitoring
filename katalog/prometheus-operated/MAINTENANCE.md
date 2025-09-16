@@ -22,10 +22,13 @@ Replace `KUBE_PROMETHEUS_RELEASE` with the current upstream release.
 
 5. Sync the new image to our registry in the [`monitoring` images.yaml file fury-distribution-container-image-sync repository](https://github.com/sighupio/fury-distribution-container-image-sync/blob/main/modules/monitoring/images.yml).
 
-6. Update the `kustomization.yaml` file with the new image.
+6. Update the Prometheus Agent manifests in the distribution with the new image:
+
+https://github.com/sighupio/distribution/blob/91b1edbd242bd453769c0ad69e6e82477b88922c/templates/distribution/manifests/monitoring/resources/prometheus-agent/prometheus-agent.yaml.tpl#L12
 
 7. Make sure that all the files have the license headers:
 
 ```bash
 mise run add-license
 ```
+
