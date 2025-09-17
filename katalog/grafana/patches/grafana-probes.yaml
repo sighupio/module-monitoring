@@ -22,7 +22,7 @@ spec:
           successThreshold: 1
           timeoutSeconds: 1
         livenessProbe:
-          failureThreshold: 5
+          failureThreshold: 10
           httpGet:
             path: /api/health
             port: http
