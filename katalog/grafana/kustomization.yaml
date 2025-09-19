@@ -19,6 +19,7 @@ patches:
   - path: patches/grafana-dashboard-sidecar.yml
   - path: patches/grafana-datasource-sidecar.yml
   - path: patches/grafana-env.yaml
+  - path: patches/grafana-probes.yaml
   - path: patches/grafana-security-context.yml
   - path: patches/grafana-volumes.yaml
   - path: patches/grafana-dashboard-sources.yml
