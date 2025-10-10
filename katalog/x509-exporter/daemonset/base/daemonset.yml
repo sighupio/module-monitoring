@@ -41,6 +41,18 @@ spec:
           ports:
             - name: metrics
               containerPort: 9793
+          readinessProbe:
+            initialDelaySeconds: 5
+            periodSeconds: 3
+            httpGet:
+              path: /healthz
+              port: metrics
+          livenessProbe:
+            initialDelaySeconds: 5
+            periodSeconds: 3
+            httpGet:
+              path: /healthz
+              port: metrics
           volumeMounts:
             - name: etc-kubernetes
               mountPath: /etc/kubernetes
