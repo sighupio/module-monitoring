@@ -9,7 +9,7 @@
 </h1>
 <!-- markdownlint-enable MD033 -->
 
-![Release](https://img.shields.io/badge/Latest%20Release-v4.0.0-blue)
+![Release](https://img.shields.io/badge/Latest%20Release-vv4.0.1-blue)
 ![License](https://img.shields.io/github/license/sighupio/module-monitoring?label=License)
 ![Slack](https://img.shields.io/badge/slack-@kubernetes/fury-yellow.svg?logo=slack&label=Slack)
 
@@ -106,7 +106,7 @@ Check the [compatibility matrix][compatibility-matrix] for additional informatio
 
 ```yaml
 versions:
-  monitoring: v4.0.0
+  monitoring: vv4.0.1
 
 bases:
     - name: monitoring/prometheus-operator
