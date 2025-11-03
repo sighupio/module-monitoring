@@ -158,26 +158,65 @@ case "${FURY_MODULE}" in
     populate_package "nodeExporter"
     ;;
   "prometheus-adapter")
-    populate_package "prometheusAdapter"
+    # prometheus-adapter uses a two-folder structure to separate namespaces
+    # monitoring-resources/ for monitoring namespace, kube-system-resources/ for kube-system namespace
+
+    # Step 1: Pull base files from kube-prometheus upstream and distribute to correct folders
+    find "${WORK_DIR}"/manifests -maxdepth 1 -name "prometheusAdapter-*.yaml" | \
+      tr "-" " " | \
+      while read -r package resource; do
+        case "${resource}" in
+          roleBindingAuthReader.yaml)
+            cp -af "${package}-${resource}" "${KATALOG_PATH}/${FURY_MODULE}/kube-system-resources/${resource}"
+            ;;
+          configMap.yaml)
+            # Skip - we use configMapGenerator in kustomization.yaml instead
+            ;;
+          *)
+            cp -af "${package}-${resource}" "${KATALOG_PATH}/${FURY_MODULE}/monitoring-resources/${resource}"
+            ;;
+        esac
+      done
+
+    # Step 2: Generate ONLY config data from helm using our custom values
     helm repo add prometheus-community https://prometheus-community.github.io/helm-charts
-    PROMETHEUS_ADAPTER_RELEASE=$(yq '.metadata.labels."app.kubernetes.io/version"' < apiService.yaml )
-    yq '.metadata.labels' < apiService.yaml > "${WORK_DIR}/labels.yml"
-    KUBE_PROMETHEUS_ADAPTER_RELEASE=$(helm search repo prometheus-adapter -l -o json | jq -r --arg PROMETHEUS_ADAPTER_RELEASE "${PROMETHEUS_ADAPTER_RELEASE}" '.[] | select(.app_version == ("v"+$PROMETHEUS_ADAPTER_RELEASE)) | .version')
-    cd "${WORK_DIR}"
+    PROMETHEUS_ADAPTER_RELEASE=$(yq '.metadata.labels."app.kubernetes.io/version"' < "${KATALOG_PATH}/${FURY_MODULE}/monitoring-resources/apiService.yaml")
+    KUBE_PROMETHEUS_ADAPTER_RELEASE=$(helm search repo prometheus-adapter -l -o json | jq -r --arg PROMETHEUS_ADAPTER_RELEASE "${PROMETHEUS_ADAPTER_RELEASE}" '.[] | select(.app_version == ("v"+$PROMETHEUS_ADAPTER_RELEASE)) | .version' | head -1)
+
+    # Generate ConfigMap with our custom values (using a temp directory to avoid polluting WORK_DIR)
+    HELM_TEMP_DIR="$(mktemp -d helm.prometheus.XXXXXX -p /tmp)"
+    cd "${HELM_TEMP_DIR}"
     helm template \
       --release-name prometheus-adapter \
       --namespace monitoring \
       -f "${VALUES_PATH}/prometheus-adapter.yml" \
       --api-versions apiregistration.k8s.io/v1 \
       --version "${KUBE_PROMETHEUS_ADAPTER_RELEASE}" \
-      prometheus-community/prometheus-adapter | yq --split-exp '.kind + "-" + .metadata.name'
+      prometheus-community/prometheus-adapter | yq -s '.kind + "-" + .metadata.name'
     cd -
-    grep -v '#' < "${WORK_DIR}/APIService-v1beta1.custom.metrics.k8s.io"  | yq "del(.metadata.labels) | .metadata.labels = (load(\"${WORK_DIR}/labels.yml\"))" >> "${KATALOG_PATH}/prometheus-adapter/apiService.yaml"
-    grep -v '#' < "${WORK_DIR}/APIService-v1beta1.external.metrics.k8s.io" | yq "del(.metadata.labels) | .metadata.labels = (load(\"${WORK_DIR}/labels.yml\"))" >> "${KATALOG_PATH}/prometheus-adapter/apiService.yaml"
-    yq -i ".data = (load(\"${WORK_DIR}/ConfigMap-prometheus-adapter.yml\") | .data)" configMap.yaml
-    yq -i '.rules[0].apiGroups = ["metrics.k8s.io", "custom.metrics.k8s.io", "external.metrics.k8s.io"]' clusterRoleServerResources.yaml
+
+    # Step 3: Update config.yaml files with helm-generated config data
+    # Extract the config.yaml content from the ConfigMap's data field (which contains the actual prometheus-adapter config)
+    # Preserve the copyright header from the original file
+    {
+      head -4 "${KATALOG_PATH}/${FURY_MODULE}/monitoring-resources/config.yaml"
+      echo ""
+      yq '.data["config.yaml"]' < "${HELM_TEMP_DIR}/ConfigMap-prometheus-adapter.yml"
+    } > "${KATALOG_PATH}/${FURY_MODULE}/monitoring-resources/config.yaml.tmp"
+    mv "${KATALOG_PATH}/${FURY_MODULE}/monitoring-resources/config.yaml.tmp" "${KATALOG_PATH}/${FURY_MODULE}/monitoring-resources/config.yaml"
+
+    # Copy to root for reference
+    cp "${KATALOG_PATH}/${FURY_MODULE}/monitoring-resources/config.yaml" "${KATALOG_PATH}/${FURY_MODULE}/config.yaml"
+
+    # Cleanup helm temp directory
+    rm -rf "${HELM_TEMP_DIR}"
+
+    # Step 4: Patch clusterRoleServerResources.yaml to include custom and external metrics
+    yq -i '.rules[0].apiGroups = ["metrics.k8s.io", "custom.metrics.k8s.io", "external.metrics.k8s.io"]' "${KATALOG_PATH}/${FURY_MODULE}/monitoring-resources/clusterRoleServerResources.yaml"
+
+    # Step 5: Update deployment checksum
     # shellcheck disable=SC2086
-    yq -i ".spec.template.metadata.annotations.\"checksum.config/md5\" = \"$(md5 -q ${VALUES_PATH}/prometheus-adapter.yml)\"" deployment.yaml
+    yq -i ".spec.template.metadata.annotations.\"checksum.config/md5\" = \"$(md5 -q ${VALUES_PATH}/prometheus-adapter.yml)\"" "${KATALOG_PATH}/${FURY_MODULE}/monitoring-resources/deployment.yaml"
     ;;
   "prometheus-operated")
     populate_package "prometheus"

@@ -46,6 +46,6 @@ Replace `KUBE_PROMETHEUS_RELEASE` with the current upstream release.
 We diverge from upstream in the following ways:
 
 1. **Two-folder architecture**: Resources are separated into `monitoring-resources/` and `kube-system-resources/` to avoid kustomize deprecations.
-2. We changed the config.yaml to a `configMap.yaml` approach so we can patch it in the distribution easily when we need it.
+2. We use `configMapGenerator` in kustomization.yaml to generate the ConfigMap from `config.yaml` so we can patch it in the distribution easily when we need it. We do not use the upstream static `configMap.yaml` file.
 3. We add 2 additional API services via the apiService-EnhancedHPAMetrics.yaml file that are not included in upstream's manifests. See: https://github.com/sighupio/module-monitoring/issues/191
 4. We add the 2 additional API services to the ClusterRole via a patch, so the adapter can serve them.
