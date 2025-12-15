@@ -4,7 +4,7 @@
 
 [tools]
 kind = "0.29.0"
-kubectl = "1.33.4"
+kubectl = "1.34.0"
 kustomize = "5.6.0"
 helm = "3.15.0"
 yq = "4.43.1"
@@ -59,12 +59,12 @@ depends = ["add-license", "validate-manifests", "validate-prometheus-rules"]
 run = 'echo "✅ Development environment ready!"'
 
 [tasks.e2e]
-description = "Run complete E2E test suite with Kind cluster (K8s 1.33)"
+description = "Run complete E2E test suite with Kind cluster (K8s 1.34)"
 run = '''
 #!/bin/bash
 set -e
 echo "🚀 Running Monitoring E2E workflow..."
-./scripts/create-e2e-cluster.sh 1.33.0
+./scripts/create-e2e-cluster.sh 1.34.0
 ./scripts/run-monitoring-tests.sh
 ./scripts/cleanup-e2e-cluster.sh
 echo "✅ Monitoring E2E workflow completed!"
@@ -73,7 +73,7 @@ echo "✅ Monitoring E2E workflow completed!"
 # Individual E2E workflow components
 [tasks.e2e-create-cluster]
 description = "Create Kind cluster for monitoring E2E testing"
-run = "./scripts/create-e2e-cluster.sh 1.33.0"
+run = "./scripts/create-e2e-cluster.sh 1.34.0"
 
 [tasks.e2e-run-tests]
 description = "Run monitoring E2E tests on existing cluster"
