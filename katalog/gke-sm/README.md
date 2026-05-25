@@ -13,7 +13,7 @@ This package provides monitoring for Kubernetes components `kubelet` and
 
 ## Configuration
 
-Fury distribution GKE ServiceMonitor has following configuration:
+Fury distribution GKE ServiceMonitor has the following configuration:
 
 - `api-server` and `kubelet` metrics are scraped with `30s` intervals
 - Dashboards shipped:
