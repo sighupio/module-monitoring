@@ -5,16 +5,14 @@
 ---
 apiVersion: kustomize.config.k8s.io/v1beta1
 kind: Kustomization
-
 namespace: monitoring
-
 images:
   - name: grafana/grafana
     newName: registry.sighup.io/fury/grafana/grafana
+    newTag: 12.4.1
   - name: kiwigrid/k8s-sidecar
     newName: registry.sighup.io/fury/kiwigrid/k8s-sidecar
-    newTag: 1.19.2
-
+    newTag: 2.7.3
 patches:
   - path: patches/grafana-dashboard-sidecar.yml
   - path: patches/grafana-datasource-sidecar.yml
@@ -23,7 +21,6 @@ patches:
   - path: patches/grafana-security-context.yml
   - path: patches/grafana-volumes.yaml
   - path: patches/grafana-dashboard-sources.yml
-
 resources:
   - dashboards
   - clusterRole.yaml
