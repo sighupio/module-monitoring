@@ -12,7 +12,7 @@ This package provides monitoring for the following Kubernetes components:
 - etcd
 
 These are components needed to deliver a functioning Kubernetes cluster. If you
-want to learn more about these components please follow the official
+want to learn more about these components, please follow the official
 [documentation](https://kubernetes.io/docs/concepts/overview/components/) of
 Kubernetes.
 
@@ -29,7 +29,7 @@ Kubernetes.
 
 ## Configuration
 
-Prometheus scrapes Kubernetes component metrics on port `metrics` with following
+Prometheus scrapes Kubernetes component metrics on port `metrics` with the following
 intervals:
 
 - kube-control-manager: `30s`
@@ -54,12 +54,12 @@ intervals:
 
 ## Alerts
 
-The followings alerts are already defined for this package.
+The following alerts are already defined for this package.
 
 ### kubernetes-absent-kubeadm
 
 | Parameter                       | Description                                                                                                               | Severity | Interval |
-| ------------------------------- | ------------------------------------------------------------------------------------------------------------------------- | -------- | :------: |
+|---------------------------------|---------------------------------------------------------------------------------------------------------------------------|----------|:--------:|
 | KubeControllerManagerDown       | This alert fires if Prometheus target discovery was not able to reach the kube-controller-manager in the last 15 minutes. | critical |   15m    |
 | KubeSchedulerDown               | This alert fires if Prometheus target discovery was not able to reach the kube-scheduler in the last 15 minutes.          | critical |   15m    |
 | KubeClientCertificateExpiration | This alert fires when the Kubernetes API client certificate is expiring in less than 30 days.                             | warning  |          |
@@ -68,7 +68,7 @@ The followings alerts are already defined for this package.
 ### coredns
 
 | Parameter                    | Description                                                                                                      | Severity | Interval |
-| ---------------------------- | ---------------------------------------------------------------------------------------------------------------- | -------- | :------: |
+|------------------------------|------------------------------------------------------------------------------------------------------------------|----------|:--------:|
 | CoreDNSPanic                 | This alert fires if CoreDNS total panic count increased by at least 1 in the last 10 minutes.                    | warning  |          |
 | CoreDNSRequestsLatency       | This alert fires if CoreDNS 99th percentile requests latency was higher than 100ms in the last 10 minutes.       | warning  |   10m    |
 | CoreDNSHealthRequestsLatency | This alert fires if CoreDNS 99th percentile health requests latency was higher than 10ms in the last 10 minutes. | warning  |   10m    |
@@ -77,7 +77,7 @@ The followings alerts are already defined for this package.
 ### etcd3
 
 | Parameter                       | Description                                                                                                  | Severity | Interval |
-| ------------------------------- | ------------------------------------------------------------------------------------------------------------ | -------- | :------: |
+|---------------------------------|--------------------------------------------------------------------------------------------------------------|----------|:--------:|
 | EtcdInsufficientMembers         | This alert fires if less than half of Etcd cluster members were online in the last 3 minutes.                | critical |    3m    |
 | EtcdNoLeader                    | This alert fires if the Etcd cluster had no leader in the last minute.                                       | critical |    1m    |
 | EtcdHighNumberOfLeaderChanges   | This alert fires if the Etcd cluster changed leader more than 3 times in the last hour.                      | warning  |          |
