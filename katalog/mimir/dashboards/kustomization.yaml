@@ -18,24 +18,15 @@ generatorOptions:
 configMapGenerator:
   - name: mimir-dashboards
     files:
-      # Disabled, we are not bundling alertmanager
-      #- mimir-alertmanager-resources.json
-      #- mimir-alertmanager.json
-      - mimir-compactor-resources.json
       - mimir-compactor.json
+      - mimir-compactor-resources.json
       - mimir-config.json
       - mimir-object-store.json
-      # Disabled, we are not doing overrides
-      #- mimir-overrides.json
       - mimir-queries.json
       - mimir-reads.json
       # Disabled, no data with our setup
       #- mimir-reads-networking.json
       - mimir-reads-resources.json
-      # Disabled, no rollout in our setup
-      #- mimir-rollout-progress.json
-      # Disabled, no rollout in our setup
-      #- mimir-ruler.json
       # Disabled, no scaling in our setup
       #- mimir-scaling.json
       - mimir-tenants.json

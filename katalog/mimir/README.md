@@ -2,7 +2,7 @@
 
 <!-- <SD-DOCS> -->
 
-Mimir is an open source, horizontally scalable, highly available, multi-tenant TSDB for long-term storage for Prometheus.
+Mimir is an open-source, horizontally scalable, highly available, multi-tenant TSDB for long-term storage for Prometheus.
 
 ## Requirements
 
