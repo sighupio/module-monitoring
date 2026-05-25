@@ -203,4 +203,6 @@ case "${FURY_MODULE}" in
     ;;
 esac
 
+mise run add-license
+
 exit 0
