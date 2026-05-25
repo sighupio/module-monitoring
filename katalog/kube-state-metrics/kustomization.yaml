@@ -11,8 +11,10 @@ namespace: monitoring
 images:
   - name: registry.k8s.io/kube-state-metrics/kube-state-metrics
     newName: registry.sighup.io/fury/kube-state-metrics/kube-state-metrics
+    newTag: v2.18.0
   - name: quay.io/brancz/kube-rbac-proxy
     newName: registry.sighup.io/fury/brancz/kube-rbac-proxy
+    newTag: v0.21.0
 
 patches:
   - patch: |-
