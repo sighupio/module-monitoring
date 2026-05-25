@@ -18,4 +18,4 @@ generatorOptions:
 configMapGenerator:
   - name: haproxy-grafana-dashboards
     files:
-      - 12693_rev8.json
+      - 12693.json
