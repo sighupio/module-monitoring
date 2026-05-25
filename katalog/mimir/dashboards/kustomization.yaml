@@ -15,31 +15,26 @@ generatorOptions:
     grafana-folder: "Monitoring"
   disableNameSuffixHash: true
 
+# Split into two ConfigMaps because the total size of all dashboard JSON files
+# exceeds the 1 MiB Kubernetes ConfigMap limit.
 configMapGenerator:
-  - name: mimir-dashboards
+  - name: mimir-dashboards-core
     files:
-      # Disabled, we are not bundling alertmanager
-      #- mimir-alertmanager-resources.json
-      #- mimir-alertmanager.json
-      - mimir-compactor-resources.json
-      - mimir-compactor.json
       - mimir-config.json
-      - mimir-object-store.json
-      # Disabled, we are not doing overrides
-      #- mimir-overrides.json
       - mimir-queries.json
       - mimir-reads.json
       # Disabled, no data with our setup
       #- mimir-reads-networking.json
-      - mimir-reads-resources.json
-      # Disabled, no rollout in our setup
-      #- mimir-rollout-progress.json
-      # Disabled, no rollout in our setup
-      #- mimir-ruler.json
-      # Disabled, no scaling in our setup
-      #- mimir-scaling.json
       - mimir-tenants.json
       - mimir-writes.json
       # Disabled, no data with our setup
       #- mimir-writes-networking.json
+  - name: mimir-dashboards-resources
+    files:
+      - mimir-compactor.json
+      - mimir-compactor-resources.json
+      - mimir-object-store.json
+      - mimir-reads-resources.json
       - mimir-writes-resources.json
+      # Disabled, no scaling in our setup
+      #- mimir-scaling.json

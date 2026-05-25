@@ -7,14 +7,12 @@
 # which may or may not match your cluster's server version. Example: 'v1.24.4'. Set to null to use the version that helm
 # devises.
 kubeVersionOverride: 1.33.0
-
 useExternalConfig: true
-
 image:
   # -- Grafana Mimir container image repository. Note: for Grafana Enterprise Metrics use the value 'enterprise.image.repository'
   repository: registry.sighup.io/fury/grafana/mimir
   # -- Grafana Mimir container image tag. Note: for Grafana Enterprise Metrics use the value 'enterprise.image.tag'
-  tag: 2.17.0
+  tag: 3.0.4
   # -- Container pull policy - shared between Grafana Mimir and Grafana Enterprise Metrics
   pullPolicy: IfNotPresent
   # -- Optionally specify an array of imagePullSecrets - shared between Grafana Mimir and Grafana Enterprise Metrics
@@ -22,7 +20,6 @@ image:
   # ref: https://kubernetes.io/docs/tasks/configure-pod-container/pull-image-private-registry/
   # pullSecrets:
   #   - myRegistryKeySecretName
-
 mimir:
   # -- Additional structured values on top of the text based 'mimir.config'. Applied after the text based config is evaluated for templates. Enables adding and modifying YAML elements in the evaulated 'mimir.config'.
   structuredConfig:
@@ -34,158 +31,123 @@ mimir:
           secret_access_key: "minio123"
           endpoint: "minio-monitoring:9000"
           insecure: true
-
     blocks_storage:
       s3:
         bucket_name: mimir
   rbac:
     usePodSecurityPolicy: false
-
 alertmanager:
   enabled: false
-
 distributor:
   replicas: 1
-
   resources:
     requests:
       cpu: 100m
       memory: 512Mi
-
   podDisruptionBudget:
     maxUnavailable: 1
-
   topologySpreadConstraints:
     maxSkew: 1
     topologyKey: kubernetes.io/hostname
     whenUnsatisfiable: ScheduleAnyway
-
 ingester:
   # -- Total number of replicas for the ingester across all availability zones
   # If ingester.zoneAwareReplication.enabled=false, this number is taken as is.
   # Otherwise each zone starts `ceil(replicas / number_of_zones)` number of pods.
   #   E.g. if 'replicas' is set to 4 and there are 3 zones, then 4/3=1.33 and after rounding up it means 2 pods per zone are started.
   replicas: 3
-
   statefulSet:
     enabled: true
-
   resources:
     requests:
       cpu: 100m
       memory: 512Mi
-
   # -- Pod Disruption Budget for ingester, this will be applied across availability zones to prevent losing redundancy
   podDisruptionBudget:
     maxUnavailable: 1
-
   podManagementPolicy: Parallel
-
   persistentVolume:
     # If true and ingester.statefulSet.enabled is true,
     # Ingester will create/use a Persistent Volume Claim
     # If false, use emptyDir
     #
     enabled: true
-
     # Ingester data Persistent Volume Claim annotations
     #
     annotations: {}
-
     # Ingester data Persistent Volume access modes
     # Must match those of existing PV or dynamic provisioner
     # Ref: http://kubernetes.io/docs/user-guide/persistent-volumes/
     accessModes:
       - ReadWriteOnce
-
     # Ingester data Persistent Volume size
     size: 2Gi
-
   zoneAwareReplication:
     # -- Enable zone-aware replication for ingester
     enabled: false
-
 overrides_exporter:
   enabled: false
-
 ruler:
   enabled: false
-
 querier:
   replicas: 2
-
   resources:
     requests:
       cpu: 100m
       memory: 128Mi
-
 query_frontend:
   replicas: 1
-
   resources:
     requests:
       cpu: 100m
       memory: 128Mi
-
   # Pod Disruption Budget
   podDisruptionBudget:
     maxUnavailable: 1
-
 query_scheduler:
   enabled: true
   replicas: 2
-
   resources:
     requests:
       cpu: 100m
       memory: 128Mi
-
   # Pod Disruption Budget
   podDisruptionBudget:
     maxUnavailable: 1
-
 store_gateway:
   # -- Total number of replicas for the store-gateway across all availability zones
   # If store_gateway.zoneAwareReplication.enabled=false, this number is taken as is.
   # Otherwise each zone starts `ceil(replicas / number_of_zones)` number of pods.
   #   E.g. if 'replicas' is set to 4 and there are 3 zones, then 4/3=1.33 and after rounding up it means 2 pods per zone are started.
   replicas: 1
-
   resources:
     requests:
       cpu: 100m
       memory: 512Mi
-
   # -- Pod Disruption Budget for store-gateway, this will be applied across availability zones to prevent losing redundancy
   podDisruptionBudget:
     maxUnavailable: 1
-
   persistentVolume:
     # If true Store-gateway will create/use a Persistent Volume Claim
     # If false, use emptyDir
     #
     enabled: true
-
     # Store-gateway data Persistent Volume Claim annotations
     #
     annotations: {}
-
     # Store-gateway data Persistent Volume access modes
     # Must match those of existing PV or dynamic provisioner
     # Ref: http://kubernetes.io/docs/user-guide/persistent-volumes/
     #
     accessModes:
       - ReadWriteOnce
-
     # Store-gateway data Persistent Volume size
     #
     size: 2Gi
-
     # Subdirectory of Store-gateway data Persistent Volume to mount
     # Useful if the volume's root directory is not empty
     #
     subPath: ""
-
     # Store-gateway data Persistent Volume Storage Class
     # If defined, storageClassName: <storageClass>
     # If set to "-", storageClassName: "", which disables dynamic provisioning
@@ -194,49 +156,39 @@ store_gateway:
     #
     # A per-zone storageClass configuration in `store_gateway.zoneAwareReplication.zones[*].storageClass` takes precedence over this field.
     # storageClass: "-"
-
   zoneAwareReplication:
     # -- Enable zone-aware replication for store-gateway
     enabled: false
-
 compactor:
   replicas: 1
-
   resources:
     requests:
       cpu: 100m
       memory: 512Mi
-
   # Pod Disruption Budget
   podDisruptionBudget:
     maxUnavailable: 1
-
   persistentVolume:
     # If true compactor will create/use a Persistent Volume Claim
     # If false, use emptyDir
     #
     enabled: true
-
     # compactor data Persistent Volume Claim annotations
     #
     annotations: {}
-
     # compactor data Persistent Volume access modes
     # Must match those of existing PV or dynamic provisioner
     # Ref: http://kubernetes.io/docs/user-guide/persistent-volumes/
     #
     accessModes:
       - ReadWriteOnce
-
     # compactor data Persistent Volume size
     #
     size: 2Gi
-
     # Subdirectory of compactor data Persistent Volume to mount
     # Useful if the volume's root directory is not empty
     #
     subPath: ""
-
     # compactor data Persistent Volume Storage Class
     # If defined, storageClassName: <storageClass>
     # If set to "-", storageClassName: "", which disables dynamic provisioning
@@ -244,54 +196,45 @@ compactor:
     #   set, choosing the default provisioner.
     #
     # storageClass: "-"
-
 memcached:
   image:
     registry: registry.sighup.io/fury
     # -- Memcached Docker image repository
     repository: memcached
     # -- Memcached Docker image tag
-    tag: 1.6.38-alpine
+    tag: 1.6.39-alpine
     # -- Memcached Docker image pull policy
     pullPolicy: IfNotPresent
-
 memcachedExporter:
   # -- Whether memcached metrics should be exported
   enabled: true
-
   image:
     registry: registry.sighup.io/fury
     repository: prom/memcached-exporter
     tag: v0.15.3
     pullPolicy: IfNotPresent
-
   resources:
     requests: {}
     limits: {}
-
 chunks-cache:
   # -- Specifies whether memcached based chunks-cache should be enabled
   enabled: false
-
 index-cache:
   # -- Specifies whether memcached based index-cache should be enabled
   enabled: false
-
 metadata-cache:
   # -- Specifies whether memcached based metadata-cache should be enabled
   enabled: false
-
 results-cache:
   # -- Specifies whether memcached based results-cache should be enabled
   enabled: false
-
 # -- Setting for the Grafana Rollout Operator https://github.com/grafana/helm-charts/tree/main/charts/rollout-operator
 rollout_operator:
   enabled: false
-
 minio:
   enabled: false
-
+kafka:
+  enabled: false
 # -- DEPRECATED: use the 'gateway' section instead. For a migration guide refer to
 # https://grafana.com/docs/helm-charts/mimir-distributed/latest/migration-guides/migrate-to-unified-proxy-deployment/
 #
@@ -301,23 +244,16 @@ nginx:
   # -- Specifies whether nginx should be enabled
   enabled: false
   # -- Number of replicas for nginx
-
 # -- A reverse proxy deployment that is meant to receive traffic for Mimir or GEM.
 # When enterprise.enabled is true the GEM gateway is deployed. Otherwise, it is an nginx.
 # Options except those under gateway.nginx apply to both versions - nginx and GEM gateway.
 gateway:
-  # -- The gateway is deployed by default for enterprise installations (enterprise.enabled=true).
-  # Toggle this to have it deployed for non-enterprise installations too.
-  enabledNonEnterprise: true
-
   resources:
     requests:
       cpu: 100m
       memory: 128Mi
-
   # -- Number of replicas for the Deployment
   replicas: 1
-
   # -- HorizontalPodAutoscaler
   autoscaling:
     enabled: true
@@ -325,11 +261,9 @@ gateway:
     maxReplicas: 3
     targetCPUUtilizationPercentage: 70
     targetMemoryUtilizationPercentage: 70
-
   nginx:
     # -- Enable logging of 2xx and 3xx HTTP requests
     verboseLogging: true
-
     # -- Image for the nginx. pullPolicy and optional pullSecrets are set in toplevel 'image' section, not here.
     image:
       # -- The Docker registry for nginx image
@@ -337,8 +271,7 @@ gateway:
       # -- The nginx image repository
       repository: nginxinc/nginx-unprivileged
       # -- The nginx image tag
-      tag: 1.28-alpine
-
+      tag: 1.29-alpine
 metaMonitoring:
   # Dashboard configuration for deploying Grafana dashboards for Mimir
   dashboards:
@@ -350,12 +283,10 @@ metaMonitoring:
     # -- Labels to add to the Grafana dashboard ConfigMap
     labels:
       grafana-sighup-dashboard: default
-
   # ServiceMonitor configuration for monitoring Kubernetes Services with Prometheus Operator and/or Grafana Agent
   serviceMonitor:
     # -- If enabled, ServiceMonitor resources for Prometheus Operator are created
     enabled: true
-
   # Rules for the Prometheus Operator
   prometheusRule:
     # -- If enabled, a PrometheusRule resource for Prometheus Operator is created
@@ -364,56 +295,32 @@ metaMonitoring:
     mimirAlerts: false
     # -- Create standard Mimir recording rules in Prometheus Operator via a PrometheusRule CRD
     mimirRules: false
-
   # metaMonitoringAgent configures the built in Grafana Agent that can scrape metrics and logs and send them to a local or remote destination
   grafanaAgent:
     # -- Controls whether to create PodLogs, MetricsInstance, LogsInstance, and GrafanaAgent CRs to scrape the
     # ServiceMonitors of the chart and ship metrics and logs to the remote endpoints below.
     # Note that you need to configure serviceMonitor in order to have some metrics available.
     enabled: false
-
 ##############################################################################
 # The values in and after the `enterprise:` key configure the enterprise features
 enterprise:
   # Enable enterprise features. License must be provided, nginx gateway is not installed, instead
   # the enterprise gateway is used.
   enabled: false
-
 graphite:
   # -- If true, enables graphite querier and graphite write proxy functionality.
   # Read more in https://grafana.com/docs/enterprise-metrics/latest/graphite/
   enabled: false
-
 # Graphite's aggregation cache. If you want to know more about it please check
 # https://grafana.com/docs/enterprise-metrics/latest/graphite/graphite_querier/#aggregation-cache
 gr-aggr-cache:
   # -- Specifies whether memcached based graphite-aggregation-cache should be enabled. Note that the cache will only appear if graphite is also enabled.
   enabled: false
-
 # Graphite's metric name cache. If you want to know more about it please check
 # https://grafana.com/docs/enterprise-metrics/latest/graphite/graphite_querier/#metric-name-cache
 gr-metricname-cache:
   # -- Specifies whether memcached based graphite-metric-name-cache should be enabled. Note that the cache will only appear if graphite is also enabled.
   enabled: false
-
-# -- Settings for the smoke-test job. This is meant to run as a Helm test hook
-# (`helm test RELEASE`) after installing the chart. It quickly verifies
-# that writing and reading metrics works. Currently not supported for
-# installations using GEM token-based authentication.
-smoke_test:
-  # -- Controls the backoffLimit on the Kubernetes Job. The Job is marked as failed after that many retries.
-  backoffLimit: 5
-  # The image section has been removed as continuous test is now a module of the regular Mimir image.
-  # See settings for the image at the top image section.
-  tenantId: ""
-  extraArgs: {}
-  env: []
-  extraEnvFrom: []
-  annotations: {}
-  initContainers: []
-  # -- The name of the PriorityClass for smoke-test pods
-  priorityClassName: null
-
 # -- Settings for mimir-continuous-test.
 # This continuously writes and reads metrics from Mimir.
 # https://grafana.com/docs/mimir/latest/manage/tools/mimir-continuous-test/
@@ -438,7 +345,6 @@ continuous_test:
   maxQueryAge: "48h"
   # -- Interval between test runs
   runInterval: "5m"
-
   # -- Kubernetes resource requests and limits for continuous test
   resources:
     limits:
