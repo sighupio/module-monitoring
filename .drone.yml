@@ -79,7 +79,7 @@ steps:
       - render
     commands:
       # we use --ignore-deprecations because we don't want the CI to fail when the API has not been removed yet.
-      - /pluto detect $${KUBERNETES_MANIFESTS} --ignore-deprecations --target-versions=k8s=v1.33.0
+      - /pluto detect $${KUBERNETES_MANIFESTS} --ignore-deprecations --target-versions=k8s=v1.35.0
     environment:
       KUBERNETES_MANIFESTS: alertmanager-operated.yml
 
@@ -748,6 +748,99 @@ steps:
       - ./scripts/cleanup-e2e-cluster.sh || true
 
 ---
+name: E2E Tests on kind clusters version 1.35.0
+kind: pipeline
+type: docker
+platform:
+  os: linux
+  arch: amd64
+depends_on:
+  - linting
+clone:
+  depth: 1
+trigger:
+  ref:
+    include:
+      - refs/tags/**
+
+environment:
+  # Mise configuration
+  MISE_DATA_DIR: "/mise-data"
+  MISE_OVERRIDE_CONFIG_FILENAMES: "mise.ci.toml"
+  KIND_VERSION: "0.31.0"
+  KUBECTL_VERSION: "1.35.5"
+  BATS_VERSION: "1.11.0"
+  CLUSTER_VERSION: "1.35.0"
+
+volumes:
+  - name: dockersock
+    host:
+      path: /var/run/docker.sock
+  - name: mise-cache
+    host:
+      path: /root/mise_data_dir
+
+steps:
+  - name: Create Kind Cluster
+    image: quay.io/sighup/mise:v2025.4.4
+    pull: always
+    network_mode: host
+    environment:
+      GITHUB_TOKEN:
+        from_secret: github_token
+    volumes:
+      - name: dockersock
+        path: /var/run/docker.sock
+      - name: mise-cache
+        path: /mise-data
+    depends_on:
+      - clone
+    commands:
+      - mise use kind@$${KIND_VERSION} kubectl@$${KUBECTL_VERSION} kustomize@5.6.0 yq@4.43.1
+      - eval "$(mise activate bash --shims)"
+      - ./scripts/create-e2e-cluster.sh $${CLUSTER_VERSION}
+
+  - name: Run E2E Tests
+    image: quay.io/sighup/mise:v2025.4.4
+    pull: always
+    network_mode: host
+    environment:
+      GITHUB_TOKEN:
+        from_secret: github_token
+    volumes:
+      - name: mise-cache
+        path: /mise-data
+    depends_on:
+      - Create Kind Cluster
+    commands:
+      - mise use bats@$${BATS_VERSION} kubectl@$${KUBECTL_VERSION} kustomize@5.6.0 kapp@0.64.2
+      - eval "$(mise activate bash --shims)"
+      - ./scripts/run-monitoring-tests.sh
+
+  - name: Delete Kind Cluster
+    image: quay.io/sighup/mise:v2025.4.4
+    pull: always
+    network_mode: host
+    environment:
+      GITHUB_TOKEN:
+        from_secret: github_token
+    volumes:
+      - name: dockersock
+        path: /var/run/docker.sock
+      - name: mise-cache
+        path: /mise-data
+    depends_on:
+      - Run E2E Tests
+    when:
+      status:
+        - success
+        - failure
+    commands:
+      - mise use kind@$${KIND_VERSION}
+      - eval "$(mise activate bash --shims)"
+      - ./scripts/cleanup-e2e-cluster.sh || true
+
+---
 name: release
 kind: pipeline
 type: docker
@@ -762,6 +855,7 @@ depends_on:
   - E2E Tests on kind clusters version 1.32.2
   - E2E Tests on kind clusters version 1.33.0
   - E2E Tests on kind clusters version 1.34.0
+  - E2E Tests on kind clusters version 1.35.0
 platform:
   os: linux
   arch: amd64
