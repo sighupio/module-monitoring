@@ -56,7 +56,7 @@
                         "type": "prometheus",
                         "uid": "$datasource"
                     },
-                    "expr": "instance:node_cpu_utilisation:rate5m{job=\"node-exporter\", instance=\"$instance\", cluster=\"$cluster\"} != 0",
+                    "expr": "instance:node_cpu_utilisation:rate5m{job=\"node-exporter\", instance=\"$instance\", cluster=~\"$cluster\"} != 0",
                     "legendFormat": "Utilisation"
                 }
             ],
@@ -103,7 +103,7 @@
                         "type": "prometheus",
                         "uid": "$datasource"
                     },
-                    "expr": "instance:node_load1_per_cpu:ratio{job=\"node-exporter\", instance=\"$instance\", cluster=\"$cluster\"} != 0",
+                    "expr": "instance:node_load1_per_cpu:ratio{job=\"node-exporter\", instance=\"$instance\", cluster=~\"$cluster\"} != 0",
                     "legendFormat": "Saturation"
                 }
             ],
@@ -165,7 +165,7 @@
                         "type": "prometheus",
                         "uid": "$datasource"
                     },
-                    "expr": "instance:node_memory_utilisation:ratio{job=\"node-exporter\", instance=\"$instance\", cluster=\"$cluster\"} != 0",
+                    "expr": "instance:node_memory_utilisation:ratio{job=\"node-exporter\", instance=\"$instance\", cluster=~\"$cluster\"} != 0",
                     "legendFormat": "Utilisation"
                 }
             ],
@@ -212,7 +212,7 @@
                         "type": "prometheus",
                         "uid": "$datasource"
                     },
-                    "expr": "instance:node_vmstat_pgmajfault:rate5m{job=\"node-exporter\", instance=\"$instance\", cluster=\"$cluster\"} != 0",
+                    "expr": "instance:node_vmstat_pgmajfault:rate5m{job=\"node-exporter\", instance=\"$instance\", cluster=~\"$cluster\"} != 0",
                     "legendFormat": "Major page Faults"
                 }
             ],
@@ -288,7 +288,7 @@
                         "type": "prometheus",
                         "uid": "$datasource"
                     },
-                    "expr": "instance:node_network_receive_bytes_excluding_lo:rate5m{job=\"node-exporter\", instance=\"$instance\", cluster=\"$cluster\"} != 0",
+                    "expr": "instance:node_network_receive_bytes_physical:rate5m{job=\"node-exporter\", instance=\"$instance\", cluster=~\"$cluster\"} != 0",
                     "legendFormat": "Receive"
                 },
                 {
@@ -296,7 +296,7 @@
                         "type": "prometheus",
                         "uid": "$datasource"
                     },
-                    "expr": "instance:node_network_transmit_bytes_excluding_lo:rate5m{job=\"node-exporter\", instance=\"$instance\", cluster=\"$cluster\"} != 0",
+                    "expr": "instance:node_network_transmit_bytes_physical:rate5m{job=\"node-exporter\", instance=\"$instance\", cluster=~\"$cluster\"} != 0",
                     "legendFormat": "Transmit"
                 }
             ],
@@ -357,7 +357,7 @@
                         "type": "prometheus",
                         "uid": "$datasource"
                     },
-                    "expr": "instance:node_network_receive_drop_excluding_lo:rate5m{job=\"node-exporter\", instance=\"$instance\", cluster=\"$cluster\"} != 0",
+                    "expr": "instance:node_network_receive_drop_physical:rate5m{job=\"node-exporter\", instance=\"$instance\", cluster=~\"$cluster\"} != 0",
                     "legendFormat": "Receive"
                 },
                 {
@@ -365,7 +365,7 @@
                         "type": "prometheus",
                         "uid": "$datasource"
                     },
-                    "expr": "instance:node_network_transmit_drop_excluding_lo:rate5m{job=\"node-exporter\", instance=\"$instance\", cluster=\"$cluster\"} != 0",
+                    "expr": "instance:node_network_transmit_drop_physical:rate5m{job=\"node-exporter\", instance=\"$instance\", cluster=~\"$cluster\"} != 0",
                     "legendFormat": "Transmit"
                 }
             ],
@@ -427,7 +427,7 @@
                         "type": "prometheus",
                         "uid": "$datasource"
                     },
-                    "expr": "instance_device:node_disk_io_time_seconds:rate5m{job=\"node-exporter\", instance=\"$instance\", cluster=\"$cluster\"} != 0",
+                    "expr": "instance_device:node_disk_io_time_seconds:rate5m{job=\"node-exporter\", instance=\"$instance\", cluster=~\"$cluster\"} != 0",
                     "legendFormat": "{{device}}"
                 }
             ],
@@ -474,7 +474,7 @@
                         "type": "prometheus",
                         "uid": "$datasource"
                     },
-                    "expr": "instance_device:node_disk_io_time_weighted_seconds:rate5m{job=\"node-exporter\", instance=\"$instance\", cluster=\"$cluster\"} != 0",
+                    "expr": "instance_device:node_disk_io_time_weighted_seconds:rate5m{job=\"node-exporter\", instance=\"$instance\", cluster=~\"$cluster\"} != 0",
                     "legendFormat": "{{device}}"
                 }
             ],
@@ -536,7 +536,7 @@
                         "type": "prometheus",
                         "uid": "$datasource"
                     },
-                    "expr": "sort_desc(1 -\n  (\n    max without (mountpoint, fstype) (node_filesystem_avail_bytes{job=\"node-exporter\", fstype!=\"\", instance=\"$instance\", cluster=\"$cluster\"})\n    /\n    max without (mountpoint, fstype) (node_filesystem_size_bytes{job=\"node-exporter\", fstype!=\"\", instance=\"$instance\", cluster=\"$cluster\"})\n  ) != 0\n)\n",
+                    "expr": "sort_desc(1 -\n  (\n    max without (mountpoint, fstype) (node_filesystem_avail_bytes{job=\"node-exporter\", fstype!=\"\", instance=\"$instance\", cluster=~\"$cluster\"})\n    /\n    max without (mountpoint, fstype) (node_filesystem_size_bytes{job=\"node-exporter\", fstype!=\"\", instance=\"$instance\", cluster=~\"$cluster\"})\n  ) != 0\n)\n",
                     "legendFormat": "{{device}}"
                 }
             ],
@@ -557,12 +557,13 @@
                 "type": "datasource"
             },
             {
+                "allValue": ".*",
                 "datasource": {
                     "type": "prometheus",
                     "uid": "${datasource}"
                 },
                 "hide": 2,
-                "includeAll": false,
+                "includeAll": true,
                 "name": "cluster",
                 "query": "label_values(node_time_seconds, cluster)",
                 "refresh": 2,
@@ -575,7 +576,7 @@
                     "uid": "${datasource}"
                 },
                 "name": "instance",
-                "query": "label_values(node_exporter_build_info{job=\"node-exporter\", cluster=\"$cluster\"}, instance)",
+                "query": "label_values(node_exporter_build_info{job=\"node-exporter\", cluster=~\"$cluster\"}, instance)",
                 "refresh": 2,
                 "sort": 1,
                 "type": "query"

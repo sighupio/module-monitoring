@@ -11,9 +11,10 @@ namespace: monitoring
 images:
   - name: grafana/grafana
     newName: registry.sighup.io/fury/grafana/grafana
+    newTag: 12.4.1
   - name: kiwigrid/k8s-sidecar
     newName: registry.sighup.io/fury/kiwigrid/k8s-sidecar
-    newTag: 1.19.2
+    newTag: 1.22.2
 
 patches:
   - path: patches/grafana-dashboard-sidecar.yml
