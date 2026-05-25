@@ -10,11 +10,12 @@ metadata:
     app.kubernetes.io/instance: main
     app.kubernetes.io/name: alertmanager
     app.kubernetes.io/part-of: kube-prometheus
-    app.kubernetes.io/version: 0.28.1
+    app.kubernetes.io/version: 0.31.1
   name: main
   namespace: monitoring
 spec:
-  image: quay.io/prometheus/alertmanager:v0.28.1
+  alertmanagerConfigSelector: {}
+  image: quay.io/prometheus/alertmanager:v0.31.1
   nodeSelector:
     kubernetes.io/os: linux
   podMetadata:
@@ -23,7 +24,7 @@ spec:
       app.kubernetes.io/instance: main
       app.kubernetes.io/name: alertmanager
       app.kubernetes.io/part-of: kube-prometheus
-      app.kubernetes.io/version: 0.28.1
+      app.kubernetes.io/version: 0.31.1
   replicas: 3
   resources:
     limits:
@@ -38,4 +39,4 @@ spec:
     runAsNonRoot: true
     runAsUser: 1000
   serviceAccountName: alertmanager-main
-  version: 0.28.1
+  version: 0.31.1
