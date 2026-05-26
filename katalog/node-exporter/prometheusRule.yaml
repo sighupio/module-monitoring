@@ -2,7 +2,6 @@
 # Use of this source code is governed by a BSD-style
 # license that can be found in the LICENSE file.
 
----
 apiVersion: monitoring.coreos.com/v1
 kind: PrometheusRule
 metadata:
@@ -10,7 +9,7 @@ metadata:
     app.kubernetes.io/component: exporter
     app.kubernetes.io/name: node-exporter
     app.kubernetes.io/part-of: kube-prometheus
-    app.kubernetes.io/version: 1.9.1
+    app.kubernetes.io/version: 1.10.2
     prometheus: k8s
     role: alert-rules
   name: node-exporter-rules
@@ -335,9 +334,9 @@ spec:
       annotations:
         description: Bonding interface {{ $labels.master }} on {{ $labels.instance }} is in degraded state due to one or more slave failures.
         runbook_url: https://runbooks.prometheus-operator.dev/runbooks/node/nodebondingdegraded
-        summary: Bonding interface is degraded
+        summary: Bonding interface is degraded.
       expr: |
-        (node_bonding_slaves - node_bonding_active) != 0
+        (node_bonding_slaves{job="node-exporter"} - node_bonding_active{job="node-exporter"}) != 0
       for: 5m
       labels:
         severity: warning
@@ -408,3 +407,23 @@ spec:
           rate(node_network_transmit_drop_total{job="node-exporter", device!="lo"}[5m])
         )
       record: instance:node_network_transmit_drop_excluding_lo:rate5m
+    - expr: |
+        sum without (device) (
+          rate(node_network_receive_bytes_total{job="node-exporter", device!~"lo|veth.+"}[5m])
+        )
+      record: instance:node_network_receive_bytes_physical:rate5m
+    - expr: |
+        sum without (device) (
+          rate(node_network_transmit_bytes_total{job="node-exporter", device!~"lo|veth.+"}[5m])
+        )
+      record: instance:node_network_transmit_bytes_physical:rate5m
+    - expr: |
+        sum without (device) (
+          rate(node_network_receive_drop_total{job="node-exporter", device!~"lo|veth.+"}[5m])
+        )
+      record: instance:node_network_receive_drop_physical:rate5m
+    - expr: |
+        sum without (device) (
+          rate(node_network_transmit_drop_total{job="node-exporter", device!~"lo|veth.+"}[5m])
+        )
+      record: instance:node_network_transmit_drop_physical:rate5m
