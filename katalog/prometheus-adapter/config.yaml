@@ -3,91 +3,91 @@
 # license that can be found in the LICENSE file.
 
 rules:
-- metricsQuery: sum(rate(<<.Series>>{<<.LabelMatchers>>,container!="POD"}[1m])) by
-    (<<.GroupBy>>)
-  name:
-    as: ""
-    matches: ^container_(.*)_seconds_total$
-  resources:
-    overrides:
-      namespace:
-        resource: namespace
-      pod:
-        resource: pod
-  seriesFilters: []
-  seriesQuery: '{__name__=~"^container_.*",container!="POD",namespace!="",pod!=""}'
-- metricsQuery: sum(rate(<<.Series>>{<<.LabelMatchers>>,container!="POD"}[1m])) by
-    (<<.GroupBy>>)
-  name:
-    as: ""
-    matches: ^container_(.*)_total$
-  resources:
-    overrides:
-      namespace:
-        resource: namespace
-      pod:
-        resource: pod
-  seriesFilters:
-  - isNot: ^container_.*_seconds_total$
-  seriesQuery: '{__name__=~"^container_.*",container!="POD",namespace!="",pod!=""}'
-- metricsQuery: sum(<<.Series>>{<<.LabelMatchers>>,container!="POD"}) by (<<.GroupBy>>)
-  name:
-    as: ""
-    matches: ^container_(.*)$
-  resources:
-    overrides:
-      namespace:
-        resource: namespace
-      pod:
-        resource: pod
-  seriesFilters:
-  - isNot: ^container_.*_total$
-  seriesQuery: '{__name__=~"^container_.*",container!="POD",namespace!="",pod!=""}'
-- metricsQuery: sum(<<.Series>>{<<.LabelMatchers>>}) by (<<.GroupBy>>)
-  name:
-    as: ""
-    matches: ""
-  resources:
-    template: <<.Resource>>
-  seriesFilters:
-  - isNot: .*_total$
-  seriesQuery: '{namespace!="",__name__!~"^container_.*"}'
-- metricsQuery: sum(rate(<<.Series>>{<<.LabelMatchers>>}[1m])) by (<<.GroupBy>>)
-  name:
-    as: ""
-    matches: ^(.*)_total$
-  resources:
-    template: <<.Resource>>
-  seriesFilters:
-  - isNot: .*_seconds_total
-  seriesQuery: '{namespace!="",__name__!~"^container_.*"}'
-- metricsQuery: sum(rate(<<.Series>>{<<.LabelMatchers>>}[1m])) by (<<.GroupBy>>)
-  name:
-    as: ""
-    matches: ^(.*)_seconds_total$
-  resources:
-    template: <<.Resource>>
-  seriesFilters: []
-  seriesQuery: '{namespace!="",__name__!~"^container_.*"}'
+  - metricsQuery: sum(rate(<<.Series>>{<<.LabelMatchers>>,container!="POD"}[1m])) by
+      (<<.GroupBy>>)
+    name:
+      as: ""
+      matches: ^container_(.*)_seconds_total$
+    resources:
+      overrides:
+        namespace:
+          resource: namespace
+        pod:
+          resource: pod
+    seriesFilters: [ ]
+    seriesQuery: '{__name__=~"^container_.*",container!="POD",namespace!="",pod!=""}'
+  - metricsQuery: sum(rate(<<.Series>>{<<.LabelMatchers>>,container!="POD"}[1m])) by
+      (<<.GroupBy>>)
+    name:
+      as: ""
+      matches: ^container_(.*)_total$
+    resources:
+      overrides:
+        namespace:
+          resource: namespace
+        pod:
+          resource: pod
+    seriesFilters:
+      - isNot: ^container_.*_seconds_total$
+    seriesQuery: '{__name__=~"^container_.*",container!="POD",namespace!="",pod!=""}'
+  - metricsQuery: sum(<<.Series>>{<<.LabelMatchers>>,container!="POD"}) by (<<.GroupBy>>)
+    name:
+      as: ""
+      matches: ^container_(.*)$
+    resources:
+      overrides:
+        namespace:
+          resource: namespace
+        pod:
+          resource: pod
+    seriesFilters:
+      - isNot: ^container_.*_total$
+    seriesQuery: '{__name__=~"^container_.*",container!="POD",namespace!="",pod!=""}'
+  - metricsQuery: sum(<<.Series>>{<<.LabelMatchers>>}) by (<<.GroupBy>>)
+    name:
+      as: ""
+      matches: ""
+    resources:
+      template: <<.Resource>>
+    seriesFilters:
+      - isNot: .*_total$
+    seriesQuery: '{namespace!="",__name__!~"^container_.*"}'
+  - metricsQuery: sum(rate(<<.Series>>{<<.LabelMatchers>>}[1m])) by (<<.GroupBy>>)
+    name:
+      as: ""
+      matches: ^(.*)_total$
+    resources:
+      template: <<.Resource>>
+    seriesFilters:
+      - isNot: .*_seconds_total
+    seriesQuery: '{namespace!="",__name__!~"^container_.*"}'
+  - metricsQuery: sum(rate(<<.Series>>{<<.LabelMatchers>>}[1m])) by (<<.GroupBy>>)
+    name:
+      as: ""
+      matches: ^(.*)_seconds_total$
+    resources:
+      template: <<.Resource>>
+    seriesFilters: [ ]
+    seriesQuery: '{namespace!="",__name__!~"^container_.*"}'
 externalRules:
-- metricsQuery: max(<<.Series>>{<<.LabelMatchers>>})
-  name:
-    as: $0
-    matches: ^.*_queue_(length|size)$
-  resources:
-    overrides:
-      namespace:
-        resource: namespace
-  seriesQuery: '{__name__=~"^.*_queue_(length|size)$",namespace!=""}'
-- metricsQuery: max(<<.Series>>{<<.LabelMatchers>>})
-  name:
-    as: $0
-    matches: ^.*_queue$
-  resources:
-    overrides:
-      namespace:
-        resource: namespace
-  seriesQuery: '{__name__=~"^.*_queue$",namespace!=""}'
+  - metricsQuery: max(<<.Series>>{<<.LabelMatchers>>})
+    name:
+      as: $0
+      matches: ^.*_queue_(length|size)$
+    resources:
+      overrides:
+        namespace:
+          resource: namespace
+    seriesQuery: '{__name__=~"^.*_queue_(length|size)$",namespace!=""}'
+  - metricsQuery: max(<<.Series>>{<<.LabelMatchers>>})
+    name:
+      as: $0
+      matches: ^.*_queue$
+    resources:
+      overrides:
+        namespace:
+          resource: namespace
+    seriesQuery: '{__name__=~"^.*_queue$",namespace!=""}'
 resourceRules:
   cpu:
     containerLabel: container
