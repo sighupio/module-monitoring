@@ -160,9 +160,10 @@ case "${FURY_MODULE}" in
   "prometheus-adapter")
     populate_package "prometheusAdapter"
     helm repo add prometheus-community https://prometheus-community.github.io/helm-charts
+    helm repo update
     PROMETHEUS_ADAPTER_RELEASE=$(yq '.metadata.labels."app.kubernetes.io/version"' < apiService.yaml )
     yq '.metadata.labels' < apiService.yaml > "${WORK_DIR}/labels.yml"
-    KUBE_PROMETHEUS_ADAPTER_RELEASE=$(helm search repo prometheus-adapter -l -o json | jq -r --arg PROMETHEUS_ADAPTER_RELEASE "${PROMETHEUS_ADAPTER_RELEASE}" '.[] | select(.app_version == ("v"+$PROMETHEUS_ADAPTER_RELEASE)) | .version')
+    KUBE_PROMETHEUS_ADAPTER_RELEASE=$(helm search repo prometheus-community/prometheus-adapter -l -o json | jq -r --arg PROMETHEUS_ADAPTER_RELEASE "${PROMETHEUS_ADAPTER_RELEASE}" '[.[] | select(.app_version == ("v"+$PROMETHEUS_ADAPTER_RELEASE)) | .version] | first')
     cd "${WORK_DIR}"
     helm template \
       --release-name prometheus-adapter \
