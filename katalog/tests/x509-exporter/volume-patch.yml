@@ -10,7 +10,23 @@ spec:
   template:
     spec:
       volumes:
-        - name: etc-etcd-pki
+        - name: file-d53b89938a3d439c2fc32700f21b9a6d3d5e280b
           hostPath:
             path: /etc/kubernetes/pki
+            type: Directory
+        - name: file-c8e6234df1c5e705baa1abe5cd91a672353607a4
+          hostPath:
+            path: /etc/kubernetes/pki/etcd
+            type: Directory
+        - name: file-67ffd277e7234401ae8ad9470bbabc6fbab0ec70
+          hostPath:
+            path: /etc/kubernetes/pki/etcd
+            type: Directory
+        - name: file-c04fb1e17a554394e8bb9da2faa8392f750854d7
+          hostPath:
+            path: /etc/kubernetes/pki/etcd
+            type: Directory
+        - name: file-f4a717b09c34f92953529a15f6f35bd47fd17add
+          hostPath:
+            path: /etc/kubernetes/pki/etcd
             type: Directory
