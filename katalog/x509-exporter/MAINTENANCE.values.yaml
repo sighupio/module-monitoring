@@ -8,8 +8,8 @@
 image:
   registry: registry.sighup.io/fury
 grafana:
-  # the following will create a configmap where you can get the dashboard json file
-  createDashboard: true
+  # We create the ConfigMap manually because automatic creation generates a non-human-readable one-line resource.
+  createDashboard: false
 
 hostPathsExporter:
   daemonSets:
@@ -27,13 +27,7 @@ hostPathsExporter:
               - matchExpressions:
                   - key: node-role.kubernetes.io/control-plane
                     operator: Exists
-              - matchExpressions:
-                  - key: node-role.kubernetes.io/master
-                    operator: Exists
       tolerations:
-        - key: node-role.kubernetes.io/master
-          operator: Exists
-          effect: NoSchedule
         - key: node-role.kubernetes.io/control-plane
           operator: Exists
           effect: NoSchedule

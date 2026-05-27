@@ -9,6 +9,17 @@ kind: Kustomization
 namespace: monitoring
 
 resources:
-  - common
-  - daemonset
-  - deployment
+  - deploy.yaml
+
+generatorOptions:
+  labels:
+    grafana-sighup-dashboard: default
+    grafana_dashboard: "1"
+  annotations:
+    grafana-folder: "Monitoring"
+  disableNameSuffixHash: true
+
+configMapGenerator:
+  - name: x509-certificate-exporter-dashboard
+    files:
+      - config/x509-certificate-exporter.json

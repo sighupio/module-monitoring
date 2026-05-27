@@ -1,38 +1,40 @@
 # `x509-exporter` Package Maintenance
 
-> [!NOTE]
-> This maintenance guide needs some love, please improve it while you work on the module.
-> Step 3. in particular has _draw the rest of the owl_ vibes.
-> We probably need to pass the right values to the chart, there's a starting point
-> in the `MAINTENANCE.values.yaml` file, but I ran out of time.
-> Any little improvement to this guide is welcome.
+## Upgrading
 
-To prepare a new release of this package:
+To update the x509-exporter package, follow these steps.
 
-1. Get the latest release from upstream: https://github.com/enix/x509-certificate-exporter/releases
+> [!IMPORTANT]
+> The following commands assume your PWD is `katalog/x509-exporter`.
 
-2. Generate the manifest using the right version:
+1. Update the Helm repo and check available chart versions:
+   ```bash
+   helm repo add enix https://charts.enix.io
+   helm repo update
+   helm search repo enix/x509-certificate-exporter -l
+   ```
 
-```bash
-mkdir temp && cd temp
-helm repo add enix https://charts.enix.io
-helm template x509-certificate-exporter enix/x509-certificate-exporter --version 3.19.1 > manifests.yaml # you can try passing the --values MAINTENANCE.values.yaml flag too
-# optional: split the manifest into several files for easier comparing:
-yq -s '.kind + .metadata.name' manifests.yaml
-```
+2. Run the upgrade script, specifying the desired chart version:
+   ```bash
+   X509_CHART_VERSION=4.1.0 ./upgrade.sh
+   ```
 
-3. Check the differences between `manifests.yaml` and the manifests within this repository tree, adjust everything accordingly.
+   This script will:
+   - Pull the specified chart version from the `enix` Helm repo
+   - Lint the chart against `MAINTENANCE.values.yaml`
+   - Generate `deploy.yaml` from the Helm chart template
+   - Download the Grafana dashboard JSON into `config/x509-certificate-exporter.json`
+   - Patch all labels to `app: x509-certificate-exporter` (with `prometheus: k8s` and `role: alert-rules` on `PrometheusRule`)
+   - Patch `spec.selector` and `spec.template.metadata.labels` on DaemonSets, Deployment and Service
+   - Run `mise run add-license`
 
-NOTE: The labels added by Helm have been removed and changed to `app: x509-certificate-exporter`
+3. Review the changes:
 
-NOTE2: Grafana dashboard is taken from: https://github.com/enix/x509-certificate-exporter/blob/v3.19.1/deploy/charts/x509-certificate-exporter/grafana-dashboards/x509-certificate-exporter.json or take it from the generated configmap.
+   - `deploy.yaml` — all Kubernetes manifests (generated, do not edit manually)
+   - `config/x509-certificate-exporter.json` — Grafana dashboard (downloaded from upstream)
+   - `kustomization.yaml` — references `deploy.yaml` and generates the dashboard ConfigMap via `configMapGenerator`
+   - `MAINTENANCE.values.yaml` — Helm values used to generate the manifests
 
-1. Sync the new image to our registry in the [`monitoring` images.yaml file container-image-sync repository](https://github.com/sighupio/container-image-sync/blob/main/modules/monitoring/images.yml).
+   > **Warning:** We don't use v4.2.0 yet because it's still a release candidate ([v4.2.0-rc.1](https://github.com/enix/x509-certificate-exporter/releases/tag/v4.2.0-rc.1)), but we manually applied its fix in `deploy.yaml`: the alert is renamed from `X509ExporterReadErrors` to `SourceErrors` and the broken `x509_read_errors` metric is replaced with `x509_source_errors_total`.
 
-2. Update each `kustomization.yaml` file with the new image.
-
-3. Remove the temporary directory
-
-```bash
-rm -rf temp
-```
+4. Sync the new image to our registry in the [`monitoring` images.yaml file container-image-sync repository](https://github.com/sighupio/container-image-sync/blob/main/modules/monitoring/images.yml).
