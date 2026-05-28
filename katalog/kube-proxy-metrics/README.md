@@ -17,7 +17,7 @@ by kube-proxy.
 
 ## Image repository and tag
 
-- kube-rbac-proxy image: `registry.sighup.io/fury/brancz/kube-rbac-proxy:v0.19.1`
+- kube-rbac-proxy image: `registry.sighup.io/fury/brancz/kube-rbac-proxy:v0.22.0`
 - kube-rbac-proxy repository: [kube-rbac-proxy on Github][krp-gh]
 
 ## Configuration
