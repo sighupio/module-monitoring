@@ -11,12 +11,16 @@ namespace: monitoring
 images:
   - name: quay.io/prometheus/blackbox-exporter
     newName: registry.sighup.io/fury/prometheus/blackbox-exporter
-  - name: jimmidyson/configmap-reload
-    newName: registry.sighup.io/fury/jimmidyson/configmap-reload
+    newTag: v0.28.0
   - name: quay.io/brancz/kube-rbac-proxy
     newName: registry.sighup.io/fury/brancz/kube-rbac-proxy
+    newTag: v0.21.0
   - name: ghcr.io/jimmidyson/configmap-reload
     newName: registry.sighup.io/fury/jimmidyson/configmap-reload
+    newTag: v0.15.0
+  - name: jimmidyson/configmap-reload
+    newName: registry.sighup.io/fury/jimmidyson/configmap-reload
+    newTag: v0.15.0
 resources:
   - clusterRole.yaml
   - clusterRoleBinding.yaml
