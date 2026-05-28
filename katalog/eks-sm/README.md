@@ -13,7 +13,7 @@ This package provides monitoring for Kubernetes components `kubelet` and
 
 ## Configuration
 
-Fury distribution EKS ServiceMonitor has following configuration:
+Fury distribution EKS ServiceMonitor has the following configuration:
 
 - `api-server` and `kubelet` metrics are scraped with `30s` intervals
 - `coredns` metrics are scraped with `15s` intervals
