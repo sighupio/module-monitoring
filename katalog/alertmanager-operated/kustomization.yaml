@@ -23,7 +23,7 @@ patches:
         # https://github.com/sighupio/module-monitoring/issues/132
         alertmanagerConfigMatcherStrategy:
           type: None
-        image: registry.sighup.io/fury/prometheus/alertmanager:v0.28.1
+        image: registry.sighup.io/fury/prometheus/alertmanager:v0.31.1
         replicas: 1
 
 resources:
