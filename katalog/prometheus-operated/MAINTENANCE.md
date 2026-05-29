@@ -20,7 +20,7 @@ Replace `KUBE_PROMETHEUS_RELEASE` with the current upstream release.
 
 4. Move `KubeClientCertificateExpiration`, `KubeSchedulerDown` and `KubeControllerManagerDown` alerts from `kubernetes-monitoring-rules.yml` to `configs/kubeadm/rules.yml`.
 
-5. Sync the new image to our registry in the [`monitoring` images.yaml file fury-distribution-container-image-sync repository](https://github.com/sighupio/fury-distribution-container-image-sync/blob/main/modules/monitoring/images.yml).
+5. Sync the new image to our registry in the [`monitoring` images.yaml file container-image-sync repository](https://github.com/sighupio/container-image-sync/blob/main/modules/monitoring/images.yml).
 
 6. Update the Prometheus Agent manifests in the distribution with the new image:
 
