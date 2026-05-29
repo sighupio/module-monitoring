@@ -39,10 +39,6 @@ yq -i ".image.tag = \"${MINIO_IMAGE_TAG}\"" MAINTENANCE.values.yaml
 yq -i ".mcImage.tag = \"${MC_VERSION}\"" MAINTENANCE.values.yaml
 echo "Updated image tags in MAINTENANCE.values.yaml"
 
-yq -i "(.images[] | select(.name == \"quay.io/minio/minio\")).newTag = \"${MINIO_IMAGE_TAG}\"" kustomization.yaml
-yq -i "(.images[] | select(.name == \"quay.io/minio/mc\")).newTag = \"${MC_VERSION}\"" kustomization.yaml
-echo "Updated image tags in kustomization.yaml"
-
 helm template minio-monitoring /tmp/minio-chainguard/helm/minio --values MAINTENANCE.values.yaml -n monitoring \
   | yq 'select(.kind != "ConfigMap" or .metadata.name != "minio-monitoring")' > deploy.yaml
 echo "Template generated in deploy.yaml"
