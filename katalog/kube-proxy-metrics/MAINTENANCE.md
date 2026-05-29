@@ -10,6 +10,6 @@ To prepare a new release of this package:
 
 2. Check the differences introduced in `kustomization.yaml` and verify the new tag.
 
-3. Sync the new image to our registry in the [`monitoring` images.yaml file fury-distribution-container-image-sync repository](https://github.com/sighupio/fury-distribution-container-image-sync/blob/main/modules/monitoring/images.yml).
+3. Sync the new image to our registry in the [`monitoring` images.yaml file container-image-sync repository](https://github.com/sighupio/container-image-sync/blob/main/modules/monitoring/images.yml).
 
 4. Update the image tag in `README.md` to reflect the new version.
