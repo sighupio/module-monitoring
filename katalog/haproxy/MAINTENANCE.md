@@ -1,29 +1,26 @@
 # HAproxy Package Maintenance Guide
 
-## Grafana Dashboard
+## Upgrade
 
-The included Grafana dashboard has been taken from:
+Run the upgrade script to update both rules and dashboard from upstream:
 
-<https://grafana.com/grafana/dashboards/12693-haproxy-2-full//>
-<https://grafana.com/api/dashboards/12693/revisions/8/download>
+```bash
+./upgrade.sh
+```
 
-### Customizations
+The script will:
 
-1. Changed the dashboard title from "HAproxy 2 Full" to "HAproxy"
-2. Changed datasource variable name from `DS_PROMETHEUS` to `datasource`.
+1. Download Prometheus alert rules from [awesome-prometheus-alerts](https://github.com/samber/awesome-prometheus-alerts) and update `rules/haproxy-rules.yaml` (removing the `HaproxyHttpSlowingDown` alert)
+2. Download the latest Grafana dashboard from [grafana.com](https://grafana.com/grafana/dashboards/12693-haproxy/) and apply customizations (datasource variable rename and `code` variable metric patch)
+3. Run `mise add-license` to add license headers
+
+## Customizations
+
+### Dashboard
+
+1. Changed datasource variable name from `DS_PROMETHEUS` to `datasource`.
 2. Changed the `code` variable metric from `haproxy_server_http_responses_total{instance="$host"}` to `{__name__=~"haproxy_.*_http_responses_total",instance="$host"}`.
 
-## Alerts
+### Alerts
 
-The Prometheus Rules for alerts are taken from the [Awesome Prometheus Alerts](https://samber.github.io/awesome-prometheus-alerts/rules#haproxy-1) project.
-
-In particular from here:
-
-<https://raw.githubusercontent.com/samber/awesome-prometheus-alerts/master/dist/rules/haproxy/embedded-exporter-v2.yml>
-
-We took the contents of the previous link and embedded it into a `PrometheusRule` object.
-
-### Alerts Customizations
-
-1. Commented out the `HaproxyHttpSlowingDown` alert
-2. Edited the `HaproxyBackendMaxActiveSession>80%` alert to use the `haproxy_backend_current_sessions` and `haproxy_backend_limit_sessions` metrics. We also [opened a PR upstream](https://github.com/samber/awesome-prometheus-alerts/pull/475) with this fix.
+1. Removed the `HaproxyHttpSlowingDown` alert from upstream rules.

@@ -5,17 +5,14 @@
 ---
 apiVersion: kustomize.config.k8s.io/v1beta1
 kind: Kustomization
-
 namespace: monitoring
-
 generatorOptions:
   labels:
     grafana-sighup-dashboard: default
   annotations:
     grafana-folder: "External Components"
   disableNameSuffixHash: true
-
 configMapGenerator:
   - name: haproxy-grafana-dashboards
     files:
-      - 12693_rev8.json
+      - 12693_rev14.json
