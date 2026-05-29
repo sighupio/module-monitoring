@@ -5,9 +5,21 @@
 
 set -euo pipefail
 
+if [ -z "${RULES_VERSION:-}" ]; then
+  echo "Usage: RULES_VERSION=2026-04-10.1 DASHBOARD_VERSION=14 ./upgrade.sh"
+  exit 1
+fi
+echo "Using rules version ${RULES_VERSION}"
+
+if [ -z "${DASHBOARD_VERSION:-}" ]; then
+  echo "Usage: RULES_VERSION=2026-04-10.1 DASHBOARD_VERSION=14 ./upgrade.sh"
+  exit 1
+fi
+echo "Using dashboard version ${DASHBOARD_VERSION}"
+
 # --- Rules ---
 GROUPS_FILE=$(mktemp -p /tmp)
-wget -q "https://raw.githubusercontent.com/samber/awesome-prometheus-alerts/master/dist/rules/haproxy/embedded-exporter-v2.yml" -O "${GROUPS_FILE}"
+wget -q "https://raw.githubusercontent.com/samber/awesome-prometheus-alerts/refs/tags/${RULES_VERSION}/dist/rules/haproxy/embedded-exporter-v2.yml" -O "${GROUPS_FILE}"
 echo "Downloaded rules from upstream"
 
 yq -i '.groups[].rules |= map(select(.alert != "HaproxyHttpSlowingDown"))' "${GROUPS_FILE}"
@@ -18,11 +30,8 @@ rm -f "$GROUPS_FILE"
 echo "Prometheus rule updated"
 
 # --- Dashboard ---
-LATEST_REVISION=$(curl -sf "https://grafana.com/api/dashboards/12693" | jq -r '.revision')
-echo "Found latest dashboard revision ${LATEST_REVISION}"
-
 DASHBOARD_FILE=$(mktemp -p /tmp)
-wget -q "https://grafana.com/api/dashboards/12693/revisions/${LATEST_REVISION}/download" -O "${DASHBOARD_FILE}"
+wget -q "https://grafana.com/api/dashboards/12693/revisions/${DASHBOARD_VERSION}/download" -O "${DASHBOARD_FILE}"
 
 SED_FILE=$(mktemp -p /tmp)
 sed 's/DS_PROMETHEUS/datasource/g' "${DASHBOARD_FILE}" > "${SED_FILE}"
@@ -37,10 +46,10 @@ jq '
 ' "${SED_FILE}" > "${JQ_FILE}"
 
 rm -f dashboards/*.json
-mv "${JQ_FILE}" "dashboards/12693_rev${LATEST_REVISION}.json"
+mv "${JQ_FILE}" "dashboards/12693_rev${DASHBOARD_VERSION}.json"
 rm $DASHBOARD_FILE $SED_FILE
 
-yq -i ".configMapGenerator[0].files[0] = \"12693_rev${LATEST_REVISION}.json\"" dashboards/kustomization.yaml
-echo "Downloaded and patched dashboards/12693_rev${LATEST_REVISION}.json"
+yq -i ".configMapGenerator[0].files[0] = \"12693_rev${DASHBOARD_VERSION}.json\"" dashboards/kustomization.yaml
+echo "Downloaded and patched dashboards/12693_rev${DASHBOARD_VERSION}.json"
 
 mise add-license
