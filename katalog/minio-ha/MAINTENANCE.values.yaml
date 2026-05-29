@@ -4,43 +4,45 @@
 
 image:
   repository: registry.sighup.io/fury/minio
-  tag: RELEASE.2024-10-13T13-34-11Z
+  tag: RELEASE.2026-05-20T23-44-52Z-chainguard
   pullPolicy: IfNotPresent
-
 mcImage:
   repository: registry.sighup.io/fury/minio/mc
-  tag: RELEASE.2024-10-08T09-37-26Z
+  tag: RELEASE.2025-08-13T08-35-41Z
   pullPolicy: IfNotPresent
-
 mode: distributed
-
 rootUser: "minio"
 rootPassword: "minio123"
-
+existingSecret: "minio-monitoring"
 # Number of drives attached to a node
 drivesPerNode: 2
 # Number of MinIO containers running
 replicas: 3
 # Number of expanded MinIO clusters
 pools: 1
-
 ## TLS Settings for MinIO
 tls:
   enabled: false
-
 persistence:
   enabled: true
   size: 10Gi
-
 ingress:
   enabled: false
-
 consoleIngress:
   enabled: false
-
-affinity: {}
+affinity:
+  podAntiAffinity:
+    preferredDuringSchedulingIgnoredDuringExecution:
+      - weight: 100
+        podAffinityTerm:
+          labelSelector:
+            matchExpressions:
+              - key: "release"
+                operator: In
+                values:
+                  - minio-monitoring
+          topologyKey: "kubernetes.io/hostname"
 topologySpreadConstraints: []
-
 ## Add stateful containers to have security context, if enabled MinIO will run as this
 ## user and group NOTE: securityContext is only enabled if persistence.enabled=true
 securityContext:
@@ -49,42 +51,36 @@ securityContext:
   runAsGroup: 1000
   fsGroup: 1000
   fsGroupChangePolicy: "OnRootMismatch"
-
 # Additational pod annotations
 podAnnotations: {}
-
 # Additional pod labels
 podLabels: {}
-
 ## Configure resource requests and limits
 ## ref: http://kubernetes.io/docs/user-guide/compute-resources/
 ##
 resources:
   requests:
     memory: 512Mi
-
 ## List of users to be created after minio install
 ##
 users: []
-  ## Username, password and policy to be assigned to the user
-  ## Default policies are [readonly|readwrite|writeonly|consoleAdmin|diagnostics]
-  ## Add new policies as explained here https://min.io/docs/minio/kubernetes/upstream/administration/identity-access-management.html#access-management
-  ## NOTE: this will fail if LDAP is enabled in your MinIO deployment
-  ## make sure to disable this if you are using LDAP.
-  #- accessKey: console
-  #  secretKey: console123
-  #  policy: consoleAdmin
-  # Or you can refer to specific secret
-  #- accessKey: externalSecret
-  #  existingSecret: my-secret
-  #  existingSecretKey: password
-  #  policy: readonly
+## Username, password and policy to be assigned to the user
+## Default policies are [readonly|readwrite|writeonly|consoleAdmin|diagnostics]
+## Add new policies as explained here https://min.io/docs/minio/kubernetes/upstream/administration/identity-access-management.html#access-management
+## NOTE: this will fail if LDAP is enabled in your MinIO deployment
+## make sure to disable this if you are using LDAP.
+#- accessKey: console
+#  secretKey: console123
+#  policy: consoleAdmin
+# Or you can refer to specific secret
+#- accessKey: externalSecret
+#  existingSecret: my-secret
+#  existingSecretKey: password
+#  policy: readonly
 
 ## List of buckets to be created after minio install
 ##
 buckets: []
-
-
 ## Specify the service account to use for the MinIO pods. If 'create' is set to 'false'
 ## and 'name' is left unspecified, the account 'default' will be used.
 serviceAccount:
@@ -92,7 +88,6 @@ serviceAccount:
   ## The name of the service account to use. If 'create' is 'true', a service account with that name
   ## will be created.
   name: "minio-sa"
-
 metrics:
   serviceMonitor:
     enabled: true
@@ -104,8 +99,8 @@ metrics:
     relabelConfigs: {}
     # for cluster metrics
     relabelConfigsCluster: {}
-      # metricRelabelings:
-      #   - regex: (server|pod)
+    # metricRelabelings:
+    #   - regex: (server|pod)
     #     action: labeldrop
     # namespace: monitoring
     # interval: 30s
