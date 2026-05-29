@@ -1,6 +1,7 @@
 # Copyright (c) 2017-present SIGHUP s.r.l All rights reserved.
 # Use of this source code is governed by a BSD-style
 # license that can be found in the LICENSE file.
+
 ---
 # Source: mimir-distributed/templates/compactor/compactor-pdb.yaml
 apiVersion: policy/v1
@@ -8,11 +9,11 @@ kind: PodDisruptionBudget
 metadata:
   name: mimir-distributed-compactor
   labels:
-    helm.sh/chart: mimir-distributed-5.8.0
+    helm.sh/chart: mimir-distributed-6.0.6
     app.kubernetes.io/name: mimir
     app.kubernetes.io/instance: mimir-distributed
     app.kubernetes.io/component: compactor
-    app.kubernetes.io/version: "2.17.0"
+    app.kubernetes.io/version: "3.0.4"
     app.kubernetes.io/managed-by: Helm
   namespace: "monitoring"
 spec:
@@ -29,11 +30,11 @@ kind: PodDisruptionBudget
 metadata:
   name: mimir-distributed-distributor
   labels:
-    helm.sh/chart: mimir-distributed-5.8.0
+    helm.sh/chart: mimir-distributed-6.0.6
     app.kubernetes.io/name: mimir
     app.kubernetes.io/instance: mimir-distributed
     app.kubernetes.io/component: distributor
-    app.kubernetes.io/version: "2.17.0"
+    app.kubernetes.io/version: "3.0.4"
     app.kubernetes.io/managed-by: Helm
   namespace: "monitoring"
 spec:
@@ -50,11 +51,11 @@ kind: PodDisruptionBudget
 metadata:
   name: mimir-distributed-gateway
   labels:
-    helm.sh/chart: mimir-distributed-5.8.0
+    helm.sh/chart: mimir-distributed-6.0.6
     app.kubernetes.io/name: mimir
     app.kubernetes.io/instance: mimir-distributed
     app.kubernetes.io/component: gateway
-    app.kubernetes.io/version: "2.17.0"
+    app.kubernetes.io/version: "3.0.4"
     app.kubernetes.io/managed-by: Helm
   namespace: "monitoring"
 spec:
@@ -71,11 +72,11 @@ kind: PodDisruptionBudget
 metadata:
   name: mimir-distributed-ingester
   labels:
-    helm.sh/chart: mimir-distributed-5.8.0
+    helm.sh/chart: mimir-distributed-6.0.6
     app.kubernetes.io/name: mimir
     app.kubernetes.io/instance: mimir-distributed
     app.kubernetes.io/component: ingester
-    app.kubernetes.io/version: "2.17.0"
+    app.kubernetes.io/version: "3.0.4"
     app.kubernetes.io/managed-by: Helm
   namespace: "monitoring"
 spec:
@@ -92,11 +93,11 @@ kind: PodDisruptionBudget
 metadata:
   name: mimir-distributed-querier
   labels:
-    helm.sh/chart: mimir-distributed-5.8.0
+    helm.sh/chart: mimir-distributed-6.0.6
     app.kubernetes.io/name: mimir
     app.kubernetes.io/instance: mimir-distributed
     app.kubernetes.io/component: querier
-    app.kubernetes.io/version: "2.17.0"
+    app.kubernetes.io/version: "3.0.4"
     app.kubernetes.io/managed-by: Helm
   namespace: "monitoring"
 spec:
@@ -113,11 +114,11 @@ kind: PodDisruptionBudget
 metadata:
   name: mimir-distributed-query-frontend
   labels:
-    helm.sh/chart: mimir-distributed-5.8.0
+    helm.sh/chart: mimir-distributed-6.0.6
     app.kubernetes.io/name: mimir
     app.kubernetes.io/instance: mimir-distributed
     app.kubernetes.io/component: query-frontend
-    app.kubernetes.io/version: "2.17.0"
+    app.kubernetes.io/version: "3.0.4"
     app.kubernetes.io/managed-by: Helm
   namespace: "monitoring"
 spec:
@@ -134,11 +135,11 @@ kind: PodDisruptionBudget
 metadata:
   name: mimir-distributed-query-scheduler
   labels:
-    helm.sh/chart: mimir-distributed-5.8.0
+    helm.sh/chart: mimir-distributed-6.0.6
     app.kubernetes.io/name: mimir
     app.kubernetes.io/instance: mimir-distributed
     app.kubernetes.io/component: query-scheduler
-    app.kubernetes.io/version: "2.17.0"
+    app.kubernetes.io/version: "3.0.4"
     app.kubernetes.io/managed-by: Helm
   namespace: "monitoring"
 spec:
@@ -155,11 +156,11 @@ kind: PodDisruptionBudget
 metadata:
   name: mimir-distributed-store-gateway
   labels:
-    helm.sh/chart: mimir-distributed-5.8.0
+    helm.sh/chart: mimir-distributed-6.0.6
     app.kubernetes.io/name: mimir
     app.kubernetes.io/instance: mimir-distributed
     app.kubernetes.io/component: store-gateway
-    app.kubernetes.io/version: "2.17.0"
+    app.kubernetes.io/version: "3.0.4"
     app.kubernetes.io/managed-by: Helm
   namespace: "monitoring"
 spec:
@@ -176,10 +177,10 @@ kind: ServiceAccount
 metadata:
   name: mimir-distributed
   labels:
-    helm.sh/chart: mimir-distributed-5.8.0
+    helm.sh/chart: mimir-distributed-6.0.6
     app.kubernetes.io/name: mimir
     app.kubernetes.io/instance: mimir-distributed
-    app.kubernetes.io/version: "2.17.0"
+    app.kubernetes.io/version: "3.0.4"
     app.kubernetes.io/managed-by: Helm
   annotations:
     {}
@@ -191,11 +192,11 @@ kind: ConfigMap
 metadata:
   name: mimir-distributed-gateway-nginx
   labels:
-    helm.sh/chart: mimir-distributed-5.8.0
+    helm.sh/chart: mimir-distributed-6.0.6
     app.kubernetes.io/name: mimir
     app.kubernetes.io/instance: mimir-distributed
     app.kubernetes.io/component: gateway-nginx
-    app.kubernetes.io/version: "2.17.0"
+    app.kubernetes.io/version: "3.0.4"
     app.kubernetes.io/managed-by: Helm
   namespace: "monitoring"
 data:
@@ -337,10 +338,10 @@ kind: ConfigMap
 metadata:
   name: mimir-distributed-runtime
   labels:
-    helm.sh/chart: mimir-distributed-5.8.0
+    helm.sh/chart: mimir-distributed-6.0.6
     app.kubernetes.io/name: mimir
     app.kubernetes.io/instance: mimir-distributed
-    app.kubernetes.io/version: "2.17.0"
+    app.kubernetes.io/version: "3.0.4"
     app.kubernetes.io/managed-by: Helm
   namespace: "monitoring"
 data:
@@ -354,18 +355,19 @@ kind: Service
 metadata:
   name: mimir-distributed-compactor
   labels:
-    helm.sh/chart: mimir-distributed-5.8.0
+    helm.sh/chart: mimir-distributed-6.0.6
     app.kubernetes.io/name: mimir
     app.kubernetes.io/instance: mimir-distributed
     app.kubernetes.io/component: compactor
     app.kubernetes.io/part-of: memberlist
-    app.kubernetes.io/version: "2.17.0"
+    app.kubernetes.io/version: "3.0.4"
     app.kubernetes.io/managed-by: Helm
   annotations:
     {}
   namespace: "monitoring"
 spec:
   type: ClusterIP
+  internalTrafficPolicy: Cluster
   ports:
     - port: 8080
       protocol: TCP
@@ -386,11 +388,11 @@ kind: Service
 metadata:
   name: mimir-distributed-continuous-test-headless
   labels:
-    helm.sh/chart: mimir-distributed-5.8.0
+    helm.sh/chart: mimir-distributed-6.0.6
     app.kubernetes.io/name: mimir
     app.kubernetes.io/instance: mimir-distributed
     app.kubernetes.io/component: continuous-test
-    app.kubernetes.io/version: "2.17.0"
+    app.kubernetes.io/version: "3.0.4"
     app.kubernetes.io/managed-by: Helm
   annotations:
     {}
@@ -415,12 +417,12 @@ kind: Service
 metadata:
   name: mimir-distributed-distributor-headless
   labels:
-    helm.sh/chart: mimir-distributed-5.8.0
+    helm.sh/chart: mimir-distributed-6.0.6
     app.kubernetes.io/name: mimir
     app.kubernetes.io/instance: mimir-distributed
     app.kubernetes.io/component: distributor
     app.kubernetes.io/part-of: memberlist
-    app.kubernetes.io/version: "2.17.0"
+    app.kubernetes.io/version: "3.0.4"
     app.kubernetes.io/managed-by: Helm
     prometheus.io/service-monitor: "false"
   annotations:
@@ -449,18 +451,19 @@ kind: Service
 metadata:
   name: mimir-distributed-distributor
   labels:
-    helm.sh/chart: mimir-distributed-5.8.0
+    helm.sh/chart: mimir-distributed-6.0.6
     app.kubernetes.io/name: mimir
     app.kubernetes.io/instance: mimir-distributed
     app.kubernetes.io/component: distributor
     app.kubernetes.io/part-of: memberlist
-    app.kubernetes.io/version: "2.17.0"
+    app.kubernetes.io/version: "3.0.4"
     app.kubernetes.io/managed-by: Helm
   annotations:
     {}
   namespace: "monitoring"
 spec:
   type: ClusterIP
+  internalTrafficPolicy: Cluster
   ports:
     - port: 8080
       protocol: TCP
@@ -481,17 +484,18 @@ kind: Service
 metadata:
   name: mimir-distributed-gateway
   labels:
-    helm.sh/chart: mimir-distributed-5.8.0
+    helm.sh/chart: mimir-distributed-6.0.6
     app.kubernetes.io/name: mimir
     app.kubernetes.io/instance: mimir-distributed
     app.kubernetes.io/component: gateway
-    app.kubernetes.io/version: "2.17.0"
+    app.kubernetes.io/version: "3.0.4"
     app.kubernetes.io/managed-by: Helm
   annotations:
     {}
   namespace: "monitoring"
 spec:
   type: ClusterIP
+  internalTrafficPolicy: Cluster
   ports:
     - port: 80
       protocol: TCP
@@ -512,13 +516,15 @@ kind: Service
 metadata:
   name: mimir-distributed-gossip-ring
   labels:
-    helm.sh/chart: mimir-distributed-5.8.0
+    helm.sh/chart: mimir-distributed-6.0.6
     app.kubernetes.io/name: mimir
     app.kubernetes.io/instance: mimir-distributed
     app.kubernetes.io/component: gossip-ring
-    app.kubernetes.io/version: "2.17.0"
+    app.kubernetes.io/version: "3.0.4"
     app.kubernetes.io/managed-by: Helm
   namespace: "monitoring"
+  annotations:
+    {}
 spec:
   type: ClusterIP
   clusterIP: None
@@ -540,12 +546,12 @@ kind: Service
 metadata:
   name: mimir-distributed-ingester-headless
   labels:
-    helm.sh/chart: mimir-distributed-5.8.0
+    helm.sh/chart: mimir-distributed-6.0.6
     app.kubernetes.io/name: mimir
     app.kubernetes.io/instance: mimir-distributed
     app.kubernetes.io/component: ingester
     app.kubernetes.io/part-of: memberlist
-    app.kubernetes.io/version: "2.17.0"
+    app.kubernetes.io/version: "3.0.4"
     app.kubernetes.io/managed-by: Helm
     prometheus.io/service-monitor: "false"
   annotations:
@@ -574,18 +580,19 @@ kind: Service
 metadata:
   name: mimir-distributed-ingester
   labels:
-    helm.sh/chart: mimir-distributed-5.8.0
+    helm.sh/chart: mimir-distributed-6.0.6
     app.kubernetes.io/name: mimir
     app.kubernetes.io/instance: mimir-distributed
     app.kubernetes.io/component: ingester
     app.kubernetes.io/part-of: memberlist
-    app.kubernetes.io/version: "2.17.0"
+    app.kubernetes.io/version: "3.0.4"
     app.kubernetes.io/managed-by: Helm
   annotations:
     {}
   namespace: "monitoring"
 spec:
   type: ClusterIP
+  internalTrafficPolicy: Cluster
   ports:
     - port: 8080
       protocol: TCP
@@ -606,18 +613,19 @@ kind: Service
 metadata:
   name: mimir-distributed-querier
   labels:
-    helm.sh/chart: mimir-distributed-5.8.0
+    helm.sh/chart: mimir-distributed-6.0.6
     app.kubernetes.io/name: mimir
     app.kubernetes.io/instance: mimir-distributed
     app.kubernetes.io/component: querier
     app.kubernetes.io/part-of: memberlist
-    app.kubernetes.io/version: "2.17.0"
+    app.kubernetes.io/version: "3.0.4"
     app.kubernetes.io/managed-by: Helm
   annotations:
     {}
   namespace: "monitoring"
 spec:
   type: ClusterIP
+  internalTrafficPolicy: Cluster
   ports:
     - port: 8080
       protocol: TCP
@@ -638,17 +646,18 @@ kind: Service
 metadata:
   name: mimir-distributed-query-frontend
   labels:
-    helm.sh/chart: mimir-distributed-5.8.0
+    helm.sh/chart: mimir-distributed-6.0.6
     app.kubernetes.io/name: mimir
     app.kubernetes.io/instance: mimir-distributed
     app.kubernetes.io/component: query-frontend
-    app.kubernetes.io/version: "2.17.0"
+    app.kubernetes.io/version: "3.0.4"
     app.kubernetes.io/managed-by: Helm
   annotations:
     {}
   namespace: "monitoring"
 spec:
   type: ClusterIP
+  internalTrafficPolicy: Cluster
   ports:
     - port: 8080
       protocol: TCP
@@ -670,11 +679,11 @@ metadata:
   name: mimir-distributed-query-scheduler-headless
   namespace: "monitoring"
   labels:
-    helm.sh/chart: mimir-distributed-5.8.0
+    helm.sh/chart: mimir-distributed-6.0.6
     app.kubernetes.io/name: mimir
     app.kubernetes.io/instance: mimir-distributed
     app.kubernetes.io/component: query-scheduler
-    app.kubernetes.io/version: "2.17.0"
+    app.kubernetes.io/version: "3.0.4"
     app.kubernetes.io/managed-by: Helm
     prometheus.io/service-monitor: "false"
   annotations:
@@ -704,16 +713,17 @@ metadata:
   name: mimir-distributed-query-scheduler
   namespace: "monitoring"
   labels:
-    helm.sh/chart: mimir-distributed-5.8.0
+    helm.sh/chart: mimir-distributed-6.0.6
     app.kubernetes.io/name: mimir
     app.kubernetes.io/instance: mimir-distributed
     app.kubernetes.io/component: query-scheduler
-    app.kubernetes.io/version: "2.17.0"
+    app.kubernetes.io/version: "3.0.4"
     app.kubernetes.io/managed-by: Helm
   annotations:
     {}
 spec:
   type: ClusterIP
+  internalTrafficPolicy: Cluster
   ports:
     - port: 8080
       protocol: TCP
@@ -734,12 +744,12 @@ kind: Service
 metadata:
   name: mimir-distributed-store-gateway-headless
   labels:
-    helm.sh/chart: mimir-distributed-5.8.0
+    helm.sh/chart: mimir-distributed-6.0.6
     app.kubernetes.io/name: mimir
     app.kubernetes.io/instance: mimir-distributed
     app.kubernetes.io/component: store-gateway
     app.kubernetes.io/part-of: memberlist
-    app.kubernetes.io/version: "2.17.0"
+    app.kubernetes.io/version: "3.0.4"
     app.kubernetes.io/managed-by: Helm
     prometheus.io/service-monitor: "false"
   annotations:
@@ -768,18 +778,19 @@ kind: Service
 metadata:
   name: mimir-distributed-store-gateway
   labels:
-    helm.sh/chart: mimir-distributed-5.8.0
+    helm.sh/chart: mimir-distributed-6.0.6
     app.kubernetes.io/name: mimir
     app.kubernetes.io/instance: mimir-distributed
     app.kubernetes.io/component: store-gateway
     app.kubernetes.io/part-of: memberlist
-    app.kubernetes.io/version: "2.17.0"
+    app.kubernetes.io/version: "3.0.4"
     app.kubernetes.io/managed-by: Helm
   annotations:
     {}
   namespace: "monitoring"
 spec:
   type: ClusterIP
+  internalTrafficPolicy: Cluster
   ports:
     - port: 8080
       protocol: TCP
@@ -801,11 +812,11 @@ metadata:
   annotations:
     {}
   labels:
-    helm.sh/chart: mimir-distributed-5.8.0
+    helm.sh/chart: mimir-distributed-6.0.6
     app.kubernetes.io/name: mimir
     app.kubernetes.io/instance: mimir-distributed
     app.kubernetes.io/component: continuous-test
-    app.kubernetes.io/version: "2.17.0"
+    app.kubernetes.io/version: "3.0.4"
     app.kubernetes.io/managed-by: Helm
   name: mimir-distributed-continuous-test
   namespace: "monitoring"
@@ -824,10 +835,10 @@ spec:
   template:
     metadata:
       labels:
-        helm.sh/chart: mimir-distributed-5.8.0
+        helm.sh/chart: mimir-distributed-6.0.6
         app.kubernetes.io/name: mimir
         app.kubernetes.io/instance: mimir-distributed
-        app.kubernetes.io/version: "2.17.0"
+        app.kubernetes.io/version: "3.0.4"
         app.kubernetes.io/managed-by: Helm
         app.kubernetes.io/component: continuous-test
       annotations:
@@ -845,7 +856,7 @@ spec:
           type: RuntimeDefault
       containers:
         - name: continuous-test
-          image: registry.sighup.io/fury/grafana/mimir:2.17.0
+          image: registry.sighup.io/fury/grafana/mimir:3.0.4
           imagePullPolicy: IfNotPresent
           args:
             - "-target=continuous-test"
@@ -878,6 +889,8 @@ spec:
               drop:
               - ALL
             readOnlyRootFilesystem: true
+          env:
+            []
       
       terminationGracePeriodSeconds: 30
       volumes:
@@ -894,12 +907,12 @@ kind: Deployment
 metadata:
   name: mimir-distributed-distributor
   labels:
-    helm.sh/chart: mimir-distributed-5.8.0
+    helm.sh/chart: mimir-distributed-6.0.6
     app.kubernetes.io/name: mimir
     app.kubernetes.io/instance: mimir-distributed
     app.kubernetes.io/component: distributor
     app.kubernetes.io/part-of: memberlist
-    app.kubernetes.io/version: "2.17.0"
+    app.kubernetes.io/version: "3.0.4"
     app.kubernetes.io/managed-by: Helm
   annotations:
     {}
@@ -920,10 +933,10 @@ spec:
   template:
     metadata:
       labels:
-        helm.sh/chart: mimir-distributed-5.8.0
+        helm.sh/chart: mimir-distributed-6.0.6
         app.kubernetes.io/name: mimir
         app.kubernetes.io/instance: mimir-distributed
-        app.kubernetes.io/version: "2.17.0"
+        app.kubernetes.io/version: "3.0.4"
         app.kubernetes.io/managed-by: Helm
         app.kubernetes.io/component: distributor
         app.kubernetes.io/part-of: memberlist
@@ -942,7 +955,7 @@ spec:
           type: RuntimeDefault
       containers:
         - name: distributor
-          image: registry.sighup.io/fury/grafana/mimir:2.17.0
+          image: registry.sighup.io/fury/grafana/mimir:3.0.4
           imagePullPolicy: IfNotPresent
           args:
             - "-target=distributor"
@@ -992,7 +1005,7 @@ spec:
               - ALL
             readOnlyRootFilesystem: true
           env:
-            - name: "GOMAXPROCS"
+            - name: GOMAXPROCS
               value: "8"
       topologySpreadConstraints:
       - maxSkew: 1
@@ -1026,11 +1039,11 @@ metadata:
   annotations:
     {}
   labels:
-    helm.sh/chart: mimir-distributed-5.8.0
+    helm.sh/chart: mimir-distributed-6.0.6
     app.kubernetes.io/name: mimir
     app.kubernetes.io/instance: mimir-distributed
     app.kubernetes.io/component: gateway
-    app.kubernetes.io/version: "2.17.0"
+    app.kubernetes.io/version: "3.0.4"
     app.kubernetes.io/managed-by: Helm
   name: mimir-distributed-gateway
   namespace: "monitoring"
@@ -1048,14 +1061,14 @@ spec:
   template:
     metadata:
       labels:
-        helm.sh/chart: mimir-distributed-5.8.0
+        helm.sh/chart: mimir-distributed-6.0.6
         app.kubernetes.io/name: mimir
         app.kubernetes.io/instance: mimir-distributed
-        app.kubernetes.io/version: "2.17.0"
+        app.kubernetes.io/version: "3.0.4"
         app.kubernetes.io/managed-by: Helm
         app.kubernetes.io/component: gateway
       annotations:
-        checksum/config: fec501ca43c1877b1b5db9e114f7d937feef51e6ac8018e5cc8203a196ccf07c
+        checksum/config: 973a6b6f19cbaadaa97f614eb61c999a81bea2eb1acca5b67abb21e08c1847dc
       namespace: "monitoring"
     spec:
       serviceAccountName: mimir-distributed
@@ -1068,7 +1081,7 @@ spec:
           type: RuntimeDefault
       containers:
         - name: gateway
-          image: registry.sighup.io/fury/nginxinc/nginx-unprivileged:1.28-alpine
+          image: registry.sighup.io/fury/nginxinc/nginx-unprivileged:1.29-alpine
           imagePullPolicy: IfNotPresent
           volumeMounts:
             - name: nginx-config
@@ -1132,12 +1145,12 @@ kind: Deployment
 metadata:
   name: mimir-distributed-querier
   labels:
-    helm.sh/chart: mimir-distributed-5.8.0
+    helm.sh/chart: mimir-distributed-6.0.6
     app.kubernetes.io/name: mimir
     app.kubernetes.io/instance: mimir-distributed
     app.kubernetes.io/component: querier
     app.kubernetes.io/part-of: memberlist
-    app.kubernetes.io/version: "2.17.0"
+    app.kubernetes.io/version: "3.0.4"
     app.kubernetes.io/managed-by: Helm
   annotations:
     {}
@@ -1158,10 +1171,10 @@ spec:
   template:
     metadata:
       labels:
-        helm.sh/chart: mimir-distributed-5.8.0
+        helm.sh/chart: mimir-distributed-6.0.6
         app.kubernetes.io/name: mimir
         app.kubernetes.io/instance: mimir-distributed
-        app.kubernetes.io/version: "2.17.0"
+        app.kubernetes.io/version: "3.0.4"
         app.kubernetes.io/managed-by: Helm
         app.kubernetes.io/component: querier
         app.kubernetes.io/part-of: memberlist
@@ -1179,7 +1192,7 @@ spec:
           type: RuntimeDefault
       containers:
         - name: querier
-          image: registry.sighup.io/fury/grafana/mimir:2.17.0
+          image: registry.sighup.io/fury/grafana/mimir:3.0.4
           imagePullPolicy: IfNotPresent
           args:
             - "-target=querier"
@@ -1223,7 +1236,7 @@ spec:
               - ALL
             readOnlyRootFilesystem: true
           env:
-            - name: "GOMAXPROCS"
+            - name: GOMAXPROCS
               value: "5"
       topologySpreadConstraints:
       - maxSkew: 1
@@ -1256,11 +1269,11 @@ kind: Deployment
 metadata:
   name: mimir-distributed-query-frontend
   labels:
-    helm.sh/chart: mimir-distributed-5.8.0
+    helm.sh/chart: mimir-distributed-6.0.6
     app.kubernetes.io/name: mimir
     app.kubernetes.io/instance: mimir-distributed
     app.kubernetes.io/component: query-frontend
-    app.kubernetes.io/version: "2.17.0"
+    app.kubernetes.io/version: "3.0.4"
     app.kubernetes.io/managed-by: Helm
   annotations:
     {}
@@ -1281,10 +1294,10 @@ spec:
   template:
     metadata:
       labels:
-        helm.sh/chart: mimir-distributed-5.8.0
+        helm.sh/chart: mimir-distributed-6.0.6
         app.kubernetes.io/name: mimir
         app.kubernetes.io/instance: mimir-distributed
-        app.kubernetes.io/version: "2.17.0"
+        app.kubernetes.io/version: "3.0.4"
         app.kubernetes.io/managed-by: Helm
         app.kubernetes.io/component: query-frontend
       annotations:
@@ -1302,7 +1315,7 @@ spec:
           type: RuntimeDefault
       containers:
         - name: query-frontend
-          image: registry.sighup.io/fury/grafana/mimir:2.17.0
+          image: registry.sighup.io/fury/grafana/mimir:3.0.4
           imagePullPolicy: IfNotPresent
           args:
             - "-target=query-frontend"
@@ -1344,6 +1357,8 @@ spec:
               drop:
               - ALL
             readOnlyRootFilesystem: true
+          env:
+            []
       topologySpreadConstraints:
       - maxSkew: 1
         topologyKey: kubernetes.io/hostname
@@ -1376,11 +1391,11 @@ metadata:
   name: mimir-distributed-query-scheduler
   namespace: "monitoring"
   labels:
-    helm.sh/chart: mimir-distributed-5.8.0
+    helm.sh/chart: mimir-distributed-6.0.6
     app.kubernetes.io/name: mimir
     app.kubernetes.io/instance: mimir-distributed
     app.kubernetes.io/component: query-scheduler
-    app.kubernetes.io/version: "2.17.0"
+    app.kubernetes.io/version: "3.0.4"
     app.kubernetes.io/managed-by: Helm
   annotations:
     {}
@@ -1399,10 +1414,10 @@ spec:
   template:
     metadata:
       labels:
-        helm.sh/chart: mimir-distributed-5.8.0
+        helm.sh/chart: mimir-distributed-6.0.6
         app.kubernetes.io/name: mimir
         app.kubernetes.io/instance: mimir-distributed
-        app.kubernetes.io/version: "2.17.0"
+        app.kubernetes.io/version: "3.0.4"
         app.kubernetes.io/managed-by: Helm
         app.kubernetes.io/component: query-scheduler
       annotations:
@@ -1419,7 +1434,7 @@ spec:
           type: RuntimeDefault
       containers:
         - name: query-scheduler
-          image: registry.sighup.io/fury/grafana/mimir:2.17.0
+          image: registry.sighup.io/fury/grafana/mimir:3.0.4
           imagePullPolicy: IfNotPresent
           args:
             - "-target=query-scheduler"
@@ -1458,6 +1473,8 @@ spec:
               drop:
               - ALL
             readOnlyRootFilesystem: true
+          env:
+            []
       topologySpreadConstraints:
       - maxSkew: 1
         topologyKey: kubernetes.io/hostname
@@ -1489,11 +1506,11 @@ kind: HorizontalPodAutoscaler
 metadata:
   name: mimir-distributed-gateway
   labels:
-    helm.sh/chart: mimir-distributed-5.8.0
+    helm.sh/chart: mimir-distributed-6.0.6
     app.kubernetes.io/name: mimir
     app.kubernetes.io/instance: mimir-distributed
     app.kubernetes.io/component: gateway
-    app.kubernetes.io/version: "2.17.0"
+    app.kubernetes.io/version: "3.0.4"
     app.kubernetes.io/managed-by: Helm
   namespace: "monitoring"
 spec:
@@ -1523,12 +1540,12 @@ kind: StatefulSet
 metadata:
   name: mimir-distributed-compactor
   labels:
-    helm.sh/chart: mimir-distributed-5.8.0
+    helm.sh/chart: mimir-distributed-6.0.6
     app.kubernetes.io/name: mimir
     app.kubernetes.io/instance: mimir-distributed
     app.kubernetes.io/component: compactor
     app.kubernetes.io/part-of: memberlist
-    app.kubernetes.io/version: "2.17.0"
+    app.kubernetes.io/version: "3.0.4"
     app.kubernetes.io/managed-by: Helm
   annotations:
     {}
@@ -1558,10 +1575,10 @@ spec:
   template:
     metadata:
       labels:
-        helm.sh/chart: mimir-distributed-5.8.0
+        helm.sh/chart: mimir-distributed-6.0.6
         app.kubernetes.io/name: mimir
         app.kubernetes.io/instance: mimir-distributed
-        app.kubernetes.io/version: "2.17.0"
+        app.kubernetes.io/version: "3.0.4"
         app.kubernetes.io/managed-by: Helm
         app.kubernetes.io/component: compactor
         app.kubernetes.io/part-of: memberlist
@@ -1602,7 +1619,7 @@ spec:
           emptyDir: {}
       containers:
         - name: compactor
-          image: registry.sighup.io/fury/grafana/mimir:2.17.0
+          image: registry.sighup.io/fury/grafana/mimir:3.0.4
           imagePullPolicy: IfNotPresent
           args:
             - "-target=compactor"
@@ -1644,6 +1661,8 @@ spec:
               drop:
               - ALL
             readOnlyRootFilesystem: true
+          env:
+            []
 ---
 # Source: mimir-distributed/templates/ingester/ingester-statefulset.yaml
 apiVersion: apps/v1
@@ -1651,12 +1670,12 @@ kind: StatefulSet
 metadata:
   name: mimir-distributed-ingester
   labels:
-    helm.sh/chart: mimir-distributed-5.8.0
+    helm.sh/chart: mimir-distributed-6.0.6
     app.kubernetes.io/name: mimir
     app.kubernetes.io/instance: mimir-distributed
     app.kubernetes.io/component: ingester
     app.kubernetes.io/part-of: memberlist
-    app.kubernetes.io/version: "2.17.0"
+    app.kubernetes.io/version: "3.0.4"
     app.kubernetes.io/managed-by: Helm
   annotations:
     {}
@@ -1686,10 +1705,10 @@ spec:
   template:
     metadata:
       labels:
-        helm.sh/chart: mimir-distributed-5.8.0
+        helm.sh/chart: mimir-distributed-6.0.6
         app.kubernetes.io/name: mimir
         app.kubernetes.io/instance: mimir-distributed
-        app.kubernetes.io/version: "2.17.0"
+        app.kubernetes.io/version: "3.0.4"
         app.kubernetes.io/managed-by: Helm
         app.kubernetes.io/component: ingester
         app.kubernetes.io/part-of: memberlist
@@ -1730,7 +1749,7 @@ spec:
           emptyDir: {}
       containers:
         - name: ingester
-          image: registry.sighup.io/fury/grafana/mimir:2.17.0
+          image: registry.sighup.io/fury/grafana/mimir:3.0.4
           imagePullPolicy: IfNotPresent
           args:
             - "-target=ingester"
@@ -1776,7 +1795,7 @@ spec:
               - ALL
             readOnlyRootFilesystem: true
           env:
-            - name: "GOMAXPROCS"
+            - name: GOMAXPROCS
               value: "4"
 ---
 # Source: mimir-distributed/templates/store-gateway/store-gateway-statefulset.yaml
@@ -1785,12 +1804,12 @@ kind: StatefulSet
 metadata:
   name: mimir-distributed-store-gateway
   labels:
-    helm.sh/chart: mimir-distributed-5.8.0
+    helm.sh/chart: mimir-distributed-6.0.6
     app.kubernetes.io/name: mimir
     app.kubernetes.io/instance: mimir-distributed
     app.kubernetes.io/component: store-gateway
     app.kubernetes.io/part-of: memberlist
-    app.kubernetes.io/version: "2.17.0"
+    app.kubernetes.io/version: "3.0.4"
     app.kubernetes.io/managed-by: Helm
   annotations:
     {}
@@ -1820,10 +1839,10 @@ spec:
   template:
     metadata:
       labels:
-        helm.sh/chart: mimir-distributed-5.8.0
+        helm.sh/chart: mimir-distributed-6.0.6
         app.kubernetes.io/name: mimir
         app.kubernetes.io/instance: mimir-distributed
-        app.kubernetes.io/version: "2.17.0"
+        app.kubernetes.io/version: "3.0.4"
         app.kubernetes.io/managed-by: Helm
         app.kubernetes.io/component: store-gateway
         app.kubernetes.io/part-of: memberlist
@@ -1864,7 +1883,7 @@ spec:
           emptyDir: {}
       containers:
         - name: store-gateway
-          image: registry.sighup.io/fury/grafana/mimir:2.17.0
+          image: registry.sighup.io/fury/grafana/mimir:3.0.4
           imagePullPolicy: IfNotPresent
           args:
             - "-target=store-gateway"
@@ -1908,9 +1927,9 @@ spec:
               - ALL
             readOnlyRootFilesystem: true
           env:
-            - name: "GOMAXPROCS"
+            - name: GOMAXPROCS
               value: "5"
-            - name: "GOMEMLIMIT"
+            - name: GOMEMLIMIT
               value: "536870912"
 ---
 # Source: mimir-distributed/templates/compactor/compactor-servmon.yaml
@@ -1920,12 +1939,12 @@ metadata:
   name: mimir-distributed-compactor
   namespace: "monitoring"
   labels:
-    helm.sh/chart: mimir-distributed-5.8.0
+    helm.sh/chart: mimir-distributed-6.0.6
     app.kubernetes.io/name: mimir
     app.kubernetes.io/instance: mimir-distributed
     app.kubernetes.io/component: compactor
     app.kubernetes.io/part-of: memberlist
-    app.kubernetes.io/version: "2.17.0"
+    app.kubernetes.io/version: "3.0.4"
     app.kubernetes.io/managed-by: Helm
 spec:
   namespaceSelector:
@@ -1960,11 +1979,11 @@ metadata:
   name: mimir-distributed-continuous-test
   namespace: "monitoring"
   labels:
-    helm.sh/chart: mimir-distributed-5.8.0
+    helm.sh/chart: mimir-distributed-6.0.6
     app.kubernetes.io/name: mimir
     app.kubernetes.io/instance: mimir-distributed
     app.kubernetes.io/component: continuous-test
-    app.kubernetes.io/version: "2.17.0"
+    app.kubernetes.io/version: "3.0.4"
     app.kubernetes.io/managed-by: Helm
 spec:
   namespaceSelector:
@@ -1999,12 +2018,12 @@ metadata:
   name: mimir-distributed-distributor
   namespace: "monitoring"
   labels:
-    helm.sh/chart: mimir-distributed-5.8.0
+    helm.sh/chart: mimir-distributed-6.0.6
     app.kubernetes.io/name: mimir
     app.kubernetes.io/instance: mimir-distributed
     app.kubernetes.io/component: distributor
     app.kubernetes.io/part-of: memberlist
-    app.kubernetes.io/version: "2.17.0"
+    app.kubernetes.io/version: "3.0.4"
     app.kubernetes.io/managed-by: Helm
 spec:
   namespaceSelector:
@@ -2032,6 +2051,45 @@ spec:
           targetLabel: cluster
       scheme: http
 ---
+# Source: mimir-distributed/templates/gateway/gateway-servmon.yaml
+apiVersion: monitoring.coreos.com/v1
+kind: ServiceMonitor
+metadata:
+  name: mimir-distributed-gateway
+  namespace: "monitoring"
+  labels:
+    helm.sh/chart: mimir-distributed-6.0.6
+    app.kubernetes.io/name: mimir
+    app.kubernetes.io/instance: mimir-distributed
+    app.kubernetes.io/component: gateway
+    app.kubernetes.io/version: "3.0.4"
+    app.kubernetes.io/managed-by: Helm
+spec:
+  namespaceSelector:
+    matchNames:
+    - monitoring
+  selector:
+    matchLabels:
+      app.kubernetes.io/name: mimir
+      app.kubernetes.io/instance: mimir-distributed
+      app.kubernetes.io/component: gateway
+    matchExpressions:
+      - key: prometheus.io/service-monitor
+        operator: NotIn
+        values:
+          - "false"
+  endpoints:
+    - port: http-metrics
+      relabelings:
+        - action: replace
+          sourceLabels: [job]
+          replacement: "monitoring/gateway"
+          targetLabel: job
+        - action: replace
+          replacement: "mimir-distributed"
+          targetLabel: cluster
+      scheme: http
+---
 # Source: mimir-distributed/templates/ingester/ingester-servmon.yaml
 apiVersion: monitoring.coreos.com/v1
 kind: ServiceMonitor
@@ -2039,12 +2097,12 @@ metadata:
   name: mimir-distributed-ingester
   namespace: "monitoring"
   labels:
-    helm.sh/chart: mimir-distributed-5.8.0
+    helm.sh/chart: mimir-distributed-6.0.6
     app.kubernetes.io/name: mimir
     app.kubernetes.io/instance: mimir-distributed
     app.kubernetes.io/component: ingester
     app.kubernetes.io/part-of: memberlist
-    app.kubernetes.io/version: "2.17.0"
+    app.kubernetes.io/version: "3.0.4"
     app.kubernetes.io/managed-by: Helm
 spec:
   namespaceSelector:
@@ -2079,12 +2137,12 @@ metadata:
   name: mimir-distributed-querier
   namespace: "monitoring"
   labels:
-    helm.sh/chart: mimir-distributed-5.8.0
+    helm.sh/chart: mimir-distributed-6.0.6
     app.kubernetes.io/name: mimir
     app.kubernetes.io/instance: mimir-distributed
     app.kubernetes.io/component: querier
     app.kubernetes.io/part-of: memberlist
-    app.kubernetes.io/version: "2.17.0"
+    app.kubernetes.io/version: "3.0.4"
     app.kubernetes.io/managed-by: Helm
 spec:
   namespaceSelector:
@@ -2119,11 +2177,11 @@ metadata:
   name: mimir-distributed-query-frontend
   namespace: "monitoring"
   labels:
-    helm.sh/chart: mimir-distributed-5.8.0
+    helm.sh/chart: mimir-distributed-6.0.6
     app.kubernetes.io/name: mimir
     app.kubernetes.io/instance: mimir-distributed
     app.kubernetes.io/component: query-frontend
-    app.kubernetes.io/version: "2.17.0"
+    app.kubernetes.io/version: "3.0.4"
     app.kubernetes.io/managed-by: Helm
 spec:
   namespaceSelector:
@@ -2158,11 +2216,11 @@ metadata:
   name: mimir-distributed-query-scheduler
   namespace: "monitoring"
   labels:
-    helm.sh/chart: mimir-distributed-5.8.0
+    helm.sh/chart: mimir-distributed-6.0.6
     app.kubernetes.io/name: mimir
     app.kubernetes.io/instance: mimir-distributed
     app.kubernetes.io/component: query-scheduler
-    app.kubernetes.io/version: "2.17.0"
+    app.kubernetes.io/version: "3.0.4"
     app.kubernetes.io/managed-by: Helm
 spec:
   namespaceSelector:
@@ -2197,12 +2255,12 @@ metadata:
   name: mimir-distributed-store-gateway
   namespace: "monitoring"
   labels:
-    helm.sh/chart: mimir-distributed-5.8.0
+    helm.sh/chart: mimir-distributed-6.0.6
     app.kubernetes.io/name: mimir
     app.kubernetes.io/instance: mimir-distributed
     app.kubernetes.io/component: store-gateway
     app.kubernetes.io/part-of: memberlist
-    app.kubernetes.io/version: "2.17.0"
+    app.kubernetes.io/version: "3.0.4"
     app.kubernetes.io/managed-by: Helm
 spec:
   namespaceSelector:
