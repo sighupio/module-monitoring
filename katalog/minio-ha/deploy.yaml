@@ -100,19 +100,10 @@ spec:
       labels:
         app: minio
         release: minio-monitoring
+      annotations:
+        checksum/secrets: 01ba4719c80b6fe911b091a7c05124b64eeece964e09c058ef8f9805daca546b
+        checksum/config: aaba6774d310c3428c5a2e3363cc3690f117b0751dff8386a361f25cd4554b04
     spec:
-      affinity:
-        podAntiAffinity:
-          preferredDuringSchedulingIgnoredDuringExecution:
-            - weight: 100
-              podAffinityTerm:
-                labelSelector:
-                  matchExpressions:
-                    - key: "release"
-                      operator: In
-                      values:
-                        - minio-monitoring
-                topologyKey: "kubernetes.io/hostname"
       securityContext:
         fsGroup: 1000
         fsGroupChangePolicy: OnRootMismatch
@@ -121,13 +112,9 @@ spec:
       serviceAccountName: minio-sa
       containers:
         - name: minio
-          image: registry.sighup.io/fury/minio:RELEASE.2024-10-13T13-34-11Z
+          image: registry.sighup.io/fury/minio:RELEASE.2026-05-20T23-44-52Z-chainguard
           imagePullPolicy: IfNotPresent
-          command: [
-            "/bin/sh",
-            "-ce",
-            "/usr/bin/docker-entrypoint.sh minio server http://minio-monitoring-{0...2}.minio-monitoring-svc.monitoring.svc/export-{0...1} -S /etc/minio/certs/ --address :9000 --console-address :9001"
-          ]
+          command: ["/bin/sh", "-ce", "/usr/bin/docker-entrypoint.sh minio server http://minio-monitoring-{0...2}.minio-monitoring-svc.monitoring.svc/export-{0...1} -S /etc/minio/certs/ --address :9000 --console-address :9001"]
           volumeMounts:
             - name: export-0
               mountPath: /export-0
@@ -153,21 +140,32 @@ spec:
               value: "public"
           resources:
             requests:
-              cpu: 100m
               memory: 512Mi
           securityContext:
             readOnlyRootFilesystem: false
+      affinity:
+        podAntiAffinity:
+          preferredDuringSchedulingIgnoredDuringExecution:
+            - podAffinityTerm:
+                labelSelector:
+                  matchExpressions:
+                    - key: release
+                      operator: In
+                      values:
+                        - minio-monitoring
+                topologyKey: kubernetes.io/hostname
+              weight: 100
       volumes:
         - name: minio-user
           secret:
-            secretName: minio-monitoring        
+            secretName: minio-monitoring
   volumeClaimTemplates:
     - apiVersion: v1
       kind: PersistentVolumeClaim
       metadata:
         name: export-0
       spec:
-        accessModes: [ "ReadWriteOnce" ]
+        accessModes: ["ReadWriteOnce"]
         resources:
           requests:
             storage: 10Gi
@@ -176,7 +174,7 @@ spec:
       metadata:
         name: export-1
       spec:
-        accessModes: [ "ReadWriteOnce" ]
+        accessModes: ["ReadWriteOnce"]
         resources:
           requests:
             storage: 10Gi
@@ -200,7 +198,7 @@ spec:
   targets:
     staticConfig:
       static:
-      - minio-monitoring.monitoring
+        - minio-monitoring.monitoring
 ---
 # Source: minio/templates/servicemonitor.yaml
 apiVersion: monitoring.coreos.com/v1

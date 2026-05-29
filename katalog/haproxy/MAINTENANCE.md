@@ -2,16 +2,21 @@
 
 ## Upgrade
 
-Run the upgrade script to update both rules and dashboard from upstream:
+Before running the script, check available versions:
+
+1. Check the latest Prometheus rules version: https://github.com/samber/awesome-prometheus-alerts/releases
+2. Check the latest dashboard version: https://grafana.com/grafana/dashboards/12693-haproxy/
+
+Then run the upgrade script:
 
 ```bash
-./upgrade.sh
+RULES_VERSION=2026-04-10.1 DASHBOARD_VERSION=14 ./upgrade.sh
 ```
 
 The script will:
 
 1. Download Prometheus alert rules from [awesome-prometheus-alerts](https://github.com/samber/awesome-prometheus-alerts) and update `rules/haproxy-rules.yaml` (removing the `HaproxyHttpSlowingDown` alert)
-2. Download the latest Grafana dashboard from [grafana.com](https://grafana.com/grafana/dashboards/12693-haproxy/) and apply customizations (datasource variable rename and `code` variable metric patch)
+2. Download the Grafana dashboard from [grafana.com](https://grafana.com/grafana/dashboards/12693-haproxy/) and apply customizations (datasource variable rename and `code` variable metric patch)
 3. Run `mise add-license` to add license headers
 
 ## Customizations

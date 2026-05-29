@@ -12,243 +12,243 @@ metadata:
   namespace: monitoring
 spec:
   groups:
-  - name: kubernetes-absent-kubeadm
-    rules:
-    - alert: KubeControllerManagerDown
-      annotations:
-        description: KubeControllerManager has disappeared from Prometheus target discovery.
-        runbook_url: https://runbooks.prometheus-operator.dev/runbooks/kubernetes/kubecontrollermanagerdown
-        summary: Target disappeared from Prometheus target discovery.
-      expr: |
-        absent(up{job="kube-controller-manager"} == 1)
-      for: 15m
-      labels:
-        severity: critical
-    - alert: KubeSchedulerDown
-      annotations:
-        description: KubeScheduler has disappeared from Prometheus target discovery.
-        runbook_url: https://runbooks.prometheus-operator.dev/runbooks/kubernetes/kubeschedulerdown
-        summary: Target disappeared from Prometheus target discovery.
-      expr: |
-        absent(up{job="kube-scheduler"} == 1)
-      for: 15m
-      labels:
-        severity: critical
-    - alert: KubeClientCertificateExpiration
-      annotations:
-        description: A client certificate used to authenticate to kubernetes apiserver is expiring in less than 7.0 days on cluster {{ $labels.cluster }}.
-        runbook_url: https://runbooks.prometheus-operator.dev/runbooks/kubernetes/kubeclientcertificateexpiration
-        summary: Client certificate is about to expire.
-      expr: |
-        histogram_quantile(0.01, sum without (namespace, service, endpoint) (rate(apiserver_client_certificate_expiration_seconds_bucket{job="apiserver"}[5m]))) < 604800
-        and
-        on(job, cluster, instance) apiserver_client_certificate_expiration_seconds_count{job="apiserver"} > 0
-      for: 5m
-      labels:
-        severity: warning
-    - alert: KubeClientCertificateExpiration
-      annotations:
-        description: A client certificate used to authenticate to kubernetes apiserver is expiring in less than 24.0 hours on cluster {{ $labels.cluster }}.
-        runbook_url: https://runbooks.prometheus-operator.dev/runbooks/kubernetes/kubeclientcertificateexpiration
-        summary: Client certificate is about to expire.
-      expr: |
-        histogram_quantile(0.01, sum without (namespace, service, endpoint) (rate(apiserver_client_certificate_expiration_seconds_bucket{job="apiserver"}[5m]))) < 86400
-        and
-        on(job, cluster, instance) apiserver_client_certificate_expiration_seconds_count{job="apiserver"} > 0
-      for: 5m
-      labels:
-        severity: critical
-  - name: etcd3
-    rules:
-    - alert: EtcdInsufficientMembers
-      annotations:
-        description: 'If one more etcd member goes down the cluster will be
+    - name: kubernetes-absent-kubeadm
+      rules:
+        - alert: KubeControllerManagerDown
+          annotations:
+            description: KubeControllerManager has disappeared from Prometheus target discovery.
+            runbook_url: https://runbooks.prometheus-operator.dev/runbooks/kubernetes/kubecontrollermanagerdown
+            summary: Target disappeared from Prometheus target discovery.
+          expr: |
+            absent(up{job="kube-controller-manager"})
+          for: 15m
+          labels:
+            severity: critical
+        - alert: KubeSchedulerDown
+          annotations:
+            description: KubeScheduler has disappeared from Prometheus target discovery.
+            runbook_url: https://runbooks.prometheus-operator.dev/runbooks/kubernetes/kubeschedulerdown
+            summary: Target disappeared from Prometheus target discovery.
+          expr: |
+            absent(up{job="kube-scheduler"})
+          for: 15m
+          labels:
+            severity: critical
+        - alert: KubeClientCertificateExpiration
+          annotations:
+            description: A client certificate used to authenticate to kubernetes apiserver is expiring in less than 7.0 days on cluster {{ $labels.cluster }}.
+            runbook_url: https://runbooks.prometheus-operator.dev/runbooks/kubernetes/kubeclientcertificateexpiration
+            summary: Client certificate is about to expire.
+          expr: |
+            histogram_quantile(0.01, sum without (namespace, service, endpoint) (rate(apiserver_client_certificate_expiration_seconds_bucket{job="apiserver"}[5m]))) < 604800
+            and
+            on(job, cluster, instance) apiserver_client_certificate_expiration_seconds_count{job="apiserver"} > 0
+          for: 5m
+          labels:
+            severity: warning
+        - alert: KubeClientCertificateExpiration
+          annotations:
+            description: A client certificate used to authenticate to kubernetes apiserver is expiring in less than 24.0 hours on cluster {{ $labels.cluster }}.
+            runbook_url: https://runbooks.prometheus-operator.dev/runbooks/kubernetes/kubeclientcertificateexpiration
+            summary: Client certificate is about to expire.
+          expr: |
+            histogram_quantile(0.01, sum without (namespace, service, endpoint) (rate(apiserver_client_certificate_expiration_seconds_bucket{job="apiserver"}[5m]))) < 86400
+            and
+            on(job, cluster, instance) apiserver_client_certificate_expiration_seconds_count{job="apiserver"} > 0
+          for: 5m
+          labels:
+            severity: critical
+    - name: etcd3
+      rules:
+        - alert: EtcdInsufficientMembers
+          annotations:
+            description: 'If one more etcd member goes down the cluster will be
           unavailable.'
-        doc: "This alert fires if less than half of Etcd cluster members were
+            doc: "This alert fires if less than half of Etcd cluster members were
           online in the last 3 minutes."
-      expr: |
-        count(up{job="etcd-metrics"} == 0) > (count(up{job="etcd-metrics"}) / 2 - 1)
-      for: 3m
-      labels:
-        severity: critical
-    - alert: EtcdNoLeader
-      annotations:
-        description: 'Etcd member {{ $labels.instance }} has no leader.'
-        doc: "This alert fires if the Etcd cluster had no leader in the last
+          expr: |
+            count(up{job="etcd-metrics"} == 0) > (count(up{job="etcd-metrics"}) / 2 - 1)
+          for: 3m
+          labels:
+            severity: critical
+        - alert: EtcdNoLeader
+          annotations:
+            description: 'Etcd member {{ $labels.instance }} has no leader.'
+            doc: "This alert fires if the Etcd cluster had no leader in the last
           minute."
-      expr: |
-        etcd_server_has_leader{job="etcd-metrics"} == 0
-      for: 1m
-      labels:
-        severity: critical
-    - alert: EtcdHighNumberOfLeaderChanges
-      annotations:
-        description: 'Etcd instance {{ $labels.instance }} has seen {{ $value }}
+          expr: |
+            etcd_server_has_leader{job="etcd-metrics"} == 0
+          for: 1m
+          labels:
+            severity: critical
+        - alert: EtcdHighNumberOfLeaderChanges
+          annotations:
+            description: 'Etcd instance {{ $labels.instance }} has seen {{ $value }}
           leader changes within the last hour.'
-        doc: "This alert fires if the Etcd cluster changed leader more than 3
+            doc: "This alert fires if the Etcd cluster changed leader more than 3
           times in the last hour."
-      expr: |
-        increase(etcd_server_leader_changes_seen_total{job="etcd-metrics"}[1h]) > 3
-      labels:
-        severity: warning
-    # - alert: EtcdHighNumberOfFailedGRPCRequests
-    #   annotations:
-    #     description: '{{ $value | printf "%.2f" }}% of requests for {{ $labels.grpc_method }} failed on etcd instance {{ $labels.instance }}'
-    #   expr: |
-    #     100 * (sum(rate(grpc_server_handled_total{grpc_code!="OK",job="etcd-metrics"}[5m])) by (grpc_service, grpc_method, instance)
-    #       /
-    #     sum(rate(grpc_server_handled_total{job="etcd-metrics"}[5m])) by (grpc_service, grpc_method, instance)) > 1
-    #   for: 10m
-    #   labels:
-    #     severity: warning
-    # - alert: EtcdHighNumberOfFailedGRPCRequests
-    #   annotations:
-    #     description: '{{ $value | printf "%.2f" }}% of requests for {{ $labels.grpc_method }} failed on etcd instance {{ $labels.instance }}'
-    #   expr: |
-    #     100 * (sum(rate(grpc_server_handled_total{grpc_code!="OK",job="etcd-metrics"}[5m])) by (grpc_service, grpc_method, instance)
-    #       /
-    #     sum(rate(grpc_server_handled_total{job="etcd-metrics"}[5m])) by (grpc_service, grpc_method, instance)) > 5
-    #   for: 5m
-    #   labels:
-    #     severity: critical
-    # - alert: EtcdGRPCRequestsSlow
-    #   annotations:
-    #     description: on etcd instance {{ $labels.instance }} gRPC requests to {{ $labels.grpc_method
-    #       }} are slow
-    #   expr: |
-    #     histogram_quantile(0.99, sum(rate(grpc_server_handling_seconds_bucket{job="etcd-metrics",grpc_type="unary"}[5m])) by (grpc_service, grpc_method, le)) > 0.15
-    #   for: 10m
-    #   labels:
-    #     severity: critical
-    # - alert: EtcdMemberCommunicationSlow
-    #   annotations:
-    #     description: etcd instance {{ $labels.instance }} member communication with {{ $labels.To }} is slow
-    #   expr: |
-    #     histogram_quantile(0.99, rate(etcd_network_peer_round_trip_time_seconds_bucket[5m])) > 0.15
-    #   for: 10m
-    #   labels:
-    #     severity: warning
-    - alert: EtcdHighNumberOfFailedProposals
-      annotations:
-        description: 'Etcd instance {{ $labels.instance }} has seen {{ $value }}
+          expr: |
+            increase(etcd_server_leader_changes_seen_total{job="etcd-metrics"}[1h]) > 3
+          labels:
+            severity: warning
+        # - alert: EtcdHighNumberOfFailedGRPCRequests
+        #   annotations:
+        #     description: '{{ $value | printf "%.2f" }}% of requests for {{ $labels.grpc_method }} failed on etcd instance {{ $labels.instance }}'
+        #   expr: |
+        #     100 * (sum(rate(grpc_server_handled_total{grpc_code!="OK",job="etcd-metrics"}[5m])) by (grpc_service, grpc_method, instance)
+        #       /
+        #     sum(rate(grpc_server_handled_total{job="etcd-metrics"}[5m])) by (grpc_service, grpc_method, instance)) > 1
+        #   for: 10m
+        #   labels:
+        #     severity: warning
+        # - alert: EtcdHighNumberOfFailedGRPCRequests
+        #   annotations:
+        #     description: '{{ $value | printf "%.2f" }}% of requests for {{ $labels.grpc_method }} failed on etcd instance {{ $labels.instance }}'
+        #   expr: |
+        #     100 * (sum(rate(grpc_server_handled_total{grpc_code!="OK",job="etcd-metrics"}[5m])) by (grpc_service, grpc_method, instance)
+        #       /
+        #     sum(rate(grpc_server_handled_total{job="etcd-metrics"}[5m])) by (grpc_service, grpc_method, instance)) > 5
+        #   for: 5m
+        #   labels:
+        #     severity: critical
+        # - alert: EtcdGRPCRequestsSlow
+        #   annotations:
+        #     description: on etcd instance {{ $labels.instance }} gRPC requests to {{ $labels.grpc_method
+        #       }} are slow
+        #   expr: |
+        #     histogram_quantile(0.99, sum(rate(grpc_server_handling_seconds_bucket{job="etcd-metrics",grpc_type="unary"}[5m])) by (grpc_service, grpc_method, le)) > 0.15
+        #   for: 10m
+        #   labels:
+        #     severity: critical
+        # - alert: EtcdMemberCommunicationSlow
+        #   annotations:
+        #     description: etcd instance {{ $labels.instance }} member communication with {{ $labels.To }} is slow
+        #   expr: |
+        #     histogram_quantile(0.99, rate(etcd_network_peer_round_trip_time_seconds_bucket[5m])) > 0.15
+        #   for: 10m
+        #   labels:
+        #     severity: warning
+        - alert: EtcdHighNumberOfFailedProposals
+          annotations:
+            description: 'Etcd instance {{ $labels.instance }} has seen {{ $value }}
           proposal failures within the last hour.'
-        doc: "This alert fires if there were more than 5 proposal failure in the
+            doc: "This alert fires if there were more than 5 proposal failure in the
           last hour."
-      expr: |
-        increase(etcd_server_proposals_failed_total{job="etcd-metrics"}[1h]) > 5
-      labels:
-        severity: warning
-    - alert: EtcdHighFsyncDurations
-      annotations:
-        description: 'Etcd instance {{ $labels.instance }} WAL fsync latency too
+          expr: |
+            increase(etcd_server_proposals_failed_total{job="etcd-metrics"}[1h]) > 5
+          labels:
+            severity: warning
+        - alert: EtcdHighFsyncDurations
+          annotations:
+            description: 'Etcd instance {{ $labels.instance }} WAL fsync latency too
           high, current latency is {{ $value | printf "%.2f" }}.'
-        doc: "This alert fires if the WAL fsync 99th percentile latency was
+            doc: "This alert fires if the WAL fsync 99th percentile latency was
           higher than 0.5s in the last 10 minutes."
-      expr: |
-        histogram_quantile(0.99, rate(etcd_disk_wal_fsync_duration_seconds_bucket[5m])) > 0.5
-      for: 10m
-      labels:
-        severity: warning
-    - alert: EtcdHighCommitDurations
-      annotations:
-        description: 'Etcd instance {{ $labels.instance }} commit latency too high,
+          expr: |
+            histogram_quantile(0.99, rate(etcd_disk_wal_fsync_duration_seconds_bucket[5m])) > 0.5
+          for: 10m
+          labels:
+            severity: warning
+        - alert: EtcdHighCommitDurations
+          annotations:
+            description: 'Etcd instance {{ $labels.instance }} commit latency too high,
           current latency is {{ $value | printf "%.2f" }}.'
-        doc: "This alert fires if the backend commit 99th percentile latency was
+            doc: "This alert fires if the backend commit 99th percentile latency was
           higher than 0.25s in the last 10 minutes."
-      expr: |
-        histogram_quantile(0.99, rate(etcd_disk_backend_commit_duration_seconds_bucket[5m])) > 0.25
-      for: 10m
-      labels:
-        severity: warning
-  - name: coredns.rules
-    rules:
-      - alert: CoreDNSPanic
-        annotations:
-          description: 'CoreDNS instance {{ $labels.instance }} panic count
+          expr: |
+            histogram_quantile(0.99, rate(etcd_disk_backend_commit_duration_seconds_bucket[5m])) > 0.25
+          for: 10m
+          labels:
+            severity: warning
+    - name: coredns.rules
+      rules:
+        - alert: CoreDNSPanic
+          annotations:
+            description: 'CoreDNS instance {{ $labels.instance }} panic count
             increased by {{ $value }}.'
-          doc: "This alert fires if CoreDNS total panic count increased by at
+            doc: "This alert fires if CoreDNS total panic count increased by at
             least 1 in the last 10 minutes."
-        expr: |
-          increase(coredns_panic_count_total[10m]) > 0
-        labels:
-          severity: critical
-      - alert: CoreDNSRequestsLatency
-        annotations:
-          description: 'CoreDNS instance {{ $labels.instance }} requests latency too
+          expr: |
+            increase(coredns_panic_count_total[10m]) > 0
+          labels:
+            severity: critical
+        - alert: CoreDNSRequestsLatency
+          annotations:
+            description: 'CoreDNS instance {{ $labels.instance }} requests latency too
             high, current latency is {{ $value | printf "%.2f" }}.'
-          doc: "This alert fires if CoreDNS 99th percentile requests latency was
+            doc: "This alert fires if CoreDNS 99th percentile requests latency was
             higher than 100ms in the last 10 minutes."
-        expr: |
-          histogram_quantile(0.99, sum by (le,instance,pod) (rate(coredns_dns_request_duration_seconds_bucket[2m]))) > 0.1
-        for: 10m
-        labels:
-          severity: warning
-      - alert: CoreDNSHealthRequestsLatency
-        annotations:
-          description: 'CoreDNS instance {{ $labels.instance }} health requests
+          expr: |
+            histogram_quantile(0.99, sum by (le,instance,pod) (rate(coredns_dns_request_duration_seconds_bucket[2m]))) > 0.1
+          for: 10m
+          labels:
+            severity: warning
+        - alert: CoreDNSHealthRequestsLatency
+          annotations:
+            description: 'CoreDNS instance {{ $labels.instance }} health requests
             latency too high, current latency is {{ $value | printf "%.2f" }}.'
-          doc: "This alert fires if CoreDNS 99th percentile health requests
+            doc: "This alert fires if CoreDNS 99th percentile health requests
             latency was higher than 10ms in the last 10 minutes."
-        expr: |
-          histogram_quantile(0.99, sum by (le,instance,pod) (rate(coredns_health_request_duration_seconds_bucket[2m]))) > 0.01
-        for: 10m
-        labels:
-          severity: warning
-      - alert: CoreDNSForwardRequestsLatency
-        annotations:
-          description: 'CoreDNS instance {{ $labels.instance }} forward requests
+          expr: |
+            histogram_quantile(0.99, sum by (le,instance,pod) (rate(coredns_health_request_duration_seconds_bucket[2m]))) > 0.01
+          for: 10m
+          labels:
+            severity: warning
+        - alert: CoreDNSForwardRequestsLatency
+          annotations:
+            description: 'CoreDNS instance {{ $labels.instance }} forward requests
             latency too high, current latency is {{ $value | printf "%.2f" }}.'
-          doc: "This alert fires if CoreDNS 99th percentile forward requests
+            doc: "This alert fires if CoreDNS 99th percentile forward requests
             latency was higher than 500ms in the last 10 minutes."
-        expr: |
-          histogram_quantile(0.99, sum by (le,instance,pod,proto) (rate(coredns_forward_request_duration_seconds_bucket[2m]))) > 0.5
-        for: 10m
-        labels:
-          severity: warning
-  - name: kube-scheduler.rules
-    rules:
-    - expr: |
-        histogram_quantile(0.99, sum(rate(scheduler_e2e_scheduling_duration_seconds_bucket{job="kube-scheduler"}[5m])) without(instance, pod))
-      labels:
-        quantile: "0.99"
-      record: cluster_quantile:scheduler_e2e_scheduling_duration_seconds:histogram_quantile
-    - expr: |
-        histogram_quantile(0.99, sum(rate(scheduler_scheduling_algorithm_duration_seconds_bucket{job="kube-scheduler"}[5m])) without(instance, pod))
-      labels:
-        quantile: "0.99"
-      record: cluster_quantile:scheduler_scheduling_algorithm_duration_seconds:histogram_quantile
-    - expr: |
-        histogram_quantile(0.99, sum(rate(scheduler_binding_duration_seconds_bucket{job="kube-scheduler"}[5m])) without(instance, pod))
-      labels:
-        quantile: "0.99"
-      record: cluster_quantile:scheduler_binding_duration_seconds:histogram_quantile
-    - expr: |
-        histogram_quantile(0.9, sum(rate(scheduler_e2e_scheduling_duration_seconds_bucket{job="kube-scheduler"}[5m])) without(instance, pod))
-      labels:
-        quantile: "0.9"
-      record: cluster_quantile:scheduler_e2e_scheduling_duration_seconds:histogram_quantile
-    - expr: |
-        histogram_quantile(0.9, sum(rate(scheduler_scheduling_algorithm_duration_seconds_bucket{job="kube-scheduler"}[5m])) without(instance, pod))
-      labels:
-        quantile: "0.9"
-      record: cluster_quantile:scheduler_scheduling_algorithm_duration_seconds:histogram_quantile
-    - expr: |
-        histogram_quantile(0.9, sum(rate(scheduler_binding_duration_seconds_bucket{job="kube-scheduler"}[5m])) without(instance, pod))
-      labels:
-        quantile: "0.9"
-      record: cluster_quantile:scheduler_binding_duration_seconds:histogram_quantile
-    - expr: |
-        histogram_quantile(0.5, sum(rate(scheduler_e2e_scheduling_duration_seconds_bucket{job="kube-scheduler"}[5m])) without(instance, pod))
-      labels:
-        quantile: "0.5"
-      record: cluster_quantile:scheduler_e2e_scheduling_duration_seconds:histogram_quantile
-    - expr: |
-        histogram_quantile(0.5, sum(rate(scheduler_scheduling_algorithm_duration_seconds_bucket{job="kube-scheduler"}[5m])) without(instance, pod))
-      labels:
-        quantile: "0.5"
-      record: cluster_quantile:scheduler_scheduling_algorithm_duration_seconds:histogram_quantile
-    - expr: |
-        histogram_quantile(0.5, sum(rate(scheduler_binding_duration_seconds_bucket{job="kube-scheduler"}[5m])) without(instance, pod))
-      labels:
-        quantile: "0.5"
-      record: cluster_quantile:scheduler_binding_duration_seconds:histogram_quantile
+          expr: |
+            histogram_quantile(0.99, sum by (le,instance,pod,proto) (rate(coredns_forward_request_duration_seconds_bucket[2m]))) > 0.5
+          for: 10m
+          labels:
+            severity: warning
+    - name: kube-scheduler.rules
+      rules:
+        - expr: |
+            histogram_quantile(0.99, sum(rate(scheduler_e2e_scheduling_duration_seconds_bucket{job="kube-scheduler"}[5m])) without(instance, pod))
+          labels:
+            quantile: "0.99"
+          record: cluster_quantile:scheduler_e2e_scheduling_duration_seconds:histogram_quantile
+        - expr: |
+            histogram_quantile(0.99, sum(rate(scheduler_scheduling_algorithm_duration_seconds_bucket{job="kube-scheduler"}[5m])) without(instance, pod))
+          labels:
+            quantile: "0.99"
+          record: cluster_quantile:scheduler_scheduling_algorithm_duration_seconds:histogram_quantile
+        - expr: |
+            histogram_quantile(0.99, sum(rate(scheduler_binding_duration_seconds_bucket{job="kube-scheduler"}[5m])) without(instance, pod))
+          labels:
+            quantile: "0.99"
+          record: cluster_quantile:scheduler_binding_duration_seconds:histogram_quantile
+        - expr: |
+            histogram_quantile(0.9, sum(rate(scheduler_e2e_scheduling_duration_seconds_bucket{job="kube-scheduler"}[5m])) without(instance, pod))
+          labels:
+            quantile: "0.9"
+          record: cluster_quantile:scheduler_e2e_scheduling_duration_seconds:histogram_quantile
+        - expr: |
+            histogram_quantile(0.9, sum(rate(scheduler_scheduling_algorithm_duration_seconds_bucket{job="kube-scheduler"}[5m])) without(instance, pod))
+          labels:
+            quantile: "0.9"
+          record: cluster_quantile:scheduler_scheduling_algorithm_duration_seconds:histogram_quantile
+        - expr: |
+            histogram_quantile(0.9, sum(rate(scheduler_binding_duration_seconds_bucket{job="kube-scheduler"}[5m])) without(instance, pod))
+          labels:
+            quantile: "0.9"
+          record: cluster_quantile:scheduler_binding_duration_seconds:histogram_quantile
+        - expr: |
+            histogram_quantile(0.5, sum(rate(scheduler_e2e_scheduling_duration_seconds_bucket{job="kube-scheduler"}[5m])) without(instance, pod))
+          labels:
+            quantile: "0.5"
+          record: cluster_quantile:scheduler_e2e_scheduling_duration_seconds:histogram_quantile
+        - expr: |
+            histogram_quantile(0.5, sum(rate(scheduler_scheduling_algorithm_duration_seconds_bucket{job="kube-scheduler"}[5m])) without(instance, pod))
+          labels:
+            quantile: "0.5"
+          record: cluster_quantile:scheduler_scheduling_algorithm_duration_seconds:histogram_quantile
+        - expr: |
+            histogram_quantile(0.5, sum(rate(scheduler_binding_duration_seconds_bucket{job="kube-scheduler"}[5m])) without(instance, pod))
+          labels:
+            quantile: "0.5"
+          record: cluster_quantile:scheduler_binding_duration_seconds:histogram_quantile

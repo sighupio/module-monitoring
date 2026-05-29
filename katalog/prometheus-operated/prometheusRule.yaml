@@ -10,7 +10,7 @@ metadata:
     app.kubernetes.io/instance: k8s
     app.kubernetes.io/name: prometheus
     app.kubernetes.io/part-of: kube-prometheus
-    app.kubernetes.io/version: 3.5.0
+    app.kubernetes.io/version: 3.10.0
     prometheus: k8s
     role: alert-rules
   name: prometheus-k8s-prometheus-rules
@@ -182,8 +182,8 @@ spec:
         # Without max_over_time, failed scrapes could create false negatives, see
         # https://www.robustperception.io/alerting-on-gauges-in-prometheus-2-0 for details.
         (
-          max_over_time(prometheus_remote_storage_highest_timestamp_in_seconds{job="prometheus-k8s",namespace="monitoring"}[5m])
-        - ignoring(remote_name, url) group_right
+          max_over_time(prometheus_remote_storage_queue_highest_timestamp_seconds{job="prometheus-k8s",namespace="monitoring"}[5m])
+        -
           max_over_time(prometheus_remote_storage_queue_highest_sent_timestamp_seconds{job="prometheus-k8s",namespace="monitoring"}[5m])
         )
         > 120

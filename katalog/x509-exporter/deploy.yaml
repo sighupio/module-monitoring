@@ -1,0 +1,773 @@
+# Copyright (c) 2017-present SIGHUP s.r.l All rights reserved.
+# Use of this source code is governed by a BSD-style
+# license that can be found in the LICENSE file.
+
+---
+# Source: x509-certificate-exporter/templates/serviceaccount.yaml
+apiVersion: v1
+kind: ServiceAccount
+metadata:
+  name: x509-certificate-exporter
+  namespace: monitoring
+  labels:
+    app: x509-certificate-exporter
+---
+# Source: x509-certificate-exporter/templates/serviceaccount.yaml
+apiVersion: v1
+kind: ServiceAccount
+metadata:
+  name: x509-certificate-exporter-node
+  namespace: monitoring
+  labels:
+    app: x509-certificate-exporter
+---
+# Source: x509-certificate-exporter/templates/configmap.yaml
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: x509-certificate-exporter-secrets
+  namespace: monitoring
+  labels:
+    app: x509-certificate-exporter
+data:
+  config.yaml: |
+    web:
+      enableStats: true
+
+    server:
+      listen: ":9793"
+
+    log:
+      level: info
+      format: text
+
+    metrics:
+      exposeRelative: false
+      exposePerCertError: false
+      exposeNotBefore: false
+      exposeExpired: true
+      exposeDiagnostics: false
+
+    sources:
+      - kind: kubernetes
+        name: cluster-secrets
+        namespaces:
+          include: ["*"]
+          exclude: []
+          includeLabels: []
+          excludeLabels: []
+        secrets:
+          include: ["*"]
+          exclude: []
+          includeLabels: []
+          excludeLabels: []
+          types:
+            - type: "kubernetes.io/tls"
+              keyPatterns: ["^tls\\.crt$"]
+              format: pem
+          exposeLabels: []
+---
+# Source: x509-certificate-exporter/templates/configmap.yaml
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: x509-certificate-exporter-control-plane
+  namespace: monitoring
+  labels:
+    app: x509-certificate-exporter
+data:
+  config.yaml: |
+    web:
+      enableStats: true
+
+    server:
+      listen: ":9793"
+
+    log:
+      level: info
+      format: text
+
+    metrics:
+      exposeRelative: false
+      exposePerCertError: false
+      exposeNotBefore: false
+      exposeExpired: true
+      exposeDiagnostics: false
+      trimPathComponents: 3
+
+    cache:
+      filePoll:
+        interval: 300s
+        skipUnchanged: true
+
+    sources:
+      - kind: file
+        name: host-paths-control-plane
+        followSymlinks: true
+        paths:
+          - /mnt/watch/file-d29c5fbfbd5b6baa2cfa845e55e8f8fa2ee3d73f/var/lib/kubelet/pki/kubelet.crt
+          - /mnt/watch/file-9dff78b77fe2f4b0f34f77796df3fea5983e5d4b/var/lib/kubelet/pki/kubelet-client-current.pem
+          - /mnt/watch/file-d53b89938a3d439c2fc32700f21b9a6d3d5e280b/etc/etcd/pki/apiserver-etcd-client.crt
+          - /mnt/watch/file-c8e6234df1c5e705baa1abe5cd91a672353607a4/etc/etcd/pki/etcd/ca.crt
+          - /mnt/watch/file-67ffd277e7234401ae8ad9470bbabc6fbab0ec70/etc/etcd/pki/etcd/healthcheck-client.crt
+          - /mnt/watch/file-c04fb1e17a554394e8bb9da2faa8392f750854d7/etc/etcd/pki/etcd/peer.crt
+          - /mnt/watch/file-f4a717b09c34f92953529a15f6f35bd47fd17add/etc/etcd/pki/etcd/server.crt
+          - /mnt/watch/file-24d5fa06386fdaf0d20c51e47b92012ea665b9f5/etc/kubernetes/pki/apiserver.crt
+          - /mnt/watch/file-15d8ed7db7457d4f5108195ceb52a124a8703898/etc/kubernetes/pki/ca.crt
+          - /mnt/watch/file-99c1687bfbcf4396bdf08131c2971b798d8eb94f/etc/kubernetes/pki/front-proxy-ca.crt
+          - /mnt/watch/file-dfdaa9ca375647a99973f96da9f7fd05a44e5e4f/etc/kubernetes/pki/front-proxy-client.crt
+          - /mnt/watch/file-35a4fcc6ab089d789fecaeed428cc8392148766a/etc/kubernetes/admin.conf
+          - /mnt/watch/file-41a6b8b147ef309a70619cafcfeb8961b3c29cae/etc/kubernetes/controller-manager.conf
+          - /mnt/watch/file-ee9e4e203c758bb95ec439d60c16fb4e8854efaf/etc/kubernetes/scheduler.conf
+        # Map host-namespace path prefixes (where symlink targets are
+        # recorded) to the paths the exporter actually sees inside the pod.
+        # Mirrors the volume mounts generated in daemonset.yaml. A non-empty
+        # list also confines symlink resolution to these scopes — anything
+        # that escapes raises x509_source_errors_total{reason="out_of_scope_symlink"}.
+        pathMappings:
+          - from: "/var/lib/kubelet/pki"
+            to: "/mnt/watch/file-d29c5fbfbd5b6baa2cfa845e55e8f8fa2ee3d73f/var/lib/kubelet/pki"
+          - from: "/var/lib/kubelet/pki"
+            to: "/mnt/watch/file-9dff78b77fe2f4b0f34f77796df3fea5983e5d4b/var/lib/kubelet/pki"
+          - from: "/etc/etcd/pki"
+            to: "/mnt/watch/file-d53b89938a3d439c2fc32700f21b9a6d3d5e280b/etc/etcd/pki"
+          - from: "/etc/etcd/pki/etcd"
+            to: "/mnt/watch/file-c8e6234df1c5e705baa1abe5cd91a672353607a4/etc/etcd/pki/etcd"
+          - from: "/etc/etcd/pki/etcd"
+            to: "/mnt/watch/file-67ffd277e7234401ae8ad9470bbabc6fbab0ec70/etc/etcd/pki/etcd"
+          - from: "/etc/etcd/pki/etcd"
+            to: "/mnt/watch/file-c04fb1e17a554394e8bb9da2faa8392f750854d7/etc/etcd/pki/etcd"
+          - from: "/etc/etcd/pki/etcd"
+            to: "/mnt/watch/file-f4a717b09c34f92953529a15f6f35bd47fd17add/etc/etcd/pki/etcd"
+          - from: "/etc/kubernetes/pki"
+            to: "/mnt/watch/file-24d5fa06386fdaf0d20c51e47b92012ea665b9f5/etc/kubernetes/pki"
+          - from: "/etc/kubernetes/pki"
+            to: "/mnt/watch/file-15d8ed7db7457d4f5108195ceb52a124a8703898/etc/kubernetes/pki"
+          - from: "/etc/kubernetes/pki"
+            to: "/mnt/watch/file-99c1687bfbcf4396bdf08131c2971b798d8eb94f/etc/kubernetes/pki"
+          - from: "/etc/kubernetes/pki"
+            to: "/mnt/watch/file-dfdaa9ca375647a99973f96da9f7fd05a44e5e4f/etc/kubernetes/pki"
+          - from: "/etc/kubernetes"
+            to: "/mnt/watch/file-35a4fcc6ab089d789fecaeed428cc8392148766a/etc/kubernetes"
+          - from: "/etc/kubernetes"
+            to: "/mnt/watch/file-41a6b8b147ef309a70619cafcfeb8961b3c29cae/etc/kubernetes"
+          - from: "/etc/kubernetes"
+            to: "/mnt/watch/file-ee9e4e203c758bb95ec439d60c16fb4e8854efaf/etc/kubernetes"
+        formats: [pem]
+      - kind: kubeconfig
+        name: host-kubeconfigs-control-plane
+        paths:
+          - /mnt/watch/kube-87dc0192f1ae9905eaf104bc294b632069be55fe/etc/kubernetes/kubelet.conf
+          - /mnt/watch/kube-35a4fcc6ab089d789fecaeed428cc8392148766a/etc/kubernetes/admin.conf
+          - /mnt/watch/kube-91fc8350dfdc257c03a9493f9daedf5842ee49b8/etc/kubernetes/super-admin.conf
+          - /mnt/watch/kube-41a6b8b147ef309a70619cafcfeb8961b3c29cae/etc/kubernetes/controller-manager.conf
+          - /mnt/watch/kube-ee9e4e203c758bb95ec439d60c16fb4e8854efaf/etc/kubernetes/scheduler.conf
+        pathMappings:
+          - from: "/etc/kubernetes"
+            to: "/mnt/watch/kube-87dc0192f1ae9905eaf104bc294b632069be55fe/etc/kubernetes"
+          - from: "/etc/kubernetes"
+            to: "/mnt/watch/kube-35a4fcc6ab089d789fecaeed428cc8392148766a/etc/kubernetes"
+          - from: "/etc/kubernetes"
+            to: "/mnt/watch/kube-91fc8350dfdc257c03a9493f9daedf5842ee49b8/etc/kubernetes"
+          - from: "/etc/kubernetes"
+            to: "/mnt/watch/kube-41a6b8b147ef309a70619cafcfeb8961b3c29cae/etc/kubernetes"
+          - from: "/etc/kubernetes"
+            to: "/mnt/watch/kube-ee9e4e203c758bb95ec439d60c16fb4e8854efaf/etc/kubernetes"
+---
+# Source: x509-certificate-exporter/templates/configmap.yaml
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: x509-certificate-exporter-data-plane
+  namespace: monitoring
+  labels:
+    app: x509-certificate-exporter
+data:
+  config.yaml: |
+    web:
+      enableStats: true
+
+    server:
+      listen: ":9793"
+
+    log:
+      level: info
+      format: text
+
+    metrics:
+      exposeRelative: false
+      exposePerCertError: false
+      exposeNotBefore: false
+      exposeExpired: true
+      exposeDiagnostics: false
+      trimPathComponents: 3
+
+    cache:
+      filePoll:
+        interval: 300s
+        skipUnchanged: true
+
+    sources:
+      - kind: file
+        name: host-paths-data-plane
+        followSymlinks: true
+        paths:
+          - /mnt/watch/file-d29c5fbfbd5b6baa2cfa845e55e8f8fa2ee3d73f/var/lib/kubelet/pki/kubelet.crt
+          - /mnt/watch/file-9dff78b77fe2f4b0f34f77796df3fea5983e5d4b/var/lib/kubelet/pki/kubelet-client-current.pem
+        # Map host-namespace path prefixes (where symlink targets are
+        # recorded) to the paths the exporter actually sees inside the pod.
+        # Mirrors the volume mounts generated in daemonset.yaml. A non-empty
+        # list also confines symlink resolution to these scopes — anything
+        # that escapes raises x509_source_errors_total{reason="out_of_scope_symlink"}.
+        pathMappings:
+          - from: "/var/lib/kubelet/pki"
+            to: "/mnt/watch/file-d29c5fbfbd5b6baa2cfa845e55e8f8fa2ee3d73f/var/lib/kubelet/pki"
+          - from: "/var/lib/kubelet/pki"
+            to: "/mnt/watch/file-9dff78b77fe2f4b0f34f77796df3fea5983e5d4b/var/lib/kubelet/pki"
+        formats: [pem]
+      - kind: kubeconfig
+        name: host-kubeconfigs-data-plane
+        paths:
+          - /mnt/watch/kube-87dc0192f1ae9905eaf104bc294b632069be55fe/etc/kubernetes/kubelet.conf
+        pathMappings:
+          - from: "/etc/kubernetes"
+            to: "/mnt/watch/kube-87dc0192f1ae9905eaf104bc294b632069be55fe/etc/kubernetes"
+---
+# Source: x509-certificate-exporter/templates/clusterrole.yaml
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRole
+metadata:
+  name: x509-certificate-exporter
+  labels:
+    app: x509-certificate-exporter
+rules:
+  - apiGroups:
+      - ""
+    resources:
+      - namespaces
+    verbs:
+      - get
+      - watch
+      - list
+  - apiGroups:
+      - ""
+    resources:
+      - secrets
+    verbs:
+      - get
+      - watch
+      - list
+---
+# Source: x509-certificate-exporter/templates/clusterrole.yaml
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRole
+metadata:
+  name: x509-certificate-exporter-node
+  labels:
+    app: x509-certificate-exporter
+rules:
+---
+# Source: x509-certificate-exporter/templates/clusterrolebinding.yaml
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRoleBinding
+metadata:
+  name: x509-certificate-exporter
+  labels:
+    app: x509-certificate-exporter
+roleRef:
+  apiGroup: rbac.authorization.k8s.io
+  kind: ClusterRole
+  name: x509-certificate-exporter
+subjects:
+  - kind: ServiceAccount
+    name: x509-certificate-exporter
+    namespace: monitoring
+---
+# Source: x509-certificate-exporter/templates/clusterrolebinding.yaml
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRoleBinding
+metadata:
+  name: x509-certificate-exporter-node
+  labels:
+    app: x509-certificate-exporter
+roleRef:
+  apiGroup: rbac.authorization.k8s.io
+  kind: ClusterRole
+  name: x509-certificate-exporter-node
+subjects:
+  - kind: ServiceAccount
+    name: x509-certificate-exporter-node
+    namespace: monitoring
+---
+# Source: x509-certificate-exporter/templates/service.yaml
+apiVersion: v1
+kind: Service
+metadata:
+  name: x509-certificate-exporter
+  namespace: monitoring
+  labels:
+    app: x509-certificate-exporter
+spec:
+  type: ClusterIP
+  clusterIP: None
+  ports:
+    - name: metrics
+      port: 9793
+      targetPort: metrics
+  selector:
+    app: x509-certificate-exporter
+---
+# Source: x509-certificate-exporter/templates/daemonset.yaml
+apiVersion: apps/v1
+kind: DaemonSet
+metadata:
+  name: x509-certificate-exporter-control-plane
+  namespace: monitoring
+  labels:
+    app: x509-certificate-exporter
+spec:
+  selector:
+    matchLabels:
+      app: x509-certificate-exporter
+  template:
+    metadata:
+      labels:
+        app: x509-certificate-exporter
+      annotations:
+        checksum/config: 20a830319f08a70d635a01e86a11779f13315b5f8099a30028a1a1d34afc80d1
+    spec:
+      serviceAccountName: x509-certificate-exporter-node
+      affinity:
+        nodeAffinity:
+          requiredDuringSchedulingIgnoredDuringExecution:
+            nodeSelectorTerms:
+              - matchExpressions:
+                  - key: node-role.kubernetes.io/control-plane
+                    operator: Exists
+      tolerations:
+        - effect: NoSchedule
+          key: node-role.kubernetes.io/control-plane
+          operator: Exists
+      securityContext:
+        seccompProfile:
+          type: RuntimeDefault
+      restartPolicy: Always
+      containers:
+        - name: x509-certificate-exporter
+          securityContext:
+            allowPrivilegeEscalation: false
+            capabilities:
+              drop:
+                - ALL
+            readOnlyRootFilesystem: true
+            runAsGroup: 0
+            runAsUser: 0
+          resources:
+            limits:
+              cpu: 1
+              memory: 40Mi
+            requests:
+              cpu: 10m
+              memory: 20Mi
+          image: registry.sighup.io/fury/enix/x509-certificate-exporter:4.1.0
+          imagePullPolicy: IfNotPresent
+          args:
+            - --config=/etc/x509-certificate-exporter/config.yaml
+          volumeMounts:
+            - name: config
+              mountPath: /etc/x509-certificate-exporter
+              readOnly: true
+            - name: file-d29c5fbfbd5b6baa2cfa845e55e8f8fa2ee3d73f
+              mountPath: /mnt/watch/file-d29c5fbfbd5b6baa2cfa845e55e8f8fa2ee3d73f/var/lib/kubelet/pki
+              readOnly: true
+            - name: file-9dff78b77fe2f4b0f34f77796df3fea5983e5d4b
+              mountPath: /mnt/watch/file-9dff78b77fe2f4b0f34f77796df3fea5983e5d4b/var/lib/kubelet/pki
+              readOnly: true
+            - name: file-d53b89938a3d439c2fc32700f21b9a6d3d5e280b
+              mountPath: /mnt/watch/file-d53b89938a3d439c2fc32700f21b9a6d3d5e280b/etc/etcd/pki
+              readOnly: true
+            - name: file-c8e6234df1c5e705baa1abe5cd91a672353607a4
+              mountPath: /mnt/watch/file-c8e6234df1c5e705baa1abe5cd91a672353607a4/etc/etcd/pki/etcd
+              readOnly: true
+            - name: file-67ffd277e7234401ae8ad9470bbabc6fbab0ec70
+              mountPath: /mnt/watch/file-67ffd277e7234401ae8ad9470bbabc6fbab0ec70/etc/etcd/pki/etcd
+              readOnly: true
+            - name: file-c04fb1e17a554394e8bb9da2faa8392f750854d7
+              mountPath: /mnt/watch/file-c04fb1e17a554394e8bb9da2faa8392f750854d7/etc/etcd/pki/etcd
+              readOnly: true
+            - name: file-f4a717b09c34f92953529a15f6f35bd47fd17add
+              mountPath: /mnt/watch/file-f4a717b09c34f92953529a15f6f35bd47fd17add/etc/etcd/pki/etcd
+              readOnly: true
+            - name: file-24d5fa06386fdaf0d20c51e47b92012ea665b9f5
+              mountPath: /mnt/watch/file-24d5fa06386fdaf0d20c51e47b92012ea665b9f5/etc/kubernetes/pki
+              readOnly: true
+            - name: file-15d8ed7db7457d4f5108195ceb52a124a8703898
+              mountPath: /mnt/watch/file-15d8ed7db7457d4f5108195ceb52a124a8703898/etc/kubernetes/pki
+              readOnly: true
+            - name: file-99c1687bfbcf4396bdf08131c2971b798d8eb94f
+              mountPath: /mnt/watch/file-99c1687bfbcf4396bdf08131c2971b798d8eb94f/etc/kubernetes/pki
+              readOnly: true
+            - name: file-dfdaa9ca375647a99973f96da9f7fd05a44e5e4f
+              mountPath: /mnt/watch/file-dfdaa9ca375647a99973f96da9f7fd05a44e5e4f/etc/kubernetes/pki
+              readOnly: true
+            - name: file-35a4fcc6ab089d789fecaeed428cc8392148766a
+              mountPath: /mnt/watch/file-35a4fcc6ab089d789fecaeed428cc8392148766a/etc/kubernetes
+              readOnly: true
+            - name: file-41a6b8b147ef309a70619cafcfeb8961b3c29cae
+              mountPath: /mnt/watch/file-41a6b8b147ef309a70619cafcfeb8961b3c29cae/etc/kubernetes
+              readOnly: true
+            - name: file-ee9e4e203c758bb95ec439d60c16fb4e8854efaf
+              mountPath: /mnt/watch/file-ee9e4e203c758bb95ec439d60c16fb4e8854efaf/etc/kubernetes
+              readOnly: true
+            - name: kube-87dc0192f1ae9905eaf104bc294b632069be55fe
+              mountPath: /mnt/watch/kube-87dc0192f1ae9905eaf104bc294b632069be55fe/etc/kubernetes
+              readOnly: true
+            - name: kube-35a4fcc6ab089d789fecaeed428cc8392148766a
+              mountPath: /mnt/watch/kube-35a4fcc6ab089d789fecaeed428cc8392148766a/etc/kubernetes
+              readOnly: true
+            - name: kube-91fc8350dfdc257c03a9493f9daedf5842ee49b8
+              mountPath: /mnt/watch/kube-91fc8350dfdc257c03a9493f9daedf5842ee49b8/etc/kubernetes
+              readOnly: true
+            - name: kube-41a6b8b147ef309a70619cafcfeb8961b3c29cae
+              mountPath: /mnt/watch/kube-41a6b8b147ef309a70619cafcfeb8961b3c29cae/etc/kubernetes
+              readOnly: true
+            - name: kube-ee9e4e203c758bb95ec439d60c16fb4e8854efaf
+              mountPath: /mnt/watch/kube-ee9e4e203c758bb95ec439d60c16fb4e8854efaf/etc/kubernetes
+              readOnly: true
+            - mountPath: /etc/etcd/pki
+              name: etc-etcd-pki
+              readOnly: true
+            - mountPath: /etc/kubernetes
+              name: etc-kubernetes
+              readOnly: true
+          ports:
+            - name: metrics
+              containerPort: 9793
+          readinessProbe:
+            initialDelaySeconds: 5
+            periodSeconds: 3
+            httpGet:
+              path: /healthz
+              port: metrics
+          livenessProbe:
+            initialDelaySeconds: 5
+            periodSeconds: 3
+            httpGet:
+              path: /healthz
+              port: metrics
+      hostNetwork: false
+      volumes:
+        - name: config
+          configMap:
+            name: x509-certificate-exporter-control-plane
+        - name: file-d29c5fbfbd5b6baa2cfa845e55e8f8fa2ee3d73f
+          hostPath:
+            path: /var/lib/kubelet/pki
+            type: "Directory"
+        - name: file-9dff78b77fe2f4b0f34f77796df3fea5983e5d4b
+          hostPath:
+            path: /var/lib/kubelet/pki
+            type: "Directory"
+        - name: file-d53b89938a3d439c2fc32700f21b9a6d3d5e280b
+          hostPath:
+            path: /etc/etcd/pki
+            type: "Directory"
+        - name: file-c8e6234df1c5e705baa1abe5cd91a672353607a4
+          hostPath:
+            path: /etc/etcd/pki/etcd
+            type: "Directory"
+        - name: file-67ffd277e7234401ae8ad9470bbabc6fbab0ec70
+          hostPath:
+            path: /etc/etcd/pki/etcd
+            type: "Directory"
+        - name: file-c04fb1e17a554394e8bb9da2faa8392f750854d7
+          hostPath:
+            path: /etc/etcd/pki/etcd
+            type: "Directory"
+        - name: file-f4a717b09c34f92953529a15f6f35bd47fd17add
+          hostPath:
+            path: /etc/etcd/pki/etcd
+            type: "Directory"
+        - name: file-24d5fa06386fdaf0d20c51e47b92012ea665b9f5
+          hostPath:
+            path: /etc/kubernetes/pki
+            type: "Directory"
+        - name: file-15d8ed7db7457d4f5108195ceb52a124a8703898
+          hostPath:
+            path: /etc/kubernetes/pki
+            type: "Directory"
+        - name: file-99c1687bfbcf4396bdf08131c2971b798d8eb94f
+          hostPath:
+            path: /etc/kubernetes/pki
+            type: "Directory"
+        - name: file-dfdaa9ca375647a99973f96da9f7fd05a44e5e4f
+          hostPath:
+            path: /etc/kubernetes/pki
+            type: "Directory"
+        - name: file-35a4fcc6ab089d789fecaeed428cc8392148766a
+          hostPath:
+            path: /etc/kubernetes
+            type: "Directory"
+        - name: file-41a6b8b147ef309a70619cafcfeb8961b3c29cae
+          hostPath:
+            path: /etc/kubernetes
+            type: "Directory"
+        - name: file-ee9e4e203c758bb95ec439d60c16fb4e8854efaf
+          hostPath:
+            path: /etc/kubernetes
+            type: "Directory"
+        - name: kube-87dc0192f1ae9905eaf104bc294b632069be55fe
+          hostPath:
+            path: /etc/kubernetes
+            type: "Directory"
+        - name: kube-35a4fcc6ab089d789fecaeed428cc8392148766a
+          hostPath:
+            path: /etc/kubernetes
+            type: "Directory"
+        - name: kube-91fc8350dfdc257c03a9493f9daedf5842ee49b8
+          hostPath:
+            path: /etc/kubernetes
+            type: "Directory"
+        - name: kube-41a6b8b147ef309a70619cafcfeb8961b3c29cae
+          hostPath:
+            path: /etc/kubernetes
+            type: "Directory"
+        - name: kube-ee9e4e203c758bb95ec439d60c16fb4e8854efaf
+          hostPath:
+            path: /etc/kubernetes
+            type: "Directory"
+        - hostPath:
+            path: /etc/etcd/pki
+            type: Directory
+          name: etc-etcd-pki
+        - hostPath:
+            path: /etc/kubernetes
+            type: Directory
+          name: etc-kubernetes
+---
+# Source: x509-certificate-exporter/templates/daemonset.yaml
+apiVersion: apps/v1
+kind: DaemonSet
+metadata:
+  name: x509-certificate-exporter-data-plane
+  namespace: monitoring
+  labels:
+    app: x509-certificate-exporter
+spec:
+  selector:
+    matchLabels:
+      app: x509-certificate-exporter
+  template:
+    metadata:
+      labels:
+        app: x509-certificate-exporter
+      annotations:
+        checksum/config: 20a830319f08a70d635a01e86a11779f13315b5f8099a30028a1a1d34afc80d1
+    spec:
+      serviceAccountName: x509-certificate-exporter-node
+      securityContext:
+        seccompProfile:
+          type: RuntimeDefault
+      restartPolicy: Always
+      containers:
+        - name: x509-certificate-exporter
+          securityContext:
+            allowPrivilegeEscalation: false
+            capabilities:
+              drop:
+                - ALL
+            readOnlyRootFilesystem: true
+            runAsGroup: 0
+            runAsUser: 0
+          resources:
+            limits:
+              cpu: 1
+              memory: 40Mi
+            requests:
+              cpu: 10m
+              memory: 20Mi
+          image: registry.sighup.io/fury/enix/x509-certificate-exporter:4.1.0
+          imagePullPolicy: IfNotPresent
+          args:
+            - --config=/etc/x509-certificate-exporter/config.yaml
+          volumeMounts:
+            - name: config
+              mountPath: /etc/x509-certificate-exporter
+              readOnly: true
+            - name: file-d29c5fbfbd5b6baa2cfa845e55e8f8fa2ee3d73f
+              mountPath: /mnt/watch/file-d29c5fbfbd5b6baa2cfa845e55e8f8fa2ee3d73f/var/lib/kubelet/pki
+              readOnly: true
+            - name: file-9dff78b77fe2f4b0f34f77796df3fea5983e5d4b
+              mountPath: /mnt/watch/file-9dff78b77fe2f4b0f34f77796df3fea5983e5d4b/var/lib/kubelet/pki
+              readOnly: true
+            - name: kube-87dc0192f1ae9905eaf104bc294b632069be55fe
+              mountPath: /mnt/watch/kube-87dc0192f1ae9905eaf104bc294b632069be55fe/etc/kubernetes
+              readOnly: true
+          ports:
+            - name: metrics
+              containerPort: 9793
+          readinessProbe:
+            initialDelaySeconds: 5
+            periodSeconds: 3
+            httpGet:
+              path: /healthz
+              port: metrics
+          livenessProbe:
+            initialDelaySeconds: 5
+            periodSeconds: 3
+            httpGet:
+              path: /healthz
+              port: metrics
+      hostNetwork: false
+      volumes:
+        - name: config
+          configMap:
+            name: x509-certificate-exporter-data-plane
+        - name: file-d29c5fbfbd5b6baa2cfa845e55e8f8fa2ee3d73f
+          hostPath:
+            path: /var/lib/kubelet/pki
+            type: "Directory"
+        - name: file-9dff78b77fe2f4b0f34f77796df3fea5983e5d4b
+          hostPath:
+            path: /var/lib/kubelet/pki
+            type: "Directory"
+        - name: kube-87dc0192f1ae9905eaf104bc294b632069be55fe
+          hostPath:
+            path: /etc/kubernetes
+            type: "Directory"
+---
+# Source: x509-certificate-exporter/templates/deployment.yaml
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: x509-certificate-exporter
+  namespace: monitoring
+  labels:
+    app: x509-certificate-exporter
+spec:
+  selector:
+    matchLabels:
+      app: x509-certificate-exporter
+  replicas: 1
+  template:
+    metadata:
+      labels:
+        app: x509-certificate-exporter
+      annotations:
+        checksum/config: 20a830319f08a70d635a01e86a11779f13315b5f8099a30028a1a1d34afc80d1
+    spec:
+      securityContext:
+        runAsNonRoot: true
+        seccompProfile:
+          type: RuntimeDefault
+      restartPolicy: Always
+      serviceAccountName: x509-certificate-exporter
+      containers:
+        - name: x509-certificate-exporter
+          securityContext:
+            allowPrivilegeEscalation: false
+            capabilities:
+              drop:
+                - ALL
+            readOnlyRootFilesystem: true
+            runAsGroup: 65534
+            runAsUser: 65534
+          resources:
+            limits:
+              cpu: 1
+              memory: 150Mi
+            requests:
+              cpu: 20m
+              memory: 20Mi
+          image: registry.sighup.io/fury/enix/x509-certificate-exporter:4.1.0
+          imagePullPolicy: IfNotPresent
+          volumeMounts:
+            - name: config
+              mountPath: /etc/x509-certificate-exporter
+              readOnly: true
+          args:
+            - --config=/etc/x509-certificate-exporter/config.yaml
+          ports:
+            - name: metrics
+              containerPort: 9793
+          readinessProbe:
+            initialDelaySeconds: 5
+            periodSeconds: 3
+            httpGet:
+              path: /healthz
+              port: metrics
+          livenessProbe:
+            initialDelaySeconds: 5
+            periodSeconds: 3
+            httpGet:
+              path: /healthz
+              port: metrics
+      volumes:
+        - name: config
+          configMap:
+            name: x509-certificate-exporter-secrets
+---
+# Source: x509-certificate-exporter/templates/prometheusrule.yaml
+apiVersion: monitoring.coreos.com/v1
+kind: PrometheusRule
+metadata:
+  name: x509-certificate-exporter
+  namespace: monitoring
+  labels:
+    app: x509-certificate-exporter
+    prometheus: k8s
+    role: alert-rules
+spec:
+  groups:
+    - name: x509-certificate-exporter.rules
+      rules:
+        - alert: 'X509ExporterReadErrors'
+          expr: delta(x509_read_errors[15m]) > 0
+          for: 5m
+          labels:
+            severity: warning
+          annotations:
+            summary: Increasing read errors for x509-certificate-exporter
+            description: Over the last 15 minutes, this x509-certificate-exporter instance has experienced errors reading certificate files or querying the Kubernetes API. This could be caused by a misconfiguration if triggered when the exporter starts.
+        - alert: 'CertificateError'
+          expr: x509_cert_error > 0
+          for: 15m
+          labels:
+            severity: warning
+          annotations:
+            summary: Certificate cannot be decoded
+            description: Certificate could not be decoded {{if $labels.secret_name }}in Kubernetes secret "{{ $labels.secret_namespace }}/{{ $labels.secret_name }}"{{else}}at location "{{ $labels.filepath }}"{{end}}
+        - alert: 'CertificateRenewal'
+          expr: (x509_cert_not_after - time()) < (28 * 86400)
+          for: 15m
+          labels:
+            severity: warning
+          annotations:
+            summary: Certificate should be renewed
+            description: Certificate for "{{ $labels.subject_CN }}" should be renewed as it expires in {{ humanizeDuration $value }} {{if $labels.secret_name }}in Kubernetes secret "{{ $labels.secret_namespace }}/{{ $labels.secret_name }}"{{else}}at location "{{ $labels.filepath }}"{{end}}
+        - alert: 'CertificateExpiration'
+          expr: (x509_cert_not_after - time()) < (14 * 86400)
+          for: 15m
+          labels:
+            severity: critical
+          annotations:
+            summary: Certificate is about to expire
+            description: Certificate for "{{ $labels.subject_CN }}" is about to expire in {{ humanizeDuration $value }} {{if $labels.secret_name }}in Kubernetes secret "{{ $labels.secret_namespace }}/{{ $labels.secret_name }}"{{else}}at location "{{ $labels.filepath }}"{{end}}
+---
+# Source: x509-certificate-exporter/templates/servicemonitor.yaml
+apiVersion: monitoring.coreos.com/v1
+kind: ServiceMonitor
+metadata:
+  name: x509-certificate-exporter
+  namespace: monitoring
+  labels:
+    app: x509-certificate-exporter
+spec:
+  selector:
+    matchLabels:
+      app: x509-certificate-exporter
+  endpoints:
+    - port: metrics
+      interval: 60s
+      scrapeTimeout: 30s
+      scheme: http

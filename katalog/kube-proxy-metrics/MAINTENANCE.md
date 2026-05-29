@@ -2,10 +2,10 @@
 
 To prepare a new release of this package:
 
-1. Run the upgrade script to bump the `kube-rbac-proxy` image to the latest release:
+1. Run the upgrade script to bump the `kube-rbac-proxy` image to the desired release:
 
    ```bash
-   ./upgrade.sh
+   RBAC_PROXY_VERSION=v0.22.0 ./upgrade.sh
    ```
 
 2. Check the differences introduced in `kustomization.yaml` and verify the new tag.
