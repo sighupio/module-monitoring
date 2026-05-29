@@ -5,8 +5,11 @@
 
 set -euo pipefail
 
-RBAC_PROXY_RELEASE=$(curl -sL "https://api.github.com/repos/kube-rbac-proxy/kube-rbac-proxy/releases/latest" | jq -r ".tag_name")
-echo "Found latest Kube RBAC Proxy ${RBAC_PROXY_RELEASE}"
+if [ -z "${RBAC_PROXY_VERSION:-}" ]; then
+  echo "Usage: RBAC_PROXY_VERSION=v0.22.0 ./upgrade.sh"
+  exit 1
+fi
+echo "Using image version ${RBAC_PROXY_VERSION}"
 
-yq -i "(.images[] | select(.name == \"kube-rbac-proxy\")).newTag = \"${RBAC_PROXY_RELEASE}\"" kustomization.yaml
-echo "Kube RBAC proxy updated to ${RBAC_PROXY_RELEASE}"
+yq -i "(.images[] | select(.name == \"kube-rbac-proxy\")).newTag = \"${RBAC_PROXY_VERSION}\"" kustomization.yaml
+echo "Kube RBAC proxy updated to ${RBAC_PROXY_VERSION}"

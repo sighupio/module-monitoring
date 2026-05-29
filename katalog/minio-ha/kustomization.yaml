@@ -5,24 +5,17 @@
 ---
 apiVersion: kustomize.config.k8s.io/v1beta1
 kind: Kustomization
-
 namespace: monitoring
-
 resources:
   - deploy.yaml
   - initialize-minio-buckets.yaml
   - prometheusrules.yaml
-
 images:
   - name: registry.sighup.io/fury/groundnuty/k8s-wait-for
+    newName: registry.sighup.io/fury/groundnuty/k8s-wait-for
     newTag: v2.0
-  - name: registry.sighup.io/fury/minio/mc
-    newTag: RELEASE.2025-08-13T08-35-41Z
-  - name: registry.sighup.io/fury/minio
-    newTag: RELEASE.2025-09-07T16-13-09Z
-
 secretGenerator:
   - name: minio-monitoring
     literals:
-    - rootPassword=minio123
-    - rootUser=minio
+      - rootPassword=minio123
+      - rootUser=minio
