@@ -16,7 +16,7 @@ spec:
     - name: EmbeddedExporter
       rules:
         - alert: MinioClusterDiskOffline
-          expr: 'minio_cluster_drive_offline_total > 0'
+          expr: 'minio_cluster_drive_offline_total{job="minio-monitoring"} > 0'
           for: 0m
           labels:
             severity: critical
@@ -24,7 +24,7 @@ spec:
             summary: Minio cluster disk offline (instance {{ $labels.instance }})
             description: "Minio cluster disk is offline\n  VALUE = {{ $value }}\n  LABELS = {{ $labels }}"
         - alert: MinioNodeDiskOffline
-          expr: 'minio_cluster_nodes_offline_total > 0'
+          expr: 'minio_cluster_nodes_offline_total{job="minio-monitoring"} > 0'
           for: 0m
           labels:
             severity: critical
@@ -32,8 +32,8 @@ spec:
             summary: Minio node disk offline (instance {{ $labels.instance }})
             description: "Minio cluster node disk is offline\n  VALUE = {{ $value }}\n  LABELS = {{ $labels }}"
         - alert: MinioDiskSpaceUsage
-          expr: 'minio_cluster_capacity_raw_free_bytes / minio_cluster_capacity_raw_total_bytes * 100 < 10 and minio_cluster_capacity_raw_total_bytes > 0'
-          for: 0m
+          expr: 'minio_cluster_capacity_raw_free_bytes{job="minio-monitoring"} / minio_cluster_capacity_raw_total_bytes{job="minio-monitoring"} * 100 < 10 and minio_cluster_capacity_raw_total_bytes{job="minio-monitoring"} > 0'
+          for: 5m
           labels:
             severity: warning
           annotations:

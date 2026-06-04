@@ -35,6 +35,9 @@ echo "Extracted archive"
 helm lint /tmp/minio-chainguard/helm/minio --values MAINTENANCE.values.yaml
 echo "Helm lint done"
 
+yq -i "(.images[] | select(.name == \"registry.sighup.io/fury/minio/mc\")).newTag = \"${MC_VERSION}\"" kustomization.yaml
+echo "Updated image tags in kustomization.yaml"
+
 yq -i ".image.tag = \"${MINIO_IMAGE_TAG}\"" MAINTENANCE.values.yaml
 yq -i ".mcImage.tag = \"${MC_VERSION}\"" MAINTENANCE.values.yaml
 echo "Updated image tags in MAINTENANCE.values.yaml"
@@ -50,6 +53,8 @@ echo "Downloaded MinIO Prometheus rules from upstream"
 
 yq -i ".spec.groups = load(\"${MINIO_RULES_FILE}\").groups" prometheusrules.yaml
 rm -f "${MINIO_RULES_FILE}"
+sed -i '' -E 's/(minio_[a-z_]+) /\1{job="minio-monitoring"} /g' prometheusrules.yaml
+yq -i '(.spec.groups[].rules[] | select(.alert == "MinioDiskSpaceUsage")).for = "5m"' prometheusrules.yaml
 echo "MinIO Prometheus rules updated"
 
 rm -r /tmp/minio-chainguard

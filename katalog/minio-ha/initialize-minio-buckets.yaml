@@ -27,7 +27,7 @@ spec:
           args: ["pod", "-lapp=minio"]
       containers:
         - name: mc
-          image: quay.io/minio/mc
+          image: registry.sighup.io/fury/minio/mc
           imagePullPolicy: Always
           envFrom:
             - secretRef:
