@@ -13,26 +13,26 @@ metadata:
   namespace: monitoring
 spec:
   groups:
-    - name: minio.rules
+    - name: EmbeddedExporter
       rules:
-        - alert: MinioMonitoringClusterDiskOffline
-          expr: minio_cluster_disk_offline_total{job="minio-monitoring"} > 0
-          for: 5m
+        - alert: MinioClusterDiskOffline
+          expr: 'minio_cluster_drive_offline_total{job="minio-monitoring"} > 0'
+          for: 0m
           labels:
             severity: critical
           annotations:
             summary: Minio cluster disk offline (instance {{ $labels.instance }})
             description: "Minio cluster disk is offline\n  VALUE = {{ $value }}\n  LABELS = {{ $labels }}"
-        - alert: MinioMonitoringNodeDiskOffline
-          expr: minio_cluster_nodes_offline_total{job="minio-monitoring"} > 0
-          for: 5m
+        - alert: MinioNodeDiskOffline
+          expr: 'minio_cluster_nodes_offline_total{job="minio-monitoring"} > 0'
+          for: 0m
           labels:
             severity: critical
           annotations:
             summary: Minio node disk offline (instance {{ $labels.instance }})
             description: "Minio cluster node disk is offline\n  VALUE = {{ $value }}\n  LABELS = {{ $labels }}"
-        - alert: MinioMonitoringDiskSpaceUsage
-          expr: minio_cluster_capacity_usable_free_bytes{job="minio-monitoring"} / minio_cluster_capacity_usable_total_bytes{job="minio-monitoring"} * 100 < 10
+        - alert: MinioDiskSpaceUsage
+          expr: 'minio_cluster_capacity_raw_free_bytes{job="minio-monitoring"} / minio_cluster_capacity_raw_total_bytes{job="minio-monitoring"} * 100 < 10 and minio_cluster_capacity_raw_total_bytes{job="minio-monitoring"} > 0'
           for: 5m
           labels:
             severity: warning
