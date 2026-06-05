@@ -35,7 +35,7 @@ echo "Extracted archive"
 helm lint /tmp/minio-chainguard/helm/minio --values MAINTENANCE.values.yaml
 echo "Helm lint done"
 
-yq -i "(.images[] | select(.name == \"registry.sighup.io/fury/minio/mc\")).newTag = \"${MC_VERSION}\"" kustomization.yaml
+kustomize edit set image registry.sighup.io/fury/minio/mc:${MC_VERSION}
 echo "Updated image tags in kustomization.yaml"
 
 yq -i ".image.tag = \"${MINIO_IMAGE_TAG}\"" MAINTENANCE.values.yaml

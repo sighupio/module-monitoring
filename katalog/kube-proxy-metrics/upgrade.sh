@@ -11,5 +11,5 @@ if [ -z "${RBAC_PROXY_VERSION:-}" ]; then
 fi
 echo "Using image version ${RBAC_PROXY_VERSION}"
 
-yq -i "(.images[] | select(.name == \"kube-rbac-proxy\")).newTag = \"${RBAC_PROXY_VERSION}\"" kustomization.yaml
+kustomize edit set image kube-rbac-proxy=registry.sighup.io/fury/brancz/kube-rbac-proxy:${RBAC_PROXY_VERSION}
 echo "Kube RBAC proxy updated to ${RBAC_PROXY_VERSION}"
