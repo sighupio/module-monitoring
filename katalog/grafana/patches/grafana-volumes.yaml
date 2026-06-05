@@ -30,6 +30,9 @@ spec:
             - mountPath: /tmp
               name: tmp-plugins
               readOnly: false
+            - mountPath: /var/lib/grafana-plugins
+              name: grafana-plugins
+              readOnly: false
             - $patch: replace
       volumes:
         - name: grafana-config
@@ -46,6 +49,9 @@ spec:
           emptyDir:
             medium: Memory
         - name: tmp-plugins
+          emptyDir:
+            medium: Memory
+        - name: grafana-plugins
           emptyDir:
             medium: Memory
         - $patch: replace
