@@ -31,6 +31,16 @@ hostPathsExporter:
         - key: node-role.kubernetes.io/control-plane
           operator: Exists
           effect: NoSchedule
+      securityContext:
+        runAsUser: 0
+        runAsGroup: 0
+        readOnlyRootFilesystem: true
+        allowPrivilegeEscalation: false
+        capabilities:
+          drop:
+            - ALL
+          add:
+            - DAC_READ_SEARCH
       watchFiles:
         # Common kubelet files
         - /var/lib/kubelet/pki/kubelet-server-current.pem
