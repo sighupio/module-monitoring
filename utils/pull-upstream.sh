@@ -159,24 +159,21 @@ case "${FURY_MODULE}" in
     ;;
   "prometheus-adapter")
     populate_package "prometheusAdapter"
+    rm configMap.yaml
     helm repo add prometheus-community https://prometheus-community.github.io/helm-charts
+    helm repo update
     PROMETHEUS_ADAPTER_RELEASE=$(yq '.metadata.labels."app.kubernetes.io/version"' < apiService.yaml )
-    yq '.metadata.labels' < apiService.yaml > "${WORK_DIR}/labels.yml"
-    KUBE_PROMETHEUS_ADAPTER_RELEASE=$(helm search repo prometheus-adapter -l -o json | jq -r --arg PROMETHEUS_ADAPTER_RELEASE "${PROMETHEUS_ADAPTER_RELEASE}" '.[] | select(.app_version == ("v"+$PROMETHEUS_ADAPTER_RELEASE)) | .version')
-    cd "${WORK_DIR}"
+    KUBE_PROMETHEUS_ADAPTER_RELEASE=$(helm search repo prometheus-community/prometheus-adapter -l -o json | jq -r --arg PROMETHEUS_ADAPTER_RELEASE "${PROMETHEUS_ADAPTER_RELEASE}" '[.[] | select(.app_version == ("v"+$PROMETHEUS_ADAPTER_RELEASE)) | .version] | first')
     helm template \
       --release-name prometheus-adapter \
       --namespace monitoring \
       -f "${VALUES_PATH}/prometheus-adapter.yml" \
       --api-versions apiregistration.k8s.io/v1 \
       --version "${KUBE_PROMETHEUS_ADAPTER_RELEASE}" \
-      prometheus-community/prometheus-adapter | yq --split-exp '.kind + "-" + .metadata.name'
-    cd -
-    grep -v '#' < "${WORK_DIR}/APIService-v1beta1.custom.metrics.k8s.io"  | yq "del(.metadata.labels) | .metadata.labels = (load(\"${WORK_DIR}/labels.yml\"))" >> "${KATALOG_PATH}/prometheus-adapter/apiService.yaml"
-    grep -v '#' < "${WORK_DIR}/APIService-v1beta1.external.metrics.k8s.io" | yq "del(.metadata.labels) | .metadata.labels = (load(\"${WORK_DIR}/labels.yml\"))" >> "${KATALOG_PATH}/prometheus-adapter/apiService.yaml"
-    yq -i ".data = (load(\"${WORK_DIR}/ConfigMap-prometheus-adapter.yml\") | .data)" configMap.yaml
+      prometheus-community/prometheus-adapter | \
+      yq 'select(.kind == "ConfigMap" and .metadata.name == "prometheus-adapter") | .data."config.yaml"' > config.yaml
+    yq -i '.metadata.labels = (load("apiService.yaml") | .metadata.labels)' apiService-EnhancedHPAMetrics.yaml
     yq -i '.rules[0].apiGroups = ["metrics.k8s.io", "custom.metrics.k8s.io", "external.metrics.k8s.io"]' clusterRoleServerResources.yaml
-    # shellcheck disable=SC2086
     yq -i ".spec.template.metadata.annotations.\"checksum.config/md5\" = \"$(md5 -q ${VALUES_PATH}/prometheus-adapter.yml)\"" deployment.yaml
     ;;
   "prometheus-operated")

@@ -27,7 +27,7 @@ NOTE: The labels added by Helm have been removed and changed to `app: x509-certi
 
 NOTE2: Grafana dashboard is taken from: https://github.com/enix/x509-certificate-exporter/blob/v3.19.1/deploy/charts/x509-certificate-exporter/grafana-dashboards/x509-certificate-exporter.json or take it from the generated configmap.
 
-1. Sync the new image to our registry in the [`monitoring` images.yaml file fury-distribution-container-image-sync repository](https://github.com/sighupio/fury-distribution-container-image-sync/blob/main/modules/monitoring/images.yml).
+1. Sync the new image to our registry in the [`monitoring` images.yaml file container-image-sync repository](https://github.com/sighupio/container-image-sync/blob/main/modules/monitoring/images.yml).
 
 2. Update each `kustomization.yaml` file with the new image.
 
