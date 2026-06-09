@@ -173,7 +173,7 @@ case "${FURY_MODULE}" in
       prometheus-community/prometheus-adapter | \
       yq 'select(.kind == "ConfigMap" and .metadata.name == "prometheus-adapter") | .data."config.yaml"' > config.yaml
     yq -i '.metadata.labels = (load("apiService.yaml") | .metadata.labels)' apiService-EnhancedHPAMetrics.yaml
-    yq -i '.rules[0].apiGroups = ["metrics.k8s.io", "custom.metrics.k8s.io", "external.metrics.k8s.io"]' clusterRoleServerResources.yaml
+    yq -i '.rules[0].apiGroups += ["custom.metrics.k8s.io", "external.metrics.k8s.io"]' clusterRoleServerResources.yaml
     yq -i ".spec.template.metadata.annotations.\"checksum.config/md5\" = \"$(md5 -q ${VALUES_PATH}/prometheus-adapter.yml)\"" deployment.yaml
     ;;
   "prometheus-operated")
