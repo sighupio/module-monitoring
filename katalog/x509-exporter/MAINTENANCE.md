@@ -26,7 +26,7 @@ To update the x509-exporter package, follow these steps.
    - Download the Grafana dashboard JSON into `config/x509-certificate-exporter.json`
    - Patch all labels to `app: x509-certificate-exporter` (with `prometheus: k8s` and `role: alert-rules` on `PrometheusRule`)
    - Patch `spec.selector` and `spec.template.metadata.labels` on DaemonSets, Deployment and Service
-   - For chart 4.1.0, run `patch_4.1.0.sh` to replace the broken `X509ExporterReadErrors` alert with `SourceErrors`/`SourceErrorsSustained` from chart v4.2.0-rc.1
+   - For chart 4.1.0, run `patch_4.1.0.sh` to replace the broken `X509ExporterReadErrors` alert with `SourceErrors`/`SourceErrorsSustained` and related Grafana dahboard from chart v4.2.0-rc.1
    - Run `mise run add-license`
 
 3. Review the changes:
