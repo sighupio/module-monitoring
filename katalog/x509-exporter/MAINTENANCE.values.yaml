@@ -15,7 +15,7 @@ hostPathsExporter:
   daemonSets:
     data-plane:
       watchFiles:
-        - /var/lib/kubelet/pki/kubelet.crt
+        - /var/lib/kubelet/pki/kubelet-server-current.pem
         - /var/lib/kubelet/pki/kubelet-client-current.pem
       watchKubeconfFiles:
         - /etc/kubernetes/kubelet.conf
@@ -33,7 +33,7 @@ hostPathsExporter:
           effect: NoSchedule
       watchFiles:
         # Common kubelet files
-        - /var/lib/kubelet/pki/kubelet.crt
+        - /var/lib/kubelet/pki/kubelet-server-current.pem
         - /var/lib/kubelet/pki/kubelet-client-current.pem
         # Control plane specific files
         - /etc/etcd/pki/apiserver-etcd-client.crt
