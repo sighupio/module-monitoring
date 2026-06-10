@@ -105,7 +105,7 @@ data:
         name: host-paths-control-plane
         followSymlinks: true
         paths:
-          - /mnt/watch/file-d29c5fbfbd5b6baa2cfa845e55e8f8fa2ee3d73f/var/lib/kubelet/pki/kubelet.crt
+          - /mnt/watch/file-4e011152ff1166efb100401a2542aa835a398acc/var/lib/kubelet/pki/kubelet-server-current.pem
           - /mnt/watch/file-9dff78b77fe2f4b0f34f77796df3fea5983e5d4b/var/lib/kubelet/pki/kubelet-client-current.pem
           - /mnt/watch/file-d53b89938a3d439c2fc32700f21b9a6d3d5e280b/etc/etcd/pki/apiserver-etcd-client.crt
           - /mnt/watch/file-c8e6234df1c5e705baa1abe5cd91a672353607a4/etc/etcd/pki/etcd/ca.crt
@@ -126,7 +126,7 @@ data:
         # that escapes raises x509_source_errors_total{reason="out_of_scope_symlink"}.
         pathMappings:
           - from: "/var/lib/kubelet/pki"
-            to: "/mnt/watch/file-d29c5fbfbd5b6baa2cfa845e55e8f8fa2ee3d73f/var/lib/kubelet/pki"
+            to: "/mnt/watch/file-4e011152ff1166efb100401a2542aa835a398acc/var/lib/kubelet/pki"
           - from: "/var/lib/kubelet/pki"
             to: "/mnt/watch/file-9dff78b77fe2f4b0f34f77796df3fea5983e5d4b/var/lib/kubelet/pki"
           - from: "/etc/etcd/pki"
@@ -212,7 +212,7 @@ data:
         name: host-paths-data-plane
         followSymlinks: true
         paths:
-          - /mnt/watch/file-d29c5fbfbd5b6baa2cfa845e55e8f8fa2ee3d73f/var/lib/kubelet/pki/kubelet.crt
+          - /mnt/watch/file-4e011152ff1166efb100401a2542aa835a398acc/var/lib/kubelet/pki/kubelet-server-current.pem
           - /mnt/watch/file-9dff78b77fe2f4b0f34f77796df3fea5983e5d4b/var/lib/kubelet/pki/kubelet-client-current.pem
         # Map host-namespace path prefixes (where symlink targets are
         # recorded) to the paths the exporter actually sees inside the pod.
@@ -221,7 +221,7 @@ data:
         # that escapes raises x509_source_errors_total{reason="out_of_scope_symlink"}.
         pathMappings:
           - from: "/var/lib/kubelet/pki"
-            to: "/mnt/watch/file-d29c5fbfbd5b6baa2cfa845e55e8f8fa2ee3d73f/var/lib/kubelet/pki"
+            to: "/mnt/watch/file-4e011152ff1166efb100401a2542aa835a398acc/var/lib/kubelet/pki"
           - from: "/var/lib/kubelet/pki"
             to: "/mnt/watch/file-9dff78b77fe2f4b0f34f77796df3fea5983e5d4b/var/lib/kubelet/pki"
         formats: [pem]
@@ -334,7 +334,7 @@ spec:
       labels:
         app: x509-certificate-exporter
       annotations:
-        checksum/config: 20a830319f08a70d635a01e86a11779f13315b5f8099a30028a1a1d34afc80d1
+        checksum/config: 020224eaec78ccc088524fcd47a427ab32661fde460c852fdbc9f2836cd71118
     spec:
       serviceAccountName: x509-certificate-exporter-node
       affinity:
@@ -377,8 +377,8 @@ spec:
             - name: config
               mountPath: /etc/x509-certificate-exporter
               readOnly: true
-            - name: file-d29c5fbfbd5b6baa2cfa845e55e8f8fa2ee3d73f
-              mountPath: /mnt/watch/file-d29c5fbfbd5b6baa2cfa845e55e8f8fa2ee3d73f/var/lib/kubelet/pki
+            - name: file-4e011152ff1166efb100401a2542aa835a398acc
+              mountPath: /mnt/watch/file-4e011152ff1166efb100401a2542aa835a398acc/var/lib/kubelet/pki
               readOnly: true
             - name: file-9dff78b77fe2f4b0f34f77796df3fea5983e5d4b
               mountPath: /mnt/watch/file-9dff78b77fe2f4b0f34f77796df3fea5983e5d4b/var/lib/kubelet/pki
@@ -454,7 +454,7 @@ spec:
         - name: config
           configMap:
             name: x509-certificate-exporter-control-plane
-        - name: file-d29c5fbfbd5b6baa2cfa845e55e8f8fa2ee3d73f
+        - name: file-4e011152ff1166efb100401a2542aa835a398acc
           hostPath:
             path: /var/lib/kubelet/pki
             type: "Directory"
@@ -548,7 +548,7 @@ spec:
       labels:
         app: x509-certificate-exporter
       annotations:
-        checksum/config: 20a830319f08a70d635a01e86a11779f13315b5f8099a30028a1a1d34afc80d1
+        checksum/config: 020224eaec78ccc088524fcd47a427ab32661fde460c852fdbc9f2836cd71118
     spec:
       serviceAccountName: x509-certificate-exporter-node
       securityContext:
@@ -580,8 +580,8 @@ spec:
             - name: config
               mountPath: /etc/x509-certificate-exporter
               readOnly: true
-            - name: file-d29c5fbfbd5b6baa2cfa845e55e8f8fa2ee3d73f
-              mountPath: /mnt/watch/file-d29c5fbfbd5b6baa2cfa845e55e8f8fa2ee3d73f/var/lib/kubelet/pki
+            - name: file-4e011152ff1166efb100401a2542aa835a398acc
+              mountPath: /mnt/watch/file-4e011152ff1166efb100401a2542aa835a398acc/var/lib/kubelet/pki
               readOnly: true
             - name: file-9dff78b77fe2f4b0f34f77796df3fea5983e5d4b
               mountPath: /mnt/watch/file-9dff78b77fe2f4b0f34f77796df3fea5983e5d4b/var/lib/kubelet/pki
@@ -609,7 +609,7 @@ spec:
         - name: config
           configMap:
             name: x509-certificate-exporter-data-plane
-        - name: file-d29c5fbfbd5b6baa2cfa845e55e8f8fa2ee3d73f
+        - name: file-4e011152ff1166efb100401a2542aa835a398acc
           hostPath:
             path: /var/lib/kubelet/pki
             type: "Directory"
@@ -640,7 +640,7 @@ spec:
       labels:
         app: x509-certificate-exporter
       annotations:
-        checksum/config: 20a830319f08a70d635a01e86a11779f13315b5f8099a30028a1a1d34afc80d1
+        checksum/config: 020224eaec78ccc088524fcd47a427ab32661fde460c852fdbc9f2836cd71118
     spec:
       securityContext:
         runAsNonRoot: true
