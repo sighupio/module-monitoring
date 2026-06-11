@@ -881,11 +881,11 @@
       "steppedLine": false,
       "targets": [
         {
-          "expr": "sum by (instance,pod,proto) (irate(coredns_forward_requests_total{job=\"kube-dns\",instance=~\"$instance\"}[2m]))",
+          "expr": "sum by (instance,pod,to) (irate(coredns_proxy_request_duration_seconds_count{job=\"kube-dns\",instance=~\"$instance\",proxy_name=\"forward\"}[2m]))",
           "format": "time_series",
           "hide": false,
           "intervalFactor": 2,
-          "legendFormat": "{{ pod }}/{{ proto }}",
+          "legendFormat": "{{ pod }}/{{ to }}",
           "refId": "A"
         }
       ],
@@ -967,26 +967,26 @@
       "steppedLine": false,
       "targets": [
         {
-          "expr": "histogram_quantile(0.99, sum by (le,instance,pod,proto) (rate(coredns_forward_request_duration_seconds_bucket{job=\"kube-dns\",instance=~\"$instance\"}[2m])))",
+          "expr": "histogram_quantile(0.99, sum by (le,instance,pod,to) (rate(coredns_proxy_request_duration_seconds_bucket{job=\"kube-dns\",instance=~\"$instance\",proxy_name=\"forward\"}[2m])))",
           "format": "time_series",
           "intervalFactor": 2,
-          "legendFormat": "{{ pod }}/{{ proto }} p99",
+          "legendFormat": "{{ pod }}/{{ to }} p99",
           "refId": "A"
         },
         {
-          "expr": "histogram_quantile(0.90, sum by (le,instance,pod,proto) (rate(coredns_forward_request_duration_seconds_bucket{job=\"kube-dns\",instance=~\"$instance\"}[2m])))",
+          "expr": "histogram_quantile(0.90, sum by (le,instance,pod,to) (rate(coredns_proxy_request_duration_seconds_bucket{job=\"kube-dns\",instance=~\"$instance\",proxy_name=\"forward\"}[2m])))",
           "format": "time_series",
           "hide": true,
           "intervalFactor": 2,
-          "legendFormat": "{{ pod }}/{{ proto }} p90",
+          "legendFormat": "{{ pod }}/{{ to }} p90",
           "refId": "B"
         },
         {
-          "expr": "histogram_quantile(0.50, sum by (le,instance,pod,proto) (rate(coredns_forward_request_duration_seconds_bucket{job=\"kube-dns\",instance=~\"$instance\"}[2m])))",
+          "expr": "histogram_quantile(0.50, sum by (le,instance,pod,to) (rate(coredns_proxy_request_duration_seconds_bucket{job=\"kube-dns\",instance=~\"$instance\",proxy_name=\"forward\"}[2m])))",
           "format": "time_series",
           "hide": true,
           "intervalFactor": 2,
-          "legendFormat": "{{ pod }}/{{ proto }} p50",
+          "legendFormat": "{{ pod }}/{{ to }} p50",
           "refId": "C"
         }
       ],
