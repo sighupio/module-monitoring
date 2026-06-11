@@ -39,3 +39,7 @@ To update the x509-exporter package, follow these steps.
    > **Note:** Chart v4.1.0 ships a broken `X509ExporterReadErrors` alert referencing the removed `x509_read_errors` metric. The `patch_4.1.0.sh` script backports the fix from [v4.2.0-rc.1](https://github.com/enix/x509-certificate-exporter/releases/tag/v4.2.0-rc.1). When we upgrade to chart ≥4.2.0, the patch script can be removed entirely.
 
 4. Sync the new image to our registry in the [`monitoring` images.yaml file container-image-sync repository](https://github.com/sighupio/container-image-sync/blob/main/modules/monitoring/images.yml).
+
+## Notes
+
+The `securityContext` block with the `DAC_READ_SEARCH` capability in `MAINTENANCE.values.yaml` under `hostPathsExporter.daemonSets.control-plane` is required because the [on-prem installer](https://github.com/sighupio/installer-on-premises/pull/163) restricts permissions on `/etc/etcd/pki` to the `etcd` user. Without this capability, the exporter cannot read etcd certificates and logs `permission denied` errors. See [#221](https://github.com/sighupio/module-monitoring/issues/221) and fix commit `2c33b03` for context.
