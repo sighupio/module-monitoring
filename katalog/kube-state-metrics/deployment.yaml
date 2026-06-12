@@ -34,7 +34,7 @@ spec:
       - args:
         - --host=127.0.0.1
         - --port=8081
-        - --resources=endpoints,endpointslices
+        - --resources=certificatesigningrequests,configmaps,cronjobs,daemonsets,deployments,endpointslices,horizontalpodautoscalers,ingresses,jobs,leases,limitranges,mutatingwebhookconfigurations,namespaces,networkpolicies,nodes,persistentvolumeclaims,persistentvolumes,poddisruptionbudgets,pods,replicasets,replicationcontrollers,resourcequotas,secrets,services,statefulsets,storageclasses,validatingwebhookconfigurations,volumeattachments,endpoints
         - --telemetry-host=127.0.0.1
         - --telemetry-port=8082
         image: registry.k8s.io/kube-state-metrics/kube-state-metrics:v2.18.0

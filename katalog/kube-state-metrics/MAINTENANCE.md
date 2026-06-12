@@ -17,4 +17,4 @@ To prepare a new release of this package:
 
 4. Update the `kustomization.yaml` file with the new image.
 
-5. Note on `--resources` flag: kube-state-metrics 2.18.0 replaced `endpoints` with `endpointslices` as the default resource. The flag `--resources=endpoints,endpointslices` is required to keep `kube_endpoint_address` metrics (used by `MimirGossipMembersEndpointsOutOfSync` alert in `katalog/mimir/prometheusRules.yaml`). Without this flag, the alert breaks because `kube_endpoint_address` is no longer emitted.
+5. Note on `--resources` flag: starting from KSM v2.18.0, `endpoints` was removed from the default resources (replaced by `endpointslices`). However, `endpoints` is still needed because `kube_endpoint_address` is used by the `MimirGossipMembersEndpointsOutOfSync` alert in `katalog/mimir/prometheusRules.yaml`. Since the `--resources` flag replaces the entire default list, the deployment explicitly lists all 28 default resources plus `endpoints`. When updating KSM, fetch the new default list from `pkg/options/resource.go` in the `kubernetes/kube-state-metrics` repository at the target version tag, append `endpoints`, and update the flag accordingly.
