@@ -8,7 +8,7 @@ To achieve high availability (HA) for MinIO, a cluster of multiple MinIO nodes m
 
 ## Requirements
 
-- Kubernetes >= `1.29.0`
+Kubernetes >= `1.32.0`
 - Kustomize = `5.6.0`
 - [prometheus-operator from SD monitoring module][prometheus-operator]
 
