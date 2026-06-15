@@ -193,6 +193,8 @@ case "${FURY_MODULE}" in
     populate_package "prometheusOperator"
 
     cp -af "${WORK_DIR}"/manifests/setup/0* "${KATALOG_PATH}/prometheus-operator/crds"
+    sed -i '' 's|quay.io/prometheus-operator/prometheus-config-reloader|registry.sighup.io/fury/prometheus-operator/prometheus-config-reloader|g' \
+      "${KATALOG_PATH}/prometheus-operator/deployment.yaml"
     ;;
   *)
     echo "$(basename "$0"): error: unknown package ${FURY_MODULE}" 1>&2

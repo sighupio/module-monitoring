@@ -33,7 +33,7 @@ spec:
       containers:
       - args:
         - --kubelet-service=kube-system/kubelet
-        - --prometheus-config-reloader=quay.io/prometheus-operator/prometheus-config-reloader:v0.89.0
+        - --prometheus-config-reloader=registry.sighup.io/fury/prometheus-operator/prometheus-config-reloader:v0.89.0
         - --watch-referenced-objects-in-all-namespaces=true
         - --disable-unmanaged-prometheus-configuration=true
         - --kubelet-endpoints=true
