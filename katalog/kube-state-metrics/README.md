@@ -20,16 +20,16 @@ From kube-state-metrics
 
 ## Requirements
 
-- Kubernetes >= `1.31.0`
+- Kubernetes >= `1.32.0`
 - Kustomize = `5.6.0`
 - [prometheus-operator](../prometheus-operator)
 
 ## Image repository and tag
 
-- kube-state-metrics image: `registry.sighup.io/fury/kube-state-metrics/kube-state-metrics:v2.16.0`
-- kube-state-metrics repository: [kube-state-metrics on GH][ksm-gh]
-- kube-rbac-proxy image: `registry.sighup.io/fury/brancz/kube-rbac-proxy:v0.19.1`
-- kube-rbac-proxy repository: [kube-rbac-proxy on Github][krp-gh]
+- kube-state-metrics image: `registry.sighup.io/fury/kube-state-metrics/kube-state-metrics:v2.18.0`
+- kube-state-metrics repository: [kube-state-metrics on GitHub][ksm-gh]
+- kube-rbac-proxy image: `registry.sighup.io/fury/brancz/kube-rbac-proxy:v0.21.0`
+- kube-rbac-proxy repository: [kube-rbac-proxy on GitHub][krp-gh]
 
 ## Configuration
 

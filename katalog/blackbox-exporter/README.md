@@ -8,18 +8,18 @@ The blackbox exporter allows blackbox probing of endpoints over HTTP, HTTPS, DNS
 
 ## Requirements
 
-- Kubernetes >= `1.31.0`
+- Kubernetes >= `1.32.0`
 - Kustomize = `5.6.0`
 - [prometheus-operator](../prometheus-operator)
 
 ## Image repository and tag
 
-- Blackbox exporter image: `registry.sighup.io/fury/prometheus/blackbox-exporter:v0.27.0`
+- Blackbox exporter image: `registry.sighup.io/fury/prometheus/blackbox-exporter:v0.28.0`
 - Blackbox exporter repository: [Blackbox exporter on GitHub][blackbox-exporter-gh]
 - Kubernetes ConfigMap Reload image: `registry.sighup.io/fury/jimmidyson/configmap-reload:v0.15.0`
 - Kubernetes ConfigMap Reload repository: [Kubernetes ConfigMap Reload on GitHub][configmap-reload-gh]
-- kube-rbac-proxy image: `registry.sighup.io/fury/brancz/kube-rbac-proxy:v0.19.1`
-- kube-rbac-proxy repository: [kube-rbac-proxy on Github][krp-gh]
+- kube-rbac-proxy image: `registry.sighup.io/fury/brancz/kube-rbac-proxy:v0.21.0`
+- kube-rbac-proxy repository: [kube-rbac-proxy on GitHub][krp-gh]
 
 ## Configuration
 
@@ -27,7 +27,7 @@ Blackbox exporter is deployed with the following configuration:
 
 - Resource limits are `20m` for CPU and `40Mi` for memory
 - Listens on port 9115
-- Metrics are scraped by Prometheus every 30s
+- Prometheus scrapes metrics every 30s
 - Probes available:
   - HTTP 200 GET (`http_2xx`)
   - HTTP 200 POST (`http_post_2xx`)
@@ -40,7 +40,7 @@ To learn how to instruct Prometheus to check Blackbox exporter probes, please se
 
 ## Deployment
 
-You can deploy blackbox-exporter by running the following command:
+You can deploy the blackbox-exporter by running the following command:
 
 ```shell
 kustomize build katalog/blackbox-exporter | kubectl apply -f - --server-side
