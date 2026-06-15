@@ -15,13 +15,13 @@ Grafana. Grafana integration is provided in Fury monitoring katalog, please see
 
 ## Requirements
 
-- Kubernetes >= `1.31.0`
+- Kubernetes >= `1.32.0`
 - Kustomize = `5.6.0`
 - [prometheus-operator](../prometheus-operator)
 
 ## Image repository and tag
 
-- Prometheus image: `registry.sighup.io/prometheus/prometheus:v3.5.0`
+- Prometheus image: `registry.sighup.io/prometheus/prometheus:v3.10.0`
 - Prometheus repository: [Prometheus on Github][prom-gh]
 - Prometheus documentation: [Prometheus documentation site][prom-doc]
 
@@ -49,13 +49,13 @@ To learn how to customize it for your needs please see the
 
 ### Accessing Prometheus UI
 
-You can access to Prometheus expression browser by port-forwarding on port 9090:
+You can access to the Prometheus expression browser by port-forwarding on port 9090:
 
 ```shell
 kubectl port-forward svc/prometheus-k8s 9090:9090 --namespace monitoring
 ```
 
-Now if you go to <http://127.0.0.1:9090> on your browser you can execute queries
+Now if you go to <http://127.0.0.1:9090> on your browser, you can execute queries
 and visualize query results.
 
 ### Service Monitoring
@@ -74,7 +74,7 @@ PrometheusRule please follow Prometheus Operator
 and Prometheus
 [documentation](https://github.com/prometheus/prometheus/blob/master/docs/configuration/alerting_rules.md).
 
-To learn how to define alert rules for your services please see the
+To learn how to define alert rules for your services, please see the
 [example](../../examples/prometheus-rules).
 
 ## Alerts
