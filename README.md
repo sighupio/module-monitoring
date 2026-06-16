@@ -9,7 +9,7 @@
 </h1>
 <!-- markdownlint-enable MD033 -->
 
-![Release](https://img.shields.io/badge/Latest%20Release-v4.1.0-blue)
+![Release](https://img.shields.io/badge/Latest%20Release-v4.2.0-blue)
 ![License](https://img.shields.io/github/license/sighupio/module-monitoring?label=License)
 ![Slack](https://img.shields.io/badge/slack-@kubernetes/fury-yellow.svg?logo=slack&label=Slack)
 
@@ -52,17 +52,17 @@ Monitoring Module provides the following packages:
 
 | Package                                                | Version  | Description                                                                                                               |
 | ------------------------------------------------------ | -------- | ------------------------------------------------------------------------------------------------------------------------- |
-| [prometheus-operator](katalog/prometheus-operator)     | `0.85.0` | Operator to deploy and manage Prometheus and related resources                                                            |
-| [prometheus-operated](katalog/prometheus-operated)     | `3.5.0`  | Prometheus instance deployed with Prometheus Operator's CRD                                                               |
-| [alertmanager-operated](katalog/alertmanager-operated) | `0.28.1` | Alertmanager instance deployed with Prometheus Operator's CRD                                                             |
-| [blackbox-exporter](katalog/blackbox-exporter)         | `0.27.0` | Prometheus exporter that allows blackbox probing of endpoints over HTTP, HTTPS, DNS, TCP, ICMP and gRPC.                  |
-| [grafana](katalog/grafana)                             | `12.1.0` | Grafana deployment to query and visualize metrics collected by Prometheus                                                 |
-| [kube-proxy-metrics](katalog/kube-proxy-metrics)       | `0.19.1` | RBAC proxy to securely expose kube-proxy metrics                                                                          |
-| [kube-state-metrics](katalog/kube-state-metrics)       | `2.16.0` | Service that generates metrics from Kubernetes API objects                                                                |
-| [node-exporter](katalog/node-exporter)                 | `1.9.1`  | Prometheus exporter for hardware and OS metrics exposed by \*NIX kernels                                                  |
+| [prometheus-operator](katalog/prometheus-operator)     | `0.89.0` | Operator to deploy and manage Prometheus and related resources                                                            |
+| [prometheus-operated](katalog/prometheus-operated)     | `3.10.0` | Prometheus instance deployed with Prometheus Operator's CRD                                                               |
+| [alertmanager-operated](katalog/alertmanager-operated) | `0.31.1` | Alertmanager instance deployed with Prometheus Operator's CRD                                                             |
+| [blackbox-exporter](katalog/blackbox-exporter)         | `0.28.0` | Prometheus exporter that allows blackbox probing of endpoints over HTTP, HTTPS, DNS, TCP, ICMP and gRPC.                  |
+| [grafana](katalog/grafana)                             | `12.4.1` | Grafana deployment to query and visualize metrics collected by Prometheus                                                 |
+| [kube-proxy-metrics](katalog/kube-proxy-metrics)       | `0.22.0` | RBAC proxy to securely expose kube-proxy metrics                                                                          |
+| [kube-state-metrics](katalog/kube-state-metrics)       | `2.18.0` | Service that generates metrics from Kubernetes API objects                                                                |
+| [node-exporter](katalog/node-exporter)                 | `1.10.2` | Prometheus exporter for hardware and OS metrics exposed by \*NIX kernels                                                  |
 | [prometheus-adapter](katalog/prometheus-adapter)       | `0.12.0` | Kubernetes resource metrics, custom metrics, and external metrics APIs implementation.                                    |
-| [x509-exporter](katalog/x509-exporter)                 | `3.19.1` | Provides monitoring for certificates                                                                                      |
-| [mimir](katalog/mimir)                                 | `2.17.0` | Mimir is an open source, horizontally scalable, highly available, multi-tenant TSDB for long-term storage for Prometheus. |
+| [x509-exporter](katalog/x509-exporter)                 | `4.1.0`  | Provides monitoring for certificates                                                                                      |
+| [mimir](katalog/mimir)                                 | `3.0.4`  | Mimir is an open source, horizontally scalable, highly available, multi-tenant TSDB for long-term storage for Prometheus. |
 | [haproxy](katalog/haproxy)                             | `N.A.`   | Grafana dashboards and Prometheus rules (alerts) for HAproxy.                                                             |
 
 ### Integration with cloud providers
@@ -83,12 +83,10 @@ Please refer to the individual package documentation for further details.
 
 | Kubernetes Version |   Compatibility    | Notes           |
 | ------------------ | :----------------: | --------------- |
-| `1.29.x`           | :white_check_mark: | No known issues |
-| `1.30.x`           | :white_check_mark: | No known issues |
-| `1.31.x`           | :white_check_mark: | No known issues |
 | `1.32.x`           | :white_check_mark: | No known issues |
 | `1.33.x`           | :white_check_mark: | No known issues |
 | `1.34.x`           | :white_check_mark: | No known issues |
+| `1.35.x`           | :white_check_mark: | No known issues |
 
 Check the [compatibility matrix][compatibility-matrix] for additional information about previous releases of the modules.
 
@@ -107,7 +105,7 @@ Check the [compatibility matrix][compatibility-matrix] for additional informatio
 
 ```yaml
 versions:
-  monitoring: v4.1.0
+  monitoring: v4.2.0
 
 bases:
     - name: monitoring/prometheus-operator

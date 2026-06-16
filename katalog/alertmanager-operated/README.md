@@ -13,13 +13,13 @@ with this package.
 
 ## Image repository and tag
 
-* Alertmanager image: `registry.sighup.io/prometheus/alertmanager:v0.28.1`
+* Alertmanager image: `registry.sighup.io/prometheus/alertmanager:v0.31.1`
 * Alertmanager repository: [Alertmanager on Github][am-gh]
 * Alertmanager documentation: [Alertmanager Homepage][am-doc]
 
 ## Requirements
 
-- Kubernetes >= `1.31.0`
+- Kubernetes >= `1.32.0`
 - Kustomize = `5.6.0`
 - [prometheus-operator](../prometheus-operator)
 
@@ -44,7 +44,7 @@ kustomize build | kubectl apply -f -
 
 ### Accessing Alertmanager UI
 
-You can access to Alertmanager dashboard by port-forwarding on port 9093:
+You can access to the Alertmanager dashboard by port-forwarding on port 9093:
 
 ```shell
 kubectl port-forward svc/alertmanager-main 9093:9093 --namespace monitoring
@@ -53,7 +53,7 @@ kubectl port-forward svc/alertmanager-main 9093:9093 --namespace monitoring
 Now you can go to [http://127.0.0.1:9093](http://127.0.0.1:9093) on your browser
 to see and manage your alerts.
 
-To learn how to add external URL to access Alertmanager please see the
+To learn how to add external URL to access Alertmanager, please see the
 [example][example].
 
 Links

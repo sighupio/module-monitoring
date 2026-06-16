@@ -5,13 +5,13 @@ This package provides monitoring for Kubernetes components `kubelet` and
 
 ## Requirements
 
-- Kubernetes >= `1.31.0`
+- Kubernetes >= `1.32.0`
 - Kustomize = `5.6.0`
 - [prometheus-operator](../../prometheus-operator)
 
 ## Configuration
 
-Fury distribution EKS ServiceMonitor has following configuration:
+Fury distribution EKS ServiceMonitor has the following configuration:
 
 - `api-server` and `kubelet` metrics are scraped with `30s` intervals
 - `coredns` metrics are scraped with `15s` intervals

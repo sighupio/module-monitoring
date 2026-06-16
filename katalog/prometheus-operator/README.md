@@ -32,22 +32,22 @@ The Operator acts on the following custom resource definitions
 - `Alertmanager`, defines a desired Alertmanager deployment. It's used by the
   Operator to deploy AlertManager instances.
 
-The operator takes care of Prometheus deployment and monitors Services as
-illustrated in this image from Prometheus Operator repository:
+The operator takes care of Prometheus deployment and monitors Services, as
+illustrated in this image from the Prometheus Operator repository:
 
-![operator architecture](https://github.com/prometheus-operator/prometheus-operator/blob/main/Documentation/user-guides/images/architecture.png)
+![operator architecture](https://raw.githubusercontent.com/prometheus-operator/prometheus-operator/refs/tags/v0.89.0/Documentation/img/architecture.png)
 
 ## Requirements
 
-- Kubernetes >= `1.31.0`
+- Kubernetes >= `1.32.0`
 - Kustomize = `5.6.0`
 
 ## Image repository and tag
 
-- Prometheus Operator image: `registry.sighup.io/prometheus-operator/prometheus-operator:v0.85.0`
-- Prometheus Operator repository: [Prometheus Operator on Github][prom-op-github]
-- kube-rbac-proxy image: `registry.sighup.io/fury/brancz/kube-rbac-proxy:v0.19.1`
-- kube-rbac-proxy repository: [kube-rbac-proxy on Github][krp-gh]
+- Prometheus Operator image: `registry.sighup.io/prometheus-operator/prometheus-operator:v0.89.0`
+- Prometheus Operator repository: [Prometheus Operator on GitHub][prom-op-github]
+- kube-rbac-proxy image: `registry.sighup.io/fury/brancz/kube-rbac-proxy:v0.21.0`
+- kube-rbac-proxy repository: [kube-rbac-proxy on GitHub][krp-gh]
 
 ## Configuration
 
