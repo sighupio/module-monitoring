@@ -37,6 +37,12 @@ sed -i '' -e '/# Alertmanager endpoints/,/# Ruler endpoints/{' -e '/# Ruler endp
 sed -i '' -e '\|# Ruler endpoints|,\|# Rest of /prometheus|{' -e '\|# Rest of /prometheus|b' -e 'd' -e '}' deploy.yaml
 echo "Removed disabled Alertmanager and Ruler location blocks from nginx gateway config"
 
+# Chart v6.0.6: remove gateway ServiceMonitor (nginx doesn't expose /metrics, fixed upstream in v6.1.0)
+if [ "${MIMIR_CHART_VERSION}" = "6.0.6" ]; then
+  sed -i '' -e '/# Source: mimir-distributed\/templates\/gateway\/gateway-servmon\.yaml/,/^---$/d' deploy.yaml
+  echo "Removed gateway ServiceMonitor (nginx /metrics not exposed, fixed upstream in v6.1.0)"
+fi
+
 cp /tmp/mimir-distributed/mixins/dashboards/*.json dashboards
 rm dashboards/mimir-alertmanager.json
 rm dashboards/mimir-alertmanager-resources.json

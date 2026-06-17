@@ -2014,45 +2014,6 @@ spec:
           targetLabel: cluster
       scheme: http
 ---
-# Source: mimir-distributed/templates/gateway/gateway-servmon.yaml
-apiVersion: monitoring.coreos.com/v1
-kind: ServiceMonitor
-metadata:
-  name: mimir-distributed-gateway
-  namespace: "monitoring"
-  labels:
-    helm.sh/chart: mimir-distributed-6.0.6
-    app.kubernetes.io/name: mimir
-    app.kubernetes.io/instance: mimir-distributed
-    app.kubernetes.io/component: gateway
-    app.kubernetes.io/version: "3.0.4"
-    app.kubernetes.io/managed-by: Helm
-spec:
-  namespaceSelector:
-    matchNames:
-    - monitoring
-  selector:
-    matchLabels:
-      app.kubernetes.io/name: mimir
-      app.kubernetes.io/instance: mimir-distributed
-      app.kubernetes.io/component: gateway
-    matchExpressions:
-      - key: prometheus.io/service-monitor
-        operator: NotIn
-        values:
-          - "false"
-  endpoints:
-    - port: http-metrics
-      relabelings:
-        - action: replace
-          sourceLabels: [job]
-          replacement: "monitoring/gateway"
-          targetLabel: job
-        - action: replace
-          replacement: "mimir-distributed"
-          targetLabel: cluster
-      scheme: http
----
 # Source: mimir-distributed/templates/ingester/ingester-servmon.yaml
 apiVersion: monitoring.coreos.com/v1
 kind: ServiceMonitor
