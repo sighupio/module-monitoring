@@ -33,6 +33,10 @@ echo "Updated image tags in MAINTENANCE.values.yaml"
 helm template mimir-distributed /tmp/mimir-distributed --no-hooks -n monitoring --values MAINTENANCE.values.yaml > deploy.yaml
 echo "Built chart template in deploy.yaml file"
 
+sed -i '' -e '/# Alertmanager endpoints/,/# Ruler endpoints/{' -e '/# Ruler endpoints/b' -e 'd' -e '}' deploy.yaml
+sed -i '' -e '\|# Ruler endpoints|,\|# Rest of /prometheus|{' -e '\|# Rest of /prometheus|b' -e 'd' -e '}' deploy.yaml
+echo "Removed disabled Alertmanager and Ruler location blocks from nginx gateway config"
+
 cp /tmp/mimir-distributed/mixins/dashboards/*.json dashboards
 rm dashboards/mimir-alertmanager.json
 rm dashboards/mimir-alertmanager-resources.json

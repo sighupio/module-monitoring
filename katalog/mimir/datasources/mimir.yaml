@@ -14,5 +14,6 @@ datasources:
     version: 1
     jsonData:
       httpHeaderName1: 'X-Scope-OrgID'
+      manageAlerts: false
     secureJsonData:
       httpHeaderValue1: 'fury'
