@@ -2,66 +2,26 @@
 
 <!-- <SD-DOCS> -->
 
-Alertmanager handles alerts sent by Prometheus server and routes them to
-configured receiver integrations such as email, Slack, PageDuty, or OpsGenie. It
-helps you to manage alerts flexibly with its grouping, inhibition
-and silencing features.
+## Overview
 
-Fury Prometheus deployment (see [prometheus-operated](../prometheus-operated))
-is already configured to automatically discover Alertmanager instances deployed
-with this package.
+Alertmanager handles alerts sent by the Prometheus server and routes them to configured receiver integrations such as email, Slack, PagerDuty, or OpsGenie. It helps you manage alerts flexibly with its grouping, inhibition and silencing features. The Prometheus deployment (see [prometheus-operated](../prometheus-operated)) is already configured to automatically discover the Alertmanager instances deployed with this package.
 
-## Image repository and tag
+## Upstream project
 
-* Alertmanager image: `registry.sighup.io/prometheus/alertmanager:v0.31.1`
-* Alertmanager repository: [Alertmanager on Github][am-gh]
-* Alertmanager documentation: [Alertmanager Homepage][am-doc]
-
-## Requirements
-
-- Kubernetes >= `1.32.0`
-- Kustomize = `5.6.0`
-- [prometheus-operator](../prometheus-operator)
-
-## Configuration
-
-Fury distribution Alertmanager is deployed with the following configuration:
-
-- Replica number: `3`
-- Listens on port `9093`
-- Alertmanager metrics are scraped by Prometheus every `30s`
+This package is based on the upstream [Alertmanager][am-gh].
 
 ## Deployment
 
-Before deploying this, please take a look at how to configure the alertmanager [the
-right way][example-2].
+This package is deployed as part of **Monitoring Module** when you create a cluster with `furyctl`.
 
-You can deploy Alertmanager by running the following command:
+You can customize it under `spec.distribution.modules.monitoring.alertmanager` in your `furyctl.yaml`. See the [module documentation](../../README.md) and the configuration reference ([EKSCluster][schema-reference-eks], [KFDDistribution][schema-reference-kfd], [OnPremises][schema-reference-onprem]) for the available options.
 
-```shell
-kustomize build | kubectl apply -f -
-```
-
-### Accessing Alertmanager UI
-
-You can access to the Alertmanager dashboard by port-forwarding on port 9093:
-
-```shell
-kubectl port-forward svc/alertmanager-main 9093:9093 --namespace monitoring
-```
-
-Now you can go to [http://127.0.0.1:9093](http://127.0.0.1:9093) on your browser
-to see and manage your alerts.
-
-To learn how to add external URL to access Alertmanager, please see the
-[example][example].
-
-Links
+<!-- Links -->
 
 [am-gh]: https://github.com/prometheus/alertmanager
-[am-doc]: https://prometheus.io/docs/alerting/alertmanager
-[example]: ../../examples/prometheus-alertmanager-externalUrl
-[example-2]: ../../examples/alertmanager-configuration
+[schema-reference-eks]: https://docs.sighup.io/docs/reference/ekscluster#specdistributionmodulesmonitoring
+[schema-reference-kfd]: https://docs.sighup.io/docs/reference/kfddistribution#specdistributionmodulesmonitoring
+[schema-reference-onprem]: https://docs.sighup.io/docs/reference/onpremises#specdistributionmodulesmonitoring
 
 <!-- </SD-DOCS> -->
 

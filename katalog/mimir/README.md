@@ -2,43 +2,26 @@
 
 <!-- <SD-DOCS> -->
 
-Mimir is an open-source, horizontally scalable, highly available, multi-tenant TSDB for long-term storage for Prometheus.
+## Overview
 
-## Requirements
+Mimir is an open-source, horizontally scalable, highly available, multi-tenant TSDB for long-term storage for Prometheus. It is deployed with a distributed approach (with Ruler, Override exporter and Alertmanager disabled), and Prometheus is patched to remote-write its metrics to Mimir. All time series are ingested in the `fury` tenant, a Grafana data source is installed to query Mimir instead of Prometheus, and by default storage is backed by the [minio-ha](../minio-ha) package.
 
-- Kubernetes >= `1.32.0`
-- Kustomize = `5.6.0`
-- [prometheus-operator from SD monitoring module][prometheus-operator]
-- [grafana from SD monitoring module][grafana]
-- [minio-ha](../minio-ha)
+## Upstream project
 
-## Image repository
-
-- registry.sighup.io/fury/grafana/mimir
-- registry.sighup.io/fury/nginxinc/nginx-unprivileged
-
-## Configuration
-
-Mimir is configured with the distributed approach. We disabled some optional components: Ruler, Override exporter and Alertmanager.
-By default, using this package, Prometheus operated is installed and patched to send metrics to Mimir with the remote write capability.
-
-All the time series are ingested in the `fury` tenant. A Grafana datasource is also installed as default for prometheus type metrics to scrape from Mimir instead of Prometheus.
-
-Also, the storage is configured by default to use the minio-ha package from the monitoring module.
+This package is based on the upstream [Grafana Mimir][mimir-gh].
 
 ## Deployment
 
-You can deploy Mimir by running the following command in the root of
-the project:
+This package is deployed as part of **Monitoring Module** when you create a cluster with `furyctl`.
 
-```shell
-kustomize build | kubectl apply -f -
-```
+You can customize it under `spec.distribution.modules.monitoring.mimir` in your `furyctl.yaml`. See the [module documentation](../../README.md) and the configuration reference ([EKSCluster][schema-reference-eks], [KFDDistribution][schema-reference-kfd], [OnPremises][schema-reference-onprem]) for the available options.
 
 <!-- Links -->
 
-[prometheus-operator]: https://github.com/sighup-io/fury-kubernetes-monitoring/blob/master/katalog/prometheus-operator
-[grafana]: https://github.com/sighup-io/fury-kubernetes-monitoring/blob/master/katalog/grafana
+[mimir-gh]: https://github.com/grafana/mimir
+[schema-reference-eks]: https://docs.sighup.io/docs/reference/ekscluster#specdistributionmodulesmonitoring
+[schema-reference-kfd]: https://docs.sighup.io/docs/reference/kfddistribution#specdistributionmodulesmonitoring
+[schema-reference-onprem]: https://docs.sighup.io/docs/reference/onpremises#specdistributionmodulesmonitoring
 
 <!-- </SD-DOCS> -->
 

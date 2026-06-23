@@ -2,44 +2,26 @@
 
 <!-- <SD-DOCS> -->
 
-MinIO is a popular distributed object storage system that allows organizations to deploy highly available
-and scalable storage infrastructure.
-To achieve high availability (HA) for MinIO, a cluster of multiple MinIO nodes must be deployed backed by their own set of PVCs.
+## Overview
 
-## Requirements
+MinIO is a distributed object storage system used to deploy highly available and scalable storage. This package deploys MinIO in high-availability mode as a three-Pod StatefulSet (with two PVCs per Pod) and runs an init Job to initialize the buckets and default retention. A `ServiceMonitor` is configured so its metrics are scraped by Prometheus. In the Monitoring Module it provides the default object storage backend for Mimir.
 
-- Kubernetes >= `1.32.0`
-- Kustomize = `5.6.0`
-- [prometheus-operator from SD monitoring module][prometheus-operator]
+## Upstream project
 
-> Prometheus Operator is necessary since we configure a `ServiceMonitor` to make
-> some metrics available from `minio` on prometheus
-
-## Image repository and tag
-
-* MinIO image: `minio/minio`
-* MinIO repo: [MinIO on GitHub][minio-gh]
-
-## Configuration
-
-MinIO HA is deployed in the following configuration:
-
-- Three Pod MinIO statefulset with 2 PVCs per Pod
-- Custom init Job to initialize buckets (`loki` and `errors`)  and default retention (7 days on `errors` bucket)
+This package is based on the upstream [MinIO][minio-gh].
 
 ## Deployment
 
-You can deploy minio-ha by running the following command in the root of
-the project:
+This package is deployed as part of **Monitoring Module** when you create a cluster with `furyctl`.
 
-```shell
-kustomize build | kubectl apply -f -
-```
+You can customize it under `spec.distribution.modules.monitoring.minio` in your `furyctl.yaml`. See the [module documentation](../../README.md) and the configuration reference ([EKSCluster][schema-reference-eks], [KFDDistribution][schema-reference-kfd], [OnPremises][schema-reference-onprem]) for the available options.
 
 <!-- Links -->
 
-[prometheus-operator]: https://github.com/sighup-io/fury-kubernetes-monitoring/blob/master/katalog/prometheus-operator
 [minio-gh]: https://github.com/minio/minio
+[schema-reference-eks]: https://docs.sighup.io/docs/reference/ekscluster#specdistributionmodulesmonitoring
+[schema-reference-kfd]: https://docs.sighup.io/docs/reference/kfddistribution#specdistributionmodulesmonitoring
+[schema-reference-onprem]: https://docs.sighup.io/docs/reference/onpremises#specdistributionmodulesmonitoring
 
 <!-- </SD-DOCS> -->
 

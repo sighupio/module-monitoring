@@ -2,45 +2,21 @@
 
 <!-- <SD-DOCS> -->
 
-kube-proxy is a critical piece of any Kubernetes cluster, therefore it is highly
-recommended to gather its metrics. Sometimes (especially in managed clusters) it
-is not possible to configure kube-proxy to be reachable by Prometheus for
-metrics scraping, this is why this package exists. Furthermore, this package
-also adds an authorization layer based on Kubernetes RBAC to the metrics exposed
-by kube-proxy.
+## Overview
 
-## Requirements
+kube-proxy is a critical component of any Kubernetes cluster, so it is highly recommended to gather its metrics. In some environments (especially managed clusters) it is not possible to configure kube-proxy to be reachable by Prometheus for scraping; this package solves that and additionally adds an authorization layer based on Kubernetes RBAC to the metrics exposed by kube-proxy.
 
-- Kubernetes >= `1.32.0`
-- Kustomize = `5.6.0`
-- [prometheus-operator](../prometheus-operator)
+## Upstream project
 
-## Image repository and tag
-
-- kube-rbac-proxy image: `registry.sighup.io/fury/brancz/kube-rbac-proxy:v0.22.0`
-- kube-rbac-proxy repository: [kube-rbac-proxy on Github][krp-gh]
-
-## Configuration
-
-Fury distribution kube-proxy-metrics is deployed with the following configuration:
-
-- Resource limits are `20m` for CPU and `40Mi` for memory
-- Listens on port `18443`
-- Metrics are scraped by Prometheus with `15s` intervals
-- Requires `hostNetwork: true` and `hostPID: true`
-- Runs as non-root user.
+This package is based on the upstream [kube-rbac-proxy][krp-gh].
 
 ## Deployment
 
-You can deploy kube-proxy-metrics by running the following command:
-
-```shell
-kustomize build | kubectl apply -f -
-```
+This package is deployed as part of **Monitoring Module** when you create a cluster with `furyctl`. See the [module documentation](../../README.md) to learn how the Monitoring Module is installed and configured.
 
 <!-- Links -->
 
-[krp-gh]: https://quay.io/repository/brancz/kube-rbac-proxy
+[krp-gh]: https://github.com/brancz/kube-rbac-proxy
 
 <!-- </SD-DOCS> -->
 

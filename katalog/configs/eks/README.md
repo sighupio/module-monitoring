@@ -1,30 +1,16 @@
 # EKS ServiceMonitor
 
-This package provides monitoring for Kubernetes components `kubelet` and
-`api-server` on EKS.
+<!-- <SD-DOCS> -->
 
-## Requirements
+## Overview
 
-- Kubernetes >= `1.32.0`
-- Kustomize = `5.6.0`
-- [prometheus-operator](../../prometheus-operator)
+This package provides monitoring for the Kubernetes components `kubelet` and `api-server` on EKS. `api-server` and `kubelet` metrics are scraped every `30s` and `coredns` every `15s`, and it ships a set of Grafana dashboards (CoreDNS, API server, kubelet, networking and persistent volumes) for those components.
 
-## Configuration
+## Deployment
 
-Fury distribution EKS ServiceMonitor has the following configuration:
+This package is deployed as part of **Monitoring Module** when you create a cluster with `furyctl`. See the [module documentation](../../../README.md) to learn how the Monitoring Module is installed and configured.
 
-- `api-server` and `kubelet` metrics are scraped with `30s` intervals
-- `coredns` metrics are scraped with `15s` intervals
-- Dashboards shipped:
-  - `coredns`: CoreDNS >= 1.8.0
-  - `api-server`: Kubernetes / API server
-  - `cluster-total`: Kubernetes / Networking / Cluster
-  - `kubelet`: Kubernetes / Kubelet
-  - `namespace-by-pod`: Kubernetes / Networking / Namespace (Pods)
-  - `namespace-by-workload`: Kubernetes / Networking / Namespace (Workload)
-  - `persistent-volumes-usage`: Kubernetes / Persistent Volumes
-  - `pod-total`: Kubernetes / Networking / Pod
-  - `workload-total`: Kubernetes / Networking / Workload
+<!-- </SD-DOCS> -->
 
 ## License
 
