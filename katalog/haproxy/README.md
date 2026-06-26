@@ -1,40 +1,17 @@
-# HAproxy Package
+# HAproxy
 
-This package provides a Grafana Dashboard and a set of alert rules for the prometheus exporter built in HAproxy v2 (and not the `haproxy_exporter`).
+<!-- <SD-DOCS> -->
 
-To use this package to monitor an HAproxy battery *outside* the cluster, you must:
+## Overview
 
-1. Check that your haproxy has been built with the built-in prometheus exporter enabled:
+This package provides a Grafana dashboard and a set of Prometheus alert rules for the Prometheus exporter built into HAproxy v2 (not the standalone `haproxy_exporter`). It is intended to monitor an HAproxy battery running outside the cluster: the HAproxy instances must be built with the built-in Prometheus exporter enabled and expose the metrics on a dedicated frontend, then a `ScrapeConfig` resource makes Prometheus scrape those targets.
 
-   ```bash
-   haproxy -vvv | grep prometheus
-   ```
+## Deployment
 
-2. Enable a frontend on HAproxy that exposes the metrics:
+This package is deployed as part of **Monitoring Module** when you create a cluster with `furyctl`. See the [module documentation](../../README.md) to learn how the Monitoring Module is installed and configured.
 
-   ```haproxyconfig
-   frontend prometheus
-     bind :8405
-     mode http
-     http-request use-service prometheus-exporter
-     no log
-   ```
+<!-- </SD-DOCS> -->
 
-3. Create a `ScrapeConfig` object to make Prometheus scrape the metrics from the HAproxy hosts:
+## License
 
-   ```yaml
-   apiVersion: monitoring.coreos.com/v1alpha1
-   kind: ScrapeConfig
-   metadata:
-     name: haproxy-lb
-     namespace: monitoring
-     labels:
-       prometheus: k8s
-   spec:
-     staticConfigs:
-       - labels:
-           job: prometheus
-         targets:
-           - haproxy01.mydomain:8405
-           - haproxy02.mydomain:8405
-   ```
+For license details please see [LICENSE](../../LICENSE)

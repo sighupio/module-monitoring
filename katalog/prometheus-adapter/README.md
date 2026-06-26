@@ -2,48 +2,26 @@
 
 <!-- <SD-DOCS> -->
 
-The Prometheus adapter provides an implementation of Kubernetes
-[resource metrics](https://github.com/kubernetes/design-proposals-archive/blob/main/instrumentation/resource-metrics-api.md),
-[custom metrics](https://github.com/kubernetes/design-proposals-archive/blob/main/instrumentation/custom-metrics-api.md), and
-[external metrics](https://github.com/kubernetes/design-proposals-archive/blob/main/instrumentation/external-metrics-api.md) APIs.
+## Overview
 
-This adapter is therefore suitable for use with the autoscaling/v2 Horizontal Pod Auto-scaler in Kubernetes 1.6+.
-It can also replace the [metrics server](https://github.com/kubernetes-incubator/metrics-server) on clusters that already run Prometheus and collect the appropriate metrics.
+The Prometheus Adapter provides an implementation of the Kubernetes resource metrics, custom metrics and external metrics APIs. It is suitable for use with the `autoscaling/v2` Horizontal Pod Autoscaler and can also replace the metrics server on clusters that already run Prometheus.
 
-*Source:* [kubernetes-sigs/prometheus-adapter][pa-gh]
+## Upstream project
 
-## Requirements
-
-- Kubernetes >= `1.32.0`
-- Kustomize = `5.6.0`
-- [prometheus-operator](../prometheus-operator)
-- [prometheus-operated](../prometheus-operated)
-
-## Image repository and tag
-
-- Prometheus adapter image: `registry.sighup.io/fury/prometheus-adapter/prometheus-adapter:v0.12.0`
-- Prometheus adapter repository: [Prometheus adapter on GitHub][pa-gh]
-
-## Configuration
-
-Fury distribution Prometheus adapter is deployed with the following
-configuration:
-
-- Resource limits are `250m` for CPU and `1024Mi` for memory
-- Listens on port 6443
-- Metrics are scraped from Prometheus every `1m`
+This package is based on the upstream [prometheus-adapter][pa-gh].
 
 ## Deployment
 
-You can deploy prometheus-adapter by running the following command:
+This package is deployed as part of **Monitoring Module** when you create a cluster with `furyctl`.
 
-```shell
-kustomize build katalog/prometheus-adapter | kubectl apply -f -
-```
+You can customize it under `spec.distribution.modules.monitoring.prometheusAdapter` in your `furyctl.yaml`. See the [module documentation](../../README.md) and the configuration reference ([EKSCluster][schema-reference-eks], [KFDDistribution][schema-reference-kfd], [OnPremises][schema-reference-onprem]) for the available options.
 
 <!-- Links -->
 
 [pa-gh]: https://github.com/kubernetes-sigs/prometheus-adapter
+[schema-reference-eks]: https://docs.sighup.io/docs/reference/ekscluster#specdistributionmodulesmonitoring
+[schema-reference-kfd]: https://docs.sighup.io/docs/reference/kfddistribution#specdistributionmodulesmonitoring
+[schema-reference-onprem]: https://docs.sighup.io/docs/reference/onpremises#specdistributionmodulesmonitoring
 
 <!-- </SD-DOCS> -->
 
