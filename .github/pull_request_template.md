@@ -1,16 +1,18 @@
 <!--
 Thank you for contributing to this project! You must fill out the information below before we can review this pull request.
+
 By explaining why you're making a change (or linking to an issue) and what changes you've made, we can triage your pull
 request to the best possible team for review.
 
 💡 **TIP**
-Remember that you can always open a PR in draft status and fill all the information afterwards.
+Remember that you can always open a PR in draft status and fill all the information afterward.
 
-Opening a PR in draft allows other team members to knwo that you are working on this change, and let's you have a 
+Opening a PR in draft lets other team members know you're working on this change, and gives you a 
 place to track your work in progress.
 
-When opening PRs in Draft, don't assign reviewers until the PR is ready for review.  Once you are confortable with the
-status of the PR and all the tests and CI is green, you can assign the reviewers to start the review process.
+When opening PRs in Draft, **don't assign reviewers until the PR is ready for review**.
+
+Once you are comfortable with the status of the PR and all the tests and CI is green, you can assign the reviewers to start the review process.
 -->
 
 ### Summary 💡
@@ -19,13 +21,14 @@ status of the PR and all the tests and CI is green, you can assign the reviewers
 
 <!--
 If there's an existing issue for your change, please link to it below inserting a link or the issue number.
+
 If there's _not_ an existing issue, please open one first if the problem you are solving needs to be clearly identified,
-for example is an error message that other users could get and google it.
+for example, an error message that other users could get and search for online.
 -->
 Closes:
 
 
-<!-- If this PR is related to changes produced in other repos, like a Module, please link them below. -->
+<!-- If this PR is related to changes produced in other repos, like a Module or the distribution, please link them below. -->
 Relates:
 
 
@@ -33,10 +36,10 @@ Relates:
 
 <!--
 Let us know what you are changing. Share anything that could provide the most context.
-Feel free to add screenshots, code examples, the Description could end up in the release notes to help users adopt
-the new feature or changes that you are introducing.
 
-Expand on the reasoning behind some decision that you could have made to help reviewers understand the diff in the PR.
+Feel free to add screenshots and code examples. The description could end up in the release notes to help users adopt the new feature or changes that you are introducing.
+
+Expand on the reasoning behind any decisions you made to help reviewers understand the diff in the PR.
 
 -->
 
@@ -53,8 +56,9 @@ If this PR introduces Breaking Changes, please include all the relevant informat
 
 <!--
 Create a checklist with all the tests that you performed on your changes, being manual or automated.
-If you are opening a Draft PR, you can use the checklist to track the tests that you want to do and mark them once you
-have performed them.
+
+If you are opening a Draft PR, you can use the checklist to track the tests that you want to do and mark them once you have performed them.
+
 Example:
 
 - [ ] Tested the change with SD version X.Y.Z
@@ -67,3 +71,18 @@ Example:
 If there's any future work that could improve or extend on the work you've done in this PR you can mention it so
 this PR can be used as context for that.
 -->
+
+### Self-assessment checklist 🏁
+
+> [!IMPORTANT]
+> Make sure that you completed this checklist before asking for review.
+>
+> PRs that do not have this checklist ready won't be reviewed.
+
+- [ ] My PR has a clear scope and does not mix together several unrelated changes
+- [ ] I've updated the `docs/releases/unreleased.md` file (or equivalent)
+- [ ] I've tested the proposed changes and wrote the tests performed in the section above
+- [ ] My branch is up-to-date with the target branch and there are no conflicts
+- [ ] I've considered all the different cluster kinds (KFDDistribution, OnPremises, EKSCluster, Immutable) that may be affected by this change
+- [ ] CI is green
+
