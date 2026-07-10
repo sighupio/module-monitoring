@@ -8,29 +8,36 @@ assignees: ''
 ---
 
 **Describe the bug**
+
 A clear and concise description of what the bug is.
 
 **To Reproduce**
+
 Steps to reproduce the behavior:
 1. Go to '...'
-2. Click on '....'
-3. Scroll down to '....'
+2. Click on '...'
+3. Scroll down to '...'
 4. See error
 
 **Expected behavior**
+
 A clear and concise description of what you expected to happen.
 
 **Screenshots**
+
 If applicable, add screenshots to help explain your problem.
 
-**Desktop (please complete the following information):**
+**Desktop (please complete the following information if applicable):**
+
  - OS: [e.g. iOS]
  - Browser [e.g. chrome, safari]
- - Version [e.g. 22]
 
 **Kubernetes (please complete the following information):**
- - Kubernetes version: [e.g. 1.30.0]
- - OPA Gatekeeper version: [e.g. 3.18.0]
+
+ - SIGHUP Distribution/Kubernetes version: [e.g. 1.30.0]
+ - Monitoring Module version: [e.g. 3.18.0]
 
 **Additional context**
+
 Add any other context about the problem here.
+
