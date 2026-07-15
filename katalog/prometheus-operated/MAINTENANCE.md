@@ -31,4 +31,7 @@ To prepare a new release of this package:
    ```bash
    mise run add-license
    ```
+8. There's a PrometheusAgent resource in the distribution that has the prometheus image tag hardcoded. Remember to update the tag there too:
+
+https://github.com/sighupio/distribution/blob/main/templates/distribution/manifests/monitoring/resources/prometheus-agent/prometheus-agent.yaml.tpl
 
