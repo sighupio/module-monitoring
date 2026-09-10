@@ -32,6 +32,6 @@ echo "Deployment patched"
 kustomize edit set image kiwigrid/k8s-sidecar=registry.sighup.io/fury/kiwigrid/k8s-sidecar:${usage_k8s_sidecar_version}
 echo "K8S sidecar updated to ${usage_k8s_sidecar_version}"
 
-yq -i "(.spec.template.spec.containers[].env[] | select(.name == \"GF_INSTALL_PLUGINS\")).value = \"https://storage.googleapis.com/integration-artifacts/grafana-lokiexplore-app/release/${DRILLDOWN_VERSION}/any/grafana-lokiexplore-app-${DRILLDOWN_VERSION}.zip;grafana-lokiexplore-app\"" patches/grafana-env.yaml
+yq -i "(.spec.template.spec.containers[].env[] | select(.name == \"GF_INSTALL_PLUGINS\")).value = \"https://storage.googleapis.com/integration-artifacts/grafana-lokiexplore-app/release/${usage_drilldown_logs_plugin_version}/any/grafana-lokiexplore-app-${usage_drilldown_logs_plugin_version}.zip;grafana-lokiexplore-app\"" patches/grafana-env.yaml
 echo "Drilldown plugin updated to ${usage_drilldown_logs_plugin_version}"
 '''
