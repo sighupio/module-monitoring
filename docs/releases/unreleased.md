@@ -1,8 +1,19 @@
 # Monitoring Module Release v4.3.0
 
-Welcome to the latest release of the `monitoring` core module of the [`SIGHUP Distribution`](https://github.com/sighupio/distribution), maintained by team SIGHUP by ReeVo.
+Welcome to the latest release of the `monitoring` core module of the [
+`SIGHUP Distribution`](https://github.com/sighupio/distribution), maintained by team SIGHUP by ReeVo.
 
 This release adds support for Kubernetes 1.36, updates all core components to their latest versions, and officially drops support for Kubernetes versions 1.32.
+
+## New features 🎉
+
+### HAProxy
+
+Updated Prometheus rules, adding three new alerts:
+
+- `HaproxyDroppingLogs`: HAProxy is dropping log messages (syslog backend can't keep up or is unreachable)
+- `HaproxyBackendHealthcheckFlapping`: backend health checks repeatedly transition between UP and DOWN states
+- `HaproxyServerHealthcheckFlapping`: server health checks repeatedly transition between UP and DOWN states
 
 ## Component Images 🚢
 
@@ -30,7 +41,8 @@ This release adds support for Kubernetes 1.36, updates all core components to th
 
 ## Update Guide 🦮
 
-The furyctl tool now manages Module installations and upgrades. The instructions below are left for reference when using the legacy version of furyctl.
+The furyctl tool now manages Module installations and upgrades. The instructions below are left for reference when using
+the legacy version of furyctl.
 
 ### Process
 
