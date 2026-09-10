@@ -7,16 +7,16 @@ To update the x509-exporter package, follow these steps.
 > [!IMPORTANT]
 > The following commands assume your PWD is `katalog/x509-exporter`.
 
-1. Update the Helm repo and check available chart versions:
+1. Get the latest available chart version:
    ```bash
-   helm repo add enix https://charts.enix.io
-   helm repo update
-   helm search repo enix/x509-certificate-exporter -l
+   mise run chart-version
    ```
 
 2. Run the upgrade script, specifying the desired chart version:
    ```bash
-   X509_CHART_VERSION=4.1.0 ./upgrade.sh
+   mise run upgrade <chart_version>
+   # Example
+   mise run upgrade 4.2.0
    ```
 
    This script will:
@@ -26,7 +26,6 @@ To update the x509-exporter package, follow these steps.
    - Download the Grafana dashboard JSON into `config/x509-certificate-exporter.json`
    - Patch all labels to `app: x509-certificate-exporter` (with `prometheus: k8s` and `role: alert-rules` on `PrometheusRule`)
    - Patch `spec.selector` and `spec.template.metadata.labels` on DaemonSets, Deployment and Service
-   - For chart 4.1.0, run `patch_4.1.0.sh` to replace the broken `X509ExporterReadErrors` alert with `SourceErrors`/`SourceErrorsSustained` and related Grafana dahboard from chart v4.2.0-rc.1
    - Run `mise run add-license`
 
 3. Review the changes:
