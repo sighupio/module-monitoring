@@ -1,0 +1,65 @@
+[tasks.minio-versions]
+description = "Show all versions from chainguard-forks/minio"
+run = '''
+curl -s https://api.github.com/repos/chainguard-forks/minio/releases | jq -r '.[].tag_name' | head -10
+'''
+
+[tasks.mc-versions]
+description = "Show all versions from minio/mc"
+run = '''
+curl -s https://api.github.com/repos/minio/mc/releases | jq -r '.[].tag_name' | head -10
+'''
+
+[tasks.prometheus-alerts-versions]
+description = "Show all versions from samber/awesome-prometheus-alerts"
+run = '''
+curl -s https://api.github.com/repos/samber/awesome-prometheus-alerts/releases | jq -r '.[].tag_name' | head -10
+'''
+
+[tasks.upgrade]
+usage = '''
+arg "<minio_version>" help="Chainguard MinIO version to use for the upgrade"
+arg "<mc_version>" help="MinIO MC version to use for the upgrade"
+arg "<prometheus_alerts_version>" help="Prometheus alerts version to use for the upgrade"
+'''
+run = '''
+MINIO_IMAGE_TAG="${usage_minio_version}-chainguard"
+echo "Using MinIO version ${usage_minio_version} with image tag ${MINIO_IMAGE_TAG}"
+echo "Updating MinIO MC with version ${usage_mc_version}"
+echo "Updating Prometheus Alerts with version ${usage_prometheus_alerts_version}"
+
+# --- MinIO ---
+mkdir -p /tmp/minio-chainguard
+curl -sL "https://api.github.com/repos/chainguard-forks/minio/tarball/${usage_minio_version}" -o /tmp/minio-chainguard/release.tar.gz
+echo "Downloaded archive"
+
+tar xf /tmp/minio-chainguard/release.tar.gz -C /tmp/minio-chainguard --strip-components=1
+echo "Extracted archive"
+
+helm lint /tmp/minio-chainguard/helm/minio --values MAINTENANCE.values.yaml
+echo "Helm lint done"
+
+kustomize edit set image registry.sighup.io/fury/minio/mc:${usage_mc_version}
+echo "Updated image tags in kustomization.yaml"
+
+yq -i ".image.tag = \"${MINIO_IMAGE_TAG}\"" MAINTENANCE.values.yaml
+echo "Updated image tags in MAINTENANCE.values.yaml"
+
+helm template minio-monitoring /tmp/minio-chainguard/helm/minio --values MAINTENANCE.values.yaml -n monitoring \
+  | yq 'select(.kind != "ConfigMap" or .metadata.name != "minio-monitoring")' > deploy.yaml
+echo "Template generated in deploy.yaml"
+
+# --- Prometheus rules ---
+MINIO_RULES_FILE=$(mktemp -p /tmp)
+wget -q "https://raw.githubusercontent.com/samber/awesome-prometheus-alerts/refs/tags/${usage_prometheus_alerts_version}/dist/rules/minio/embedded-exporter.yml" -O "${MINIO_RULES_FILE}"
+echo "Downloaded MinIO Prometheus rules from upstream"
+
+yq -i ".spec.groups = load(\"${MINIO_RULES_FILE}\").groups" prometheusrules.yaml
+rm -f "${MINIO_RULES_FILE}"
+sed -i '' -E 's/(minio_[a-z_]+) /\1{job="minio-monitoring"} /g' prometheusrules.yaml
+yq -i '(.spec.groups[].rules[] | select(.alert == "MinioDiskSpaceUsage")).for = "5m"' prometheusrules.yaml
+echo "MinIO Prometheus rules updated"
+
+rm -r /tmp/minio-chainguard
+mise run //:add-license
+'''

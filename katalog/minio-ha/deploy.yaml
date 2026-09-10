@@ -112,7 +112,7 @@ spec:
       serviceAccountName: minio-sa
       containers:
         - name: minio
-          image: registry.sighup.io/fury/minio:RELEASE.2026-05-20T23-44-52Z-chainguard
+          image: registry.sighup.io/fury/minio:RELEASE.2026-07-17T12-07-51Z-chainguard
           imagePullPolicy: IfNotPresent
           command: ["/bin/sh", "-ce", "/usr/bin/docker-entrypoint.sh minio server http://minio-monitoring-{0...2}.minio-monitoring-svc.monitoring.svc/export-{0...1} -S /etc/minio/certs/ --address :9000 --console-address :9001"]
           volumeMounts:

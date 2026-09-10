@@ -4,11 +4,7 @@
 
 image:
   repository: registry.sighup.io/fury/minio
-  tag: RELEASE.2026-05-20T23-44-52Z-chainguard
-  pullPolicy: IfNotPresent
-mcImage:
-  repository: registry.sighup.io/fury/minio/mc
-  tag: RELEASE.2025-08-13T08-35-41Z
+  tag: RELEASE.2026-07-17T12-07-51Z-chainguard
   pullPolicy: IfNotPresent
 mode: distributed
 rootUser: "minio"

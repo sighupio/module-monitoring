@@ -9,7 +9,9 @@ Before running the script, check available versions:
 Then run the upgrade script:
 
 ```bash
-MINIO_VERSION=RELEASE.2026-05-20T23-44-52Z MC_VERSION=RELEASE.2025-08-13T08-35-41Z PROMETHEUS_ALERTS_VERSION=2026-04-10.1 ./upgrade.sh
+mise run upgrade <minio_version> <mc_version> <prometheus_alerts_version>
+# Example
+mise run upgrade RELEASE.2026-07-17T12-07-51Z RELEASE.2025-08-13T08-35-41Z 2026-09-07.1
 ```
 
 The script automatically:
