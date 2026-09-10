@@ -5,7 +5,7 @@ To prepare a new release of this package:
 1. Get the current upstream release
 
    ```bash
-     export KUBE_PROMETHEUS_RELEASE=v0.17.0
+     export KUBE_PROMETHEUS_RELEASE=v0.18.0
      ../../utils/pull-upstream.sh ${KUBE_PROMETHEUS_RELEASE} alertmanager-operated
    ```
    
@@ -15,7 +15,7 @@ To prepare a new release of this package:
 
 3. Sync the new image to our registry in the [`monitoring` images.yaml file container-image-sync repository](https://github.com/sighupio/container-image-sync/blob/main/modules/monitoring/images.yml).
 
-4. Update the `kustomization.yaml` file with the new image.
+4. Update the patch in `kustomization.yaml` file with the new image.
 
 5. Check that the `DeadMansSwitch` alerts in the current configuration have the following parameters and not the default ones:
 

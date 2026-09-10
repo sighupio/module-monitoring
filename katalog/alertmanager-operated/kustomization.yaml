@@ -7,7 +7,6 @@ apiVersion: kustomize.config.k8s.io/v1beta1
 kind: Kustomization
 
 namespace: monitoring
-
 patches:
   - patch: |-
       apiVersion: monitoring.coreos.com/v1
@@ -23,7 +22,7 @@ patches:
         # https://github.com/sighupio/module-monitoring/issues/132
         alertmanagerConfigMatcherStrategy:
           type: None
-        image: registry.sighup.io/fury/prometheus/alertmanager:v0.31.1
+        image: registry.sighup.io/fury/prometheus/alertmanager:v0.33.0
         replicas: 1
 
 resources:
