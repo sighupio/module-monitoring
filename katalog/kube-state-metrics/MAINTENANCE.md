@@ -1,5 +1,7 @@
 # `kube-state-metrics` Package Maintenance
 
+> ⚠️ **Warning**: when bumping this package, first check the `kube-rbac-proxy` version used by the upstream chart: the `kube-rbac-proxy` version in `katalog/kube-proxy-metrics` must be updated accordingly to the same version.
+
 To prepare a new release of this package:
 
 1. Get the current upstream release
