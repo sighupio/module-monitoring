@@ -334,7 +334,7 @@ spec:
       labels:
         app: x509-certificate-exporter
       annotations:
-        checksum/config: 1b93763923bd6d41ad44590324423253b74959117dcd093e823b79e73f44fa0c
+        checksum/config: 963f85063073ea48c471c8ce364501f145a7d9980f4ed51a35071e2569da4df5
     spec:
       serviceAccountName: x509-certificate-exporter-node
       affinity:
@@ -371,7 +371,7 @@ spec:
             requests:
               cpu: 10m
               memory: 20Mi
-          image: registry.sighup.io/fury/enix/x509-certificate-exporter:4.1.0
+          image: registry.sighup.io/fury/enix/x509-certificate-exporter:4.2.0
           imagePullPolicy: IfNotPresent
           args:
             - --config=/etc/x509-certificate-exporter/config.yaml
@@ -550,7 +550,7 @@ spec:
       labels:
         app: x509-certificate-exporter
       annotations:
-        checksum/config: 1b93763923bd6d41ad44590324423253b74959117dcd093e823b79e73f44fa0c
+        checksum/config: 963f85063073ea48c471c8ce364501f145a7d9980f4ed51a35071e2569da4df5
     spec:
       serviceAccountName: x509-certificate-exporter-node
       securityContext:
@@ -574,7 +574,7 @@ spec:
             requests:
               cpu: 10m
               memory: 20Mi
-          image: registry.sighup.io/fury/enix/x509-certificate-exporter:4.1.0
+          image: registry.sighup.io/fury/enix/x509-certificate-exporter:4.2.0
           imagePullPolicy: IfNotPresent
           args:
             - --config=/etc/x509-certificate-exporter/config.yaml
@@ -642,7 +642,7 @@ spec:
       labels:
         app: x509-certificate-exporter
       annotations:
-        checksum/config: 1b93763923bd6d41ad44590324423253b74959117dcd093e823b79e73f44fa0c
+        checksum/config: 963f85063073ea48c471c8ce364501f145a7d9980f4ed51a35071e2569da4df5
     spec:
       securityContext:
         runAsNonRoot: true
@@ -667,7 +667,7 @@ spec:
             requests:
               cpu: 20m
               memory: 20Mi
-          image: registry.sighup.io/fury/enix/x509-certificate-exporter:4.1.0
+          image: registry.sighup.io/fury/enix/x509-certificate-exporter:4.2.0
           imagePullPolicy: IfNotPresent
           volumeMounts:
             - name: config
@@ -709,30 +709,14 @@ spec:
   groups:
     - name: x509-certificate-exporter.rules
       rules:
-        - alert: 'CertificateError'
-          expr: x509_cert_error > 0
-          for: 15m
-          labels:
-            severity: warning
-          annotations:
-            summary: Certificate cannot be decoded
-            description: Certificate could not be decoded {{if $labels.secret_name }}in Kubernetes secret "{{ $labels.secret_namespace }}/{{ $labels.secret_name }}"{{else}}at location "{{ $labels.filepath }}"{{end}}
-        - alert: 'CertificateRenewal'
-          expr: (x509_cert_not_after - time()) < (28 * 86400)
-          for: 15m
-          labels:
-            severity: warning
-          annotations:
-            summary: Certificate should be renewed
-            description: Certificate for "{{ $labels.subject_CN }}" should be renewed as it expires in {{ humanizeDuration $value }} {{if $labels.secret_name }}in Kubernetes secret "{{ $labels.secret_namespace }}/{{ $labels.secret_name }}"{{else}}at location "{{ $labels.filepath }}"{{end}}
-        - alert: 'CertificateExpiration'
-          expr: (x509_cert_not_after - time()) < (14 * 86400)
-          for: 15m
-          labels:
-            severity: critical
-          annotations:
-            summary: Certificate is about to expire
-            description: Certificate for "{{ $labels.subject_CN }}" is about to expire in {{ humanizeDuration $value }} {{if $labels.secret_name }}in Kubernetes secret "{{ $labels.secret_namespace }}/{{ $labels.secret_name }}"{{else}}at location "{{ $labels.filepath }}"{{end}}
+        # Two-band alert on x509_source_errors_total. Same shape as
+        # KubeTransportErrors below: warning fires on >5 errors in 15min
+        # (filters single-event noise like one malformed PEM in one Secret);
+        # critical fires once the warning has held for 30min, signalling a
+        # persistent decode problem rather than a transient blip.
+        #
+        # Aggregated over `reason` so the alert routes by source — the
+        # reason breakdown stays available on the metric itself for triage.
         - alert: 'SourceErrors'
           expr: "sum without (reason) (increase(x509_source_errors_total[15m])) > 5"
           for: 5m
@@ -749,6 +733,128 @@ spec:
           annotations:
             summary: x509-certificate-exporter source has been producing errors for 30+ minutes
             description: Source `{{ $labels.source_name }}` has had a sustained error rate (>5 events per 15min, continuously for 30 minutes). This is no longer a transient state — investigate the breakdown of `x509_source_errors_total` by reason to find the root cause.
+        - alert: 'SourceDown'
+          expr: "x509_source_up == 0"
+          for: 5m
+          labels:
+            severity: critical
+          annotations:
+            summary: x509-certificate-exporter source is not reporting healthy
+            description: Source `{{ $labels.source_name }}` (kind `{{ $labels.source_kind }}`) failed its initial sync or has gone unhealthy. While this lasts, certificates it normally watches are not being checked — a silently expired cert is possible. Common causes are RBAC denials, persistent K8s API errors, or unreadable file paths.
+        # Two-band alert on x509_kube_transport_errors_total — same pattern
+        # as SourceErrors. Warning fires on >5 events in 15min per source
+        # (aggregated over resource/reason), filtering routine control-plane
+        # events: a rolling kube-apiserver upgrade typically produces 1–3
+        # watch_flapped events per series and resolves on its own. Critical
+        # fires once the condition has held continuously for 30 minutes.
+        - alert: 'KubeTransportErrors'
+          expr: "sum without (resource, reason) (increase(x509_kube_transport_errors_total[15m])) > 5"
+          for: 5m
+          labels:
+            severity: warning
+          annotations:
+            summary: x509-certificate-exporter is having trouble talking to the Kubernetes API
+            description: Source `{{ $labels.source_name }}` recorded more than 5 Kubernetes API transport-level errors (LIST/WATCH/informer failures) over the last 15 minutes. While this lasts, certificate observations from affected resources may be stale or missing. Typical causes are auth failures (token rotation, RBAC drift), apiserver throttling, or persistent network issues to the control plane.
+        - alert: 'KubeTransportErrorsSustained'
+          expr: "sum without (resource, reason) (increase(x509_kube_transport_errors_total[15m])) > 5"
+          for: 30m
+          labels:
+            severity: critical
+          annotations:
+            summary: x509-certificate-exporter cannot reach the Kubernetes API reliably
+            description: Source `{{ $labels.source_name }}` has been recording sustained Kubernetes API transport-level errors continuously for at least 30 minutes. Certificate observations have likely been missing fresh updates for that whole window. Investigate apiserver reachability, RBAC, and token/cert rotation drift.
+        - alert: 'KeystorePassphraseFailures'
+          expr: "(increase(x509_pkcs12_passphrase_failures_total[15m]) > 0) or (increase(x509_jks_passphrase_failures_total[15m]) > 0)"
+          for: 15m
+          labels:
+            severity: warning
+          annotations:
+            summary: Keystore passphrase failures observed
+            description: Source `{{ $labels.source_name }}` recorded PKCS#12 or JKS/JCEKS decode failures with reason `bad_passphrase` over the last 15 minutes. The configured passphrase is wrong, missing, or pointing at the wrong key — the affected keystores are not contributing any certificate metrics.
+        # CertificateRenewal and CertificateExpiration below are intentionally
+        # always-on (no toggle): expiration monitoring is the exporter's core
+        # value, disabling them would defeat the purpose of installing the
+        # chart. CertificateError, CertificateNotYetValid and CertificateCollision
+        # are opt-out via toggles because they each guard against a specific
+        # operational failure mode rather than the base "your cert is dying"
+        # signal.
+        # Depends on `exposePerCertificateErrorMetrics: true`. Without it the
+        # `x509_cert_error` series isn't emitted and this rule is a silent
+        # no-op — documented in values.yaml alongside the toggle.
+        - alert: 'CertificateError'
+          expr: "x509_cert_error > 0"
+          for: 15m
+          labels:
+            severity: warning
+          annotations:
+            summary: Certificate cannot be decoded
+            description: Certificate could not be decoded {{if $labels.secret_name }}in Kubernetes secret `{{ $labels.secret_namespace }}/{{ $labels.secret_name }}`{{else}}at location `{{ $labels.filepath }}`{{end}}
+        - alert: 'CertificateRenewal'
+          expr: "(x509_cert_not_after - time()) < (28 * 86400) and (x509_cert_not_after - time()) > 0"
+          for: 15m
+          labels:
+            severity: warning
+          annotations:
+            summary: Certificate should be renewed
+            description: Certificate for `{{ $labels.subject_CN }}` should be renewed as it expires in {{ humanizeDuration $value }} {{if $labels.secret_name }}in Kubernetes secret `{{ $labels.secret_namespace }}/{{ $labels.secret_name }}`{{else}}at location `{{ $labels.filepath }}`{{end}}
+        # The expression keeps firing once the cert is past NotAfter (the
+        # difference goes negative but stays below the threshold), so the
+        # description distinguishes "about to expire" from "already expired"
+        # via humanizeDuration's sign. AlertManager preserves the same
+        # series identity through the transition; no flapping.
+        - alert: 'CertificateExpiration'
+          expr: "(x509_cert_not_after - time()) < (14 * 86400)"
+          for: 15m
+          labels:
+            severity: critical
+          annotations:
+            summary: Certificate is expiring or expired
+            description: Certificate for `{{ $labels.subject_CN }}` {{if lt $value 0.0}}expired {{ humanizeDuration $value }} ago{{else}}expires in {{ humanizeDuration $value }}{{end}} {{if $labels.secret_name }}in Kubernetes secret `{{ $labels.secret_namespace }}/{{ $labels.secret_name }}`{{else}}at location `{{ $labels.filepath }}`{{end}}
+        # Depends on `exposeNotBeforeMetric: true`. Without it the
+        # `x509_cert_not_before` series isn't emitted and this rule is a
+        # silent no-op — documented in values.yaml alongside the toggle.
+        - alert: 'CertificateNotYetValid'
+          expr: "(x509_cert_not_before - time()) > 0"
+          for: 15m
+          labels:
+            severity: warning
+          annotations:
+            summary: Certificate is not yet valid
+            description: Certificate for `{{ $labels.subject_CN }}` becomes valid in {{ humanizeDuration $value }} {{if $labels.secret_name }}in Kubernetes secret `{{ $labels.secret_namespace }}/{{ $labels.secret_name }}`{{else}}at location `{{ $labels.filepath }}`{{end}}. Likely a clock drift, a misdated issuance, or a planned-future cert that shipped early.
+        # Targets the `_dropped_total` counter so the alert only fires for
+        # actual data-loss (registry CollisionNever policy). The detect-only
+        # counter `x509_cert_collision_total` keeps ticking under the default
+        # CollisionAuto policy, where the discriminator resolves the overlap
+        # and no data is lost — that signal stays available as a diagnostic
+        # on dashboards but doesn't page.
+        - alert: 'CertificateCollision'
+          expr: "increase(x509_cert_collision_dropped_total[1h]) > 0"
+          for: 15m
+          labels:
+            severity: warning
+          annotations:
+            summary: Certificate label collision dropped a series
+            description: At least one certificate observed by source kind `{{ $labels.source_kind }}` was dropped because it shared its Prometheus label set with another and the registry is configured with `Collision=Never`. Its expiration will not raise an alert. Typically caused by overlapping `secretTypes` / `configMapKeys` patterns, or identical subjects in two distinct keystores; either disambiguate the source config or switch the registry to the default `Auto` policy so the discriminator label disambiguates the series instead.
+        # CRLs below follow the same always-on pattern as certificate
+        # renewal/expiration — the alerts are noise-free when no CRL is
+        # being watched (the underlying `x509_crl_*` series simply don't
+        # exist), so there's no benefit to a toggle.
+        - alert: 'CRLNeedsRefresh'
+          expr: "(x509_crl_next_update - time()) < (7 * 86400) and x509_crl_stale == 0"
+          for: 15m
+          labels:
+            severity: warning
+          annotations:
+            summary: CRL needs to be refreshed
+            description: CRL issued by `{{ $labels.issuer_CN }}` reaches its nextUpdate in {{ humanizeDuration $value }} {{if $labels.secret_name }}in Kubernetes secret `{{ $labels.secret_namespace }}/{{ $labels.secret_name }}`{{else}}at location `{{ $labels.filepath }}`{{end}}
+        - alert: 'CRLStale'
+          expr: "x509_crl_stale > 0"
+          for: 15m
+          labels:
+            severity: critical
+          annotations:
+            summary: CRL is stale (past its nextUpdate)
+            description: CRL issued by `{{ $labels.issuer_CN }}` is past its nextUpdate — clients validating against this CRL are likely to reject the issuer's certs {{if $labels.secret_name }}in Kubernetes secret `{{ $labels.secret_namespace }}/{{ $labels.secret_name }}`{{else}}at location `{{ $labels.filepath }}`{{end}}
 ---
 # Source: x509-certificate-exporter/templates/servicemonitor.yaml
 apiVersion: monitoring.coreos.com/v1
