@@ -1,6 +1,7 @@
 # Copyright (c) 2017-present SIGHUP s.r.l All rights reserved.
 # Use of this source code is governed by a BSD-style
 # license that can be found in the LICENSE file.
+monorepo_root = true
 
 [tools]
 kind = "0.33.0"
@@ -16,6 +17,11 @@ kapp = "0.65.4"     # For GitOps-style deployments
 "ubi:google/addlicense" = "v1.1.1"
 promtool = "2.54.1"
 stern = "1.33.0"    # For log monitoring during tests
+
+[monorepo]
+config_roots = [
+    "katalog/grafana"
+]
 
 # Development task definitions
 [tasks.add-license]
