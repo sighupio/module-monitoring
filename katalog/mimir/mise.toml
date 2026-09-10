@@ -1,19 +1,20 @@
-#!/bin/bash
-# Copyright (c) 2017-present SIGHUP s.r.l All rights reserved.
-# Use of this source code is governed by a BSD-style
-# license that can be found in the LICENSE file.
+[tasks.chart-version]
+run = '''
+helm repo add grafana https://grafana.github.io/helm-charts
+helm repo update
+helm search repo grafana/mimir-distributed -l
+'''
 
-set -euo pipefail
-
-if [ -z "${MIMIR_CHART_VERSION:-}" ]; then
-  echo "Usage: MIMIR_CHART_VERSION=6.0.6 ./upgrade.sh"
-  exit 1
-fi
-echo "Using chart version ${MIMIR_CHART_VERSION}"
+[tasks.upgrade]
+usage = '''
+arg "<chart_version>" help="Mimir chart version"
+'''
+run = '''
+echo "Using chart version ${usage_chart_version}"
 
 rm -rf /tmp/mimir-distributed
-helm pull grafana/mimir-distributed --version "${MIMIR_CHART_VERSION}" --untar --untardir /tmp
-echo "Downloaded chart with version $MIMIR_CHART_VERSION in /tmp/mimir-distributed"
+helm pull grafana/mimir-distributed --version "${usage_chart_version}" --untar --untardir /tmp
+echo "Downloaded chart with version $usage_chart_version in /tmp/mimir-distributed"
 
 helm lint /tmp/mimir-distributed --values MAINTENANCE.values.yaml
 echo "Helm lint done"
@@ -38,7 +39,7 @@ sed -i '' -e '\|# Ruler endpoints|,\|# Rest of /prometheus|{' -e '\|# Rest of /p
 echo "Removed disabled Alertmanager and Ruler location blocks from nginx gateway config"
 
 # Chart v6.0.6: remove gateway ServiceMonitor (nginx doesn't expose /metrics, fixed upstream in v6.1.0)
-if [ "${MIMIR_CHART_VERSION}" = "6.0.6" ]; then
+if [ "${usage_chart_version}" = "6.0.6" ]; then
   sed -i '' -e '/# Source: mimir-distributed\/templates\/gateway\/gateway-servmon\.yaml/,/^---$/d' deploy.yaml
   echo "Removed gateway ServiceMonitor (nginx /metrics not exposed, fixed upstream in v6.1.0)"
 fi
@@ -65,4 +66,5 @@ helm template mimir-distributed /tmp/mimir-distributed \
   -n monitoring --values MAINTENANCE.values.yaml > prometheusRules.yaml
 echo "Built Prometheus chart template in prometheusRule.yaml file"
 
-mise run add-license
+mise run //:add-license
+'''
