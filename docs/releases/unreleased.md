@@ -10,7 +10,7 @@ This release adds support for Kubernetes 1.36, updates all core components to th
 |-----------------------|-----------------------------------------------------------------------------------------------------------------------------------------|------------------|
 | `alertmanager`        | [`v0.33.0`](https://github.com/prometheus/alertmanager/releases/tag/v0.33.0)                                                            | 0.31.1           |
 | `blackbox-exporter`   | [`v0.28.0`](https://github.com/prometheus/blackbox_exporter/releases/tag/v0.28.0)                                                       | No update        |
-| `grafana`             | [`v12.4.1`](https://github.com/grafana/grafana/releases/tag/v12.4.1)                                                                    | No update        |
+| `grafana`             | [`v13.0.2`](https://github.com/grafana/grafana/releases/tag/v13.0.2)                                                                    | v12.4.1          |
 | `kube-rbac-proxy`     | [`v0.22.0`](https://github.com/brancz/kube-rbac-proxy/releases/tag/v0.22.0)                                                             | v0.21.0          |
 | `kube-state-metrics`  | [`v2.18.0`](https://github.com/kubernetes/kube-state-metrics/releases/tag/v2.18.0)                                                      | No update        |
 | `node-exporter`       | [`v1.10.2`](https://github.com/prometheus/node_exporter/releases/tag/v1.10.2)                                                           | No update        |
