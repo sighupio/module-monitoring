@@ -10,4 +10,4 @@ To prepare a new release of this package:
    ```
    Replace `KUBE_PROMETHEUS_RELEASE` with the current upstream release.
 
-2. Check the differences introduced by pulling the upstream release and add the necessary patches in`kustomization.yaml`
+2. Check the differences introduced by pulling the upstream release and add the necessary patches in `kustomization.yaml`
