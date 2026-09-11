@@ -5,16 +5,17 @@ To prepare a new release of this package:
 1. Run the upgrade script
 
    ```bash
-   export KUBE_PROMETHEUS_RELEASE=v0.17.0
+   export KUBE_PROMETHEUS_RELEASE=v0.18.0
    ../../utils/pull-upstream.sh "${KUBE_PROMETHEUS_RELEASE}" prometheus-adapter
    ```
+   Replace `KUBE_PROMETHEUS_RELEASE` with the current upstream release. 
 
-   Replace `KUBE_PROMETHEUS_RELEASE` with the current upstream release. The script will:
-   - Pull upstream manifests from kube-prometheus
+   The script will:
+    - Pull upstream manifests from kube-prometheus
     - Extract the adapter config from the Helm chart
     - Generate `config.yaml` from the rendered Helm template
-   - Sync labels in `apiService-EnhancedHPAMetrics.yaml` with upstream
-   - Add license headers
+    - Sync labels in `apiService-EnhancedHPAMetrics.yaml` with upstream
+    - Add license headers
 
 2. Check the differences introduced by pulling the upstream release and add the necessary patches in `kustomization.yaml`
 
