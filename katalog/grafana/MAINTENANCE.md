@@ -10,7 +10,7 @@ To prepare a new release of this package:
    mise run upgrade v0.18.0 2.11.2 2.5.1
    ```
    
-   Replace `KUBE_PROMETHEUS_RELEASE` with the current upstream release, `K8S_SIDECAR_VERSION` with the desired [k8s-sidecar version](https://github.com/kiwigrid/k8s-sidecar/releases), and `DRILLDOWN_VERSION` with the desired [Grafana Logs Drilldown plugin version](https://grafana.com/grafana/plugins/grafana-lokiexplore-app/).
+   Replace `kube_prometheus_version` with the current upstream release, `k8s_sidecar_version` with the desired [k8s-sidecar version](https://github.com/kiwigrid/k8s-sidecar/releases), and `drilldown_logs_plugin_version` with the desired [Grafana Logs Drilldown plugin version](https://grafana.com/grafana/plugins/grafana-lokiexplore-app/).
    
    The script will pull the upstream release, automatically remove Windows and AIX dashboards from `deployment.yaml`, update the k8s-sidecar image, and update the Drilldown plugin URL in the environment patch.
 
