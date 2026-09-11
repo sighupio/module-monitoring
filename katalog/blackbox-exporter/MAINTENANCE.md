@@ -1,5 +1,7 @@
 # `blackbox-exporter` Package Maintenance
 
+> ⚠️ **Warning**: the `kube-rbac-proxy` version used in this package should be aligned with the one used by the upstream `kube-state-metrics` chart. Bump `katalog/kube-state-metrics` first, then update this package to the same `kube-rbac-proxy` version obtained from its chart.
+
 To prepare a new release of this package:
 
 1. Get the current upstream release
