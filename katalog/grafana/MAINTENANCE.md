@@ -26,7 +26,7 @@ To prepare a new release of this package:
 
 - We've changed the JSON file inside grafana-dashboardSources, dropping the folder name and enabling the option to use subfolders. This is done via a kustomize patch.
 - Added `FOLDER_ANNOTATION` environment variable to the dashboards' sidecar. This is done via a kustomize patch.
-- Added custom grafana dashboard (`fury-cluster-overview.json`), which shows an overview of the status of the resources present in the cluster. This is done via a kustomize patch.
+- Added custom grafana dashboard (`fury-cluster-overview.json`), which shows an overview representing the status of the resources present in the cluster. This is done via a kustomize patch.
 - Windows and AIX dashboards are removed automatically by the `upgrade` task (JSON files and volume mounts).
 - Added default Kubernetes values for the readiness probe and introduced a liveness probe. The readiness probe defaults allow parameter customization, while the liveness probe was added to enable a more lenient approach to health checks and to recover from application hangs or failures. Both changes are applied using a Kustomize patch.
 - Added Grafana Logs Drilldown plugin (`grafana-lokiexplore-app`) via `GF_INSTALL_PLUGINS` environment variable. The plugin version is managed by the `drilldown_logs_plugin_version` argument in the `upgrade` task.
