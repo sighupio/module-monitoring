@@ -1,19 +1,8 @@
 # Monitoring Module Release v4.3.0
 
-Welcome to the latest release of the `monitoring` core module of the [
-`SIGHUP Distribution`](https://github.com/sighupio/distribution), maintained by team SIGHUP by ReeVo.
+Welcome to the latest release of the `monitoring` core module of the [`SIGHUP Distribution`](https://github.com/sighupio/distribution), maintained by team SIGHUP by ReeVo.
 
 This release adds support for Kubernetes 1.36, updates all core components to their latest versions, and officially drops support for Kubernetes versions 1.32.
-
-## New features 🎉
-
-### HAProxy
-
-Updated Prometheus rules, adding three new alerts:
-
-- `HaproxyDroppingLogs`: HAProxy is dropping log messages (syslog backend can't keep up or is unreachable)
-- `HaproxyBackendHealthcheckFlapping`: backend health checks repeatedly transition between UP and DOWN states
-- `HaproxyServerHealthcheckFlapping`: server health checks repeatedly transition between UP and DOWN states
 
 ## Component Images 🚢
 
@@ -34,6 +23,16 @@ Updated Prometheus rules, adding three new alerts:
 | `mc`                  | [`RELEASE.2025-08-13T08-35-41Z`](https://github.com/minio/mc/releases/tag/RELEASE.2025-08-13T08-35-41Z)                                 | No update        |
 
 > Please refer to the individual release notes to get detailed info on the releases.
+
+## New features 🎉
+
+### HAProxy
+
+Updated Prometheus rules, adding three new alerts:
+
+- `HaproxyDroppingLogs`: HAProxy is dropping log messages (syslog backend can't keep up or is unreachable)
+- `HaproxyBackendHealthcheckFlapping`: backend health checks repeatedly transition between UP and DOWN states
+- `HaproxyServerHealthcheckFlapping`: server health checks repeatedly transition between UP and DOWN states
 
 ## Breaking Changes 💔
 
