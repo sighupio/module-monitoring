@@ -627,7 +627,7 @@ steps:
     depends_on:
       - Create Kind Cluster
     commands:
-      - mise use bats@$${BATS_VERSION} kubectl@$${KUBECTL_VERSION} kustomize@5.6.0 kapp@0.64.2
+      - mise use bats@$${BATS_VERSION} kubectl@$${KUBECTL_VERSION} kustomize@5.6.0 kapp@0.65.4
       - eval "$(mise activate bash --shims)"
       - ./scripts/run-monitoring-tests.sh
 
