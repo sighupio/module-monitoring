@@ -2,7 +2,7 @@
 
 Welcome to the latest release of the `monitoring` core module of the [`SIGHUP Distribution`](https://github.com/sighupio/distribution), maintained by team SIGHUP by ReeVo.
 
-This release adds support for Kubernetes 1.36 and updates all core components to their latest versions.
+This release adds support for Kubernetes 1.36, updates all core components to their latest versions, and officially drops support for Kubernetes versions 1.32.
 
 ## Component Images 🚢
 
@@ -23,6 +23,10 @@ This release adds support for Kubernetes 1.36 and updates all core components to
 | `mc`                  | [`RELEASE.2025-08-13T08-35-41Z`](https://github.com/minio/mc/releases/tag/RELEASE.2025-08-13T08-35-41Z)                                 | No update        |
 
 > Please refer to the individual release notes to get detailed info on the releases.
+
+## Breaking Changes 💔
+
+- **Dropped support for Kubernetes 1.32**: Clusters running Kubernetes `1.32` or older are no longer supported and should be upgraded before upgrading to this module version.
 
 ## Update Guide 🦮
 
