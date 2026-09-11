@@ -37,7 +37,7 @@ The following packages are included in Monitoring Module:
 | [blackbox-exporter](katalog/blackbox-exporter)         | `0.28.0` | Prometheus exporter that allows blackbox probing of endpoints over HTTP, HTTPS, DNS, TCP, ICMP and gRPC.                  |
 | [grafana](katalog/grafana)                             | `13.0.2` | Grafana deployment to query and visualize metrics collected by Prometheus                                                 |
 | [kube-proxy-metrics](katalog/kube-proxy-metrics)       | `0.22.0` | RBAC proxy to securely expose kube-proxy metrics                                                                          |
-| [kube-state-metrics](katalog/kube-state-metrics)       | `2.18.0` | Service that generates metrics from Kubernetes API objects                                                                |
+| [kube-state-metrics](katalog/kube-state-metrics)       | `2.19.0` | Service that generates metrics from Kubernetes API objects                                                                |
 | [node-exporter](katalog/node-exporter)                 | `1.10.2` | Prometheus exporter for hardware and OS metrics exposed by \*NIX kernels                                                  |
 | [prometheus-adapter](katalog/prometheus-adapter)       | `0.12.0` | Kubernetes resource metrics, custom metrics, and external metrics APIs implementation.                                    |
 | [x509-exporter](katalog/x509-exporter)                 | `4.1.0`  | Provides monitoring for certificates                                                                                      |
