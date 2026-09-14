@@ -51,7 +51,7 @@ The following improvements are active by default with the module's configuration
 ## Update Guide 🦮
 
 > [!WARNING]
-> Mimir is upgraded directly from `v3.0.4` to `v3.2.0` (two minor versions). Mimir 3.2 enables remote query execution by default, which requires queriers on at least Mimir 3.1. During the rolling upgrade, there may be a short window in which a new query-frontend sends query plans to queriers that have not been upgraded yet, causing transient query errors. This resolves automatically once all queriers are running the new version.
+> Mimir 3.2 enables remote query execution by default, which requires queriers on at least Mimir 3.1. During the rolling upgrade, there may be a short window in which a new query-frontend sends query plans to queriers that have not been upgraded yet, causing transient query errors. This resolves automatically once all queriers are running the new version.
 
 The furyctl tool now manages Module installations and upgrades. The instructions below are left for reference when using the legacy version of furyctl.
 
