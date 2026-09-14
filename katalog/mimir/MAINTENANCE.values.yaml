@@ -34,6 +34,13 @@ mimir:
     blocks_storage:
       s3:
         bucket_name: mimir
+    ingest_storage:
+      enabled: false
+    ingester:
+      push_grpc_method_enabled: true
+    limits:
+      max_global_series_per_user: 0
+      compactor_blocks_retention_period: 720h
   rbac:
     usePodSecurityPolicy: false
 alertmanager:
