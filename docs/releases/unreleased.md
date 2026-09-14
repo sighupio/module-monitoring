@@ -24,11 +24,25 @@ This release adds support for Kubernetes 1.36, updates all core components to th
 
 > Please refer to the individual release notes to get detailed info on the releases.
 
+## New features 🎉
+
+### Mimir
+
+The following improvements are active by default with the module's configuration:
+
+- **Query sharding enabled by default**: shardable range queries are automatically split across queriers for better parallelism.
+- **Remote query execution enabled by default**: the query-frontend plans queries and distributes portions of the plan to queriers through the Mimir Query Engine (MQE), including subset-selector elimination and subquery spin-off.
+- Several MQE query-path optimizations that reduce CPU and memory consumption.
+
+
 ## Breaking Changes 💔
 
 - **Dropped support for Kubernetes 1.32**: Clusters running Kubernetes `1.32` or older are no longer supported and should be upgraded before upgrading to this module version.
 
 ## Update Guide 🦮
+
+> [!WARNING]
+> Mimir is upgraded directly from `v3.0.4` to `v3.2.0` (two minor versions). Mimir 3.2 enables remote query execution by default, which requires queriers on at least Mimir 3.1. During the rolling upgrade, there may be a short window in which a new query-frontend sends query plans to queriers that have not been upgraded yet, causing transient query errors. This resolves automatically once all queriers are running the new version.
 
 The furyctl tool now manages Module installations and upgrades. The instructions below are left for reference when using the legacy version of furyctl.
 
