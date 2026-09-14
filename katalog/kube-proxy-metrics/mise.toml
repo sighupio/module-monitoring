@@ -1,0 +1,10 @@
+[tasks.upgrade]
+usage = '''
+arg "<rbac_proxy_version>" help="RBAC proxy version"
+'''
+run = '''
+echo "Using image version ${usage_rbac_proxy_version}"
+
+kustomize edit set image kube-rbac-proxy=registry.sighup.io/fury/brancz/kube-rbac-proxy:${usage_rbac_proxy_version}
+echo "Kube RBAC proxy updated to ${usage_rbac_proxy_version}"
+'''
