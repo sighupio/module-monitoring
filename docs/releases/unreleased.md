@@ -40,8 +40,7 @@ Updated Prometheus rules, adding three new alerts:
 
 ## Update Guide 🦮
 
-The furyctl tool now manages Module installations and upgrades. The instructions below are left for reference when using
-the legacy version of furyctl.
+The furyctl tool now manages Module installations and upgrades. The instructions below are left for reference when using the legacy version of furyctl.
 
 ### Process
 
