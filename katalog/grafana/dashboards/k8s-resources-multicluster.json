@@ -299,7 +299,7 @@
                                 "value": [
                                     {
                                         "title": "Drill down",
-                                        "url": "/d/efa86fd1d0c121a26444b636a3f509a8/kubernetes-compute-resources-cluster?${datasource:queryparam}&var-cluster=${__data.fields.Cluster}"
+                                        "url": "/d/efa86fd1d0c121a26444b636a3f509a8?${datasource:queryparam}&var-cluster=${__data.fields.Cluster}"
                                     }
                                 ]
                             }
@@ -487,7 +487,7 @@
                                 "value": [
                                     {
                                         "title": "Drill down",
-                                        "url": "/d/efa86fd1d0c121a26444b636a3f509a8/kubernetes-compute-resources-cluster?${datasource:queryparam}&var-cluster=${__data.fields.Cluster}"
+                                        "url": "/d/efa86fd1d0c121a26444b636a3f509a8?${datasource:queryparam}&var-cluster=${__data.fields.Cluster}"
                                     }
                                 ]
                             }

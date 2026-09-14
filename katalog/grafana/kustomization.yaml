@@ -6,28 +6,28 @@ apiVersion: kustomize.config.k8s.io/v1beta1
 kind: Kustomization
 namespace: monitoring
 images:
-  - name: grafana/grafana
-    newName: registry.sighup.io/fury/grafana/grafana
-    newTag: 12.4.1
-  - name: kiwigrid/k8s-sidecar
-    newName: registry.sighup.io/fury/kiwigrid/k8s-sidecar
-    newTag: 2.7.3
+- name: grafana/grafana
+  newName: registry.sighup.io/fury/grafana/grafana
+  newTag: 13.0.2
+- name: kiwigrid/k8s-sidecar
+  newName: registry.sighup.io/fury/kiwigrid/k8s-sidecar
+  newTag: 2.11.2
 patches:
-  - path: patches/grafana-dashboard-sidecar.yml
-  - path: patches/grafana-datasource-sidecar.yml
-  - path: patches/grafana-env.yaml
-  - path: patches/grafana-probes.yaml
-  - path: patches/grafana-security-context.yml
-  - path: patches/grafana-volumes.yaml
-  - path: patches/grafana-dashboard-sources.yml
+- path: patches/grafana-dashboard-sidecar.yml
+- path: patches/grafana-datasource-sidecar.yml
+- path: patches/grafana-env.yaml
+- path: patches/grafana-probes.yaml
+- path: patches/grafana-security-context.yml
+- path: patches/grafana-volumes.yaml
+- path: patches/grafana-dashboard-sources.yml
 resources:
-  - dashboards
-  - clusterRole.yaml
-  - clusterRoleBinding.yaml
-  - config.yaml
-  - dashboardSources.yaml
-  - deployment.yaml
-  - prometheusRule.yaml
-  - service.yaml
-  - serviceAccount.yaml
-  - serviceMonitor.yaml
+- dashboards
+- clusterRole.yaml
+- clusterRoleBinding.yaml
+- config.yaml
+- dashboardSources.yaml
+- deployment.yaml
+- prometheusRule.yaml
+- service.yaml
+- serviceAccount.yaml
+- serviceMonitor.yaml
