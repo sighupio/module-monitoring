@@ -31,6 +31,11 @@ yq -i ".memcachedExporter.image.tag = \"$MEMCACHED_EXPORTER_TAG\"" MAINTENANCE.v
 yq -i ".gateway.nginx.image.tag = \"$NGINX_TAG\"" MAINTENANCE.values.yaml
 echo "Updated image tags in MAINTENANCE.values.yaml"
 
+helm template mimir-distributed /tmp/mimir-distributed --no-hooks -n monitoring --values MAINTENANCE.values.yaml --set useExternalConfig=false \
+  | yq 'select(.kind == "ConfigMap" and .metadata.name == "mimir-distributed-config") | .data["mimir.yaml"]' \
+  > config/mimir.yaml
+echo "Regenerated config/mimir.yaml"
+
 helm template mimir-distributed /tmp/mimir-distributed --no-hooks -n monitoring --values MAINTENANCE.values.yaml > deploy.yaml
 echo "Built chart template in deploy.yaml file"
 
