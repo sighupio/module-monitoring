@@ -35,8 +35,6 @@ To update the x509-exporter package, follow these steps.
    - `kustomization.yaml` — references `deploy.yaml` and generates the dashboard ConfigMap via `configMapGenerator`
    - `MAINTENANCE.values.yaml` — Helm values used to generate the manifests
 
-   > **Note:** Chart v4.1.0 ships a broken `X509ExporterReadErrors` alert referencing the removed `x509_read_errors` metric. The `patch_4.1.0.sh` script backports the fix from [v4.2.0-rc.1](https://github.com/enix/x509-certificate-exporter/releases/tag/v4.2.0-rc.1). When we upgrade to chart ≥4.2.0, the patch script can be removed entirely.
-
 4. Sync the new image to our registry in the [`monitoring` images.yaml file container-image-sync repository](https://github.com/sighupio/container-image-sync/blob/main/modules/monitoring/images.yml).
 
 ## Notes
