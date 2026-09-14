@@ -24,6 +24,16 @@ This release adds support for Kubernetes 1.36, updates all core components to th
 
 > Please refer to the individual release notes to get detailed info on the releases.
 
+## New features 🎉
+
+### HAProxy
+
+Updated Prometheus rules, adding three new alerts:
+
+- `HaproxyDroppingLogs`: HAProxy is dropping log messages (syslog backend can't keep up or is unreachable)
+- `HaproxyBackendHealthcheckFlapping`: backend health checks repeatedly transition between UP and DOWN states
+- `HaproxyServerHealthcheckFlapping`: server health checks repeatedly transition between UP and DOWN states
+
 ## Breaking Changes 💔
 
 - **Dropped support for Kubernetes 1.32**: Clusters running Kubernetes `1.32` or older are no longer supported and should be upgraded before upgrading to this module version.
