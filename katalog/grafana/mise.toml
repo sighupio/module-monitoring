@@ -27,11 +27,15 @@ yq -i 'del(.spec.template.spec.volumes[] | select(.name == "grafana-dashboard-k8
 yq -i 'del(.spec.template.spec.volumes[] | select(.name == "grafana-dashboard-k8s-windows-node-rsrc-use"))' deployment.yaml
 yq -i 'del(.spec.template.spec.volumes[] | select(.name == "grafana-dashboard-nodes-aix"))' deployment.yaml
 
+# Bump Grafana memory limit: Grafana 13 has a higher memory footprint than 12 (see grafana/grafana#123017)
+yq -i '(.spec.template.spec.containers[] | select(.name == "grafana") | .resources.limits.memory) = "512Mi"' deployment.yaml
+yq -i '(.spec.template.spec.containers[] | select(.name == "grafana") | .resources.requests.memory) = "256Mi"' deployment.yaml
+
 echo "Deployment patched"
 
 kustomize edit set image kiwigrid/k8s-sidecar=registry.sighup.io/fury/kiwigrid/k8s-sidecar:${usage_k8s_sidecar_version}
 echo "K8S sidecar updated to ${usage_k8s_sidecar_version}"
 
-yq -i "(.spec.template.spec.containers[].env[] | select(.name == \"GF_INSTALL_PLUGINS\")).value = \"https://storage.googleapis.com/integration-artifacts/grafana-lokiexplore-app/release/${usage_drilldown_logs_plugin_version}/any/grafana-lokiexplore-app-${usage_drilldown_logs_plugin_version}.zip;grafana-lokiexplore-app\"" patches/grafana-env.yaml
+yq -i "(.spec.template.spec.containers[].env[] | select(.name == \"GF_PLUGINS_PREINSTALL\")).value = \"grafana-lokiexplore-app@${usage_drilldown_logs_plugin_version}@https://storage.googleapis.com/integration-artifacts/grafana-lokiexplore-app/release/${usage_drilldown_logs_plugin_version}/any/grafana-lokiexplore-app-${usage_drilldown_logs_plugin_version}.zip\"" patches/grafana-env.yaml
 echo "Drilldown plugin updated to ${usage_drilldown_logs_plugin_version}"
 '''
