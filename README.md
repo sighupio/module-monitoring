@@ -41,7 +41,7 @@ The following packages are included in Monitoring Module:
 | [node-exporter](katalog/node-exporter)                 | `1.11.1` | Prometheus exporter for hardware and OS metrics exposed by \*NIX kernels                                                  |
 | [prometheus-adapter](katalog/prometheus-adapter)       | `0.12.0` | Kubernetes resource metrics, custom metrics, and external metrics APIs implementation.                                    |
 | [x509-exporter](katalog/x509-exporter)                 | `4.2.0`  | Provides monitoring for certificates                                                                                      |
-| [mimir](katalog/mimir)                                 | `3.0.4`  | Mimir is an open source, horizontally scalable, highly available, multi-tenant TSDB for long-term storage for Prometheus. |
+| [mimir](katalog/mimir)                                 | `3.2.0`  | Mimir is an open source, horizontally scalable, highly available, multi-tenant TSDB for long-term storage for Prometheus. |
 | [haproxy](katalog/haproxy)                             | `N.A.`   | Grafana dashboards and Prometheus rules (alerts) for HAproxy.                                                             |
 
 The module also ships the provider-specific ServiceMonitor packages (`eks-sm`, `aks-sm`, `gke-sm`, `kubeadm-sm`), which are selected and deployed automatically based on your cluster's provider.
