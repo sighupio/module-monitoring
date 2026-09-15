@@ -44,6 +44,19 @@ Added two new Prometheus alerts:
 - `MinioKmsUnavailable`, fired when the KMS backend is offline and SSE-KMS operations fail.
 
 
+### Prometheus
+
+Added five new control-plane alerts from upstream:
+
+- `KubeAPIInstanceUnreachable`: a kube-apiserver instance has been unreachable for more than 15 minutes
+- `KubeletInstanceUnreachable`: a kubelet instance has been unreachable for more than 15 minutes
+- `KubeSchedulerInstanceUnreachable`: a kube-scheduler instance has been unreachable for more than 15 minutes
+- `KubeControllerManagerDown`: the kube-controller-manager target has disappeared from Prometheus target discovery
+- `KubeControllerManagerInstanceUnreachable`: a kube-controller-manager instance has been unreachable for more than 15 minutes
+
+Improved existing rules: quota alerts (`KubeQuotaAlmostFull`, `KubeQuotaFullyUsed`, `KubeQuotaExceeded`) now deduplicate series with `topk by`, and the HPA/pod-owner joins are more robust in multi-cluster setups.
+
+
 ### x509-exporter
 
 Updated the chart, adding eight new default alerts:
@@ -56,19 +69,6 @@ Updated the chart, adding eight new default alerts:
 - `CRLNeedsRefresh` / `CRLStale`: certificate revocation list nearing its `nextUpdate` or already stale
 
 Also improved existing alerts: `CertificateRenewal` no longer fires for already-expired certificates, and `CertificateExpiration` now distinguishes "expiring" from "already expired" in its description.
-
-
-### Prometheus
-
-Added five new control-plane alerts from upstream:
-
-- `KubeAPIInstanceUnreachable`: a kube-apiserver instance has been unreachable for more than 15 minutes
-- `KubeletInstanceUnreachable`: a kubelet instance has been unreachable for more than 15 minutes
-- `KubeSchedulerInstanceUnreachable`: a kube-scheduler instance has been unreachable for more than 15 minutes
-- `KubeControllerManagerDown`: the kube-controller-manager target has disappeared from Prometheus target discovery
-- `KubeControllerManagerInstanceUnreachable`: a kube-controller-manager instance has been unreachable for more than 15 minutes
-
-Improved existing rules: quota alerts (`KubeQuotaAlmostFull`, `KubeQuotaFullyUsed`, `KubeQuotaExceeded`) now deduplicate series with `topk by`, and the HPA/pod-owner joins are more robust in multi-cluster setups.
 
 
 ## Bug Fixes 🐞
