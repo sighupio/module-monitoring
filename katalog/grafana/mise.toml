@@ -27,7 +27,7 @@ yq -i 'del(.spec.template.spec.volumes[] | select(.name == "grafana-dashboard-k8
 yq -i 'del(.spec.template.spec.volumes[] | select(.name == "grafana-dashboard-k8s-windows-node-rsrc-use"))' deployment.yaml
 yq -i 'del(.spec.template.spec.volumes[] | select(.name == "grafana-dashboard-nodes-aix"))' deployment.yaml
 
-# Bump Grafana memory limit: Grafana 13 has a higher memory footprint than 12 (see grafana/grafana#123017)
+# Bump Grafana memory limit: Grafana 13 has a higher memory footprint than 12
 yq -i '(.spec.template.spec.containers[] | select(.name == "grafana") | .resources.limits.memory) = "512Mi"' deployment.yaml
 yq -i '(.spec.template.spec.containers[] | select(.name == "grafana") | .resources.requests.memory) = "256Mi"' deployment.yaml
 
