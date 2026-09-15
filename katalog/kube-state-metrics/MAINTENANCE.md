@@ -1,14 +1,15 @@
 # `kube-state-metrics` Package Maintenance
 
+> ⚠️ **Warning**: when bumping this package, first check the `kube-rbac-proxy` version used by the upstream chart: the `kube-rbac-proxy` version in `katalog/kube-proxy-metrics` must be updated accordingly to the same version.
+
 To prepare a new release of this package:
 
 1. Get the current upstream release
 
    ```bash
-   export KUBE_PROMETHEUS_RELEASE=v0.17.0
+   export KUBE_PROMETHEUS_RELEASE=v0.18.0
    ../../utils/pull-upstream.sh ${KUBE_PROMETHEUS_RELEASE} kube-state-metrics
    ```
-
    Replace `KUBE_PROMETHEUS_RELEASE` with the current upstream release.
 
 2. Check the differences introduced by pulling the upstream release and add the necessary patches in `kustomization.yaml`
@@ -17,4 +18,4 @@ To prepare a new release of this package:
 
 4. Update the `kustomization.yaml` file with the new image.
 
-5. Note on `--resources` flag: starting from KSM v2.18.0, `endpoints` was removed from the default resources (replaced by `endpointslices`). However, `endpoints` is still needed because `kube_endpoint_address` is used by the `MimirGossipMembersEndpointsOutOfSync` alert in `katalog/mimir/prometheusRules.yaml`. Since the `--resources` flag replaces the entire default list, the deployment explicitly lists all 28 default resources plus `endpoints`. When updating KSM, fetch the new default list from `pkg/options/resource.go` in the `kubernetes/kube-state-metrics` repository at the target version tag, append `endpoints`, and update the flag accordingly.
+5. Note on `--resources` flag: starting from KSM v2.18.0, `endpoints` was removed from the default resources (replaced by `endpointslices`). However, `endpoints` is still needed because `kube_endpoint_address` is used by the `MimirGossipMembersEndpointsOutOfSync` alert in `katalog/mimir/prometheusRules.yaml`. Since the `--resources` flag replaces the entire default list, the deployment explicitly lists the default resources plus `endpoints`. When updating KSM, fetch the default list from `pkg/options/resource.go` in the `kubernetes/kube-state-metrics` repository at the target version tag, append `endpoints`, and update the flag accordingly.
