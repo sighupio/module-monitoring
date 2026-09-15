@@ -43,7 +43,7 @@ data:
 
     metrics:
       exposeRelative: false
-      exposePerCertError: false
+      exposePerCertError: true
       exposeNotBefore: true
       exposeExpired: true
       exposeDiagnostics: false
@@ -89,7 +89,7 @@ data:
 
     metrics:
       exposeRelative: false
-      exposePerCertError: false
+      exposePerCertError: true
       exposeNotBefore: true
       exposeExpired: true
       exposeDiagnostics: false
@@ -196,7 +196,7 @@ data:
 
     metrics:
       exposeRelative: false
-      exposePerCertError: false
+      exposePerCertError: true
       exposeNotBefore: true
       exposeExpired: true
       exposeDiagnostics: false
@@ -334,7 +334,7 @@ spec:
       labels:
         app: x509-certificate-exporter
       annotations:
-        checksum/config: 963f85063073ea48c471c8ce364501f145a7d9980f4ed51a35071e2569da4df5
+        checksum/config: 26a5590d7be55c0bf40bb9faed64d4f6d7476eab473a6d82222e8bc287cea719
     spec:
       serviceAccountName: x509-certificate-exporter-node
       affinity:
@@ -550,7 +550,7 @@ spec:
       labels:
         app: x509-certificate-exporter
       annotations:
-        checksum/config: 963f85063073ea48c471c8ce364501f145a7d9980f4ed51a35071e2569da4df5
+        checksum/config: 26a5590d7be55c0bf40bb9faed64d4f6d7476eab473a6d82222e8bc287cea719
     spec:
       serviceAccountName: x509-certificate-exporter-node
       securityContext:
@@ -642,7 +642,7 @@ spec:
       labels:
         app: x509-certificate-exporter
       annotations:
-        checksum/config: 963f85063073ea48c471c8ce364501f145a7d9980f4ed51a35071e2569da4df5
+        checksum/config: 26a5590d7be55c0bf40bb9faed64d4f6d7476eab473a6d82222e8bc287cea719
     spec:
       securityContext:
         runAsNonRoot: true

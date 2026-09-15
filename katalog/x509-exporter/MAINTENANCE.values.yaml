@@ -10,6 +10,8 @@ image:
 grafana:
   # We create the ConfigMap manually because automatic creation generates a non-human-readable one-line resource.
   createDashboard: false
+# Required by the CertificateError alert (emits the x509_cert_error series); without it the rule is a silent no-op.
+exposePerCertificateErrorMetrics: true
 exposeNotBeforeMetric: true
 hostPathsExporter:
   daemonSets:
