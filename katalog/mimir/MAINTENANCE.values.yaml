@@ -39,6 +39,7 @@ mimir:
     ingester:
       push_grpc_method_enabled: true
     limits:
+      # We disable the limit on series a user can push because we have only Prometheus pushing with the fury user.
       max_global_series_per_user: 0
       compactor_blocks_retention_period: 720h
   rbac:
