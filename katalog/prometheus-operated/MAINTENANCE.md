@@ -8,10 +8,9 @@ To prepare a new release of this package:
    > Run the following command from the `katalog` folder.
 
    ```bash
-   export KUBE_PROMETHEUS_RELEASE=v0.17.0
+   export KUBE_PROMETHEUS_RELEASE=v0.18.0
    ../utils/pull-upstream.sh ${KUBE_PROMETHEUS_RELEASE} prometheus-operated
    ```
-
    Replace `KUBE_PROMETHEUS_RELEASE` with the current upstream release.
 
 2. Check the differences introduced by pulling the upstream release and add the necessary patches in `kustomization.yaml`

@@ -36,7 +36,7 @@ spec:
         sum by (namespace, pod, job, cluster) (
           max by(namespace, pod, job, cluster) (
             kube_pod_status_phase{job="kube-state-metrics", phase=~"Pending|Unknown"}
-          ) * on(namespace, pod, cluster) group_left(owner_kind) topk by(namespace, pod, cluster) (
+          ) * on(namespace, pod, cluster) group_left() topk by(namespace, pod, cluster) (
             1, max by(namespace, pod, owner_kind, cluster) (kube_pod_owner{owner_kind!="Job"})
           )
         ) > 0
@@ -258,7 +258,7 @@ spec:
             ==
           kube_horizontalpodautoscaler_spec_max_replicas{job="kube-state-metrics"}
         )
-        and on(namespace, horizontalpodautoscaler) (
+        and on(namespace, horizontalpodautoscaler, cluster) (
           kube_horizontalpodautoscaler_spec_max_replicas{job="kube-state-metrics"}
             !=
           kube_horizontalpodautoscaler_spec_min_replicas{job="kube-state-metrics"}
@@ -387,11 +387,13 @@ spec:
         runbook_url: https://runbooks.prometheus-operator.dev/runbooks/kubernetes/kubequotaalmostfull
         summary: Namespace quota is going to be full.
       expr: |
-        max without (instance, job, type) (
-          kube_resourcequota{job="kube-state-metrics", type="used"}
+        topk by (cluster, namespace, resource, resourcequota) (1,
+          max without (instance, job, type) (
+            kube_resourcequota{job="kube-state-metrics", type="used"}
+          )
         )
         / on (cluster, namespace, resource, resourcequota) group_left()
-        (
+        topk by (cluster, namespace, resource, resourcequota) (1,
           max without (instance, job, type) (
             kube_resourcequota{job="kube-state-metrics", type="hard"}
           ) > 0
@@ -406,11 +408,13 @@ spec:
         runbook_url: https://runbooks.prometheus-operator.dev/runbooks/kubernetes/kubequotafullyused
         summary: Namespace quota is fully used.
       expr: |
-        max without (instance, job, type) (
-          kube_resourcequota{job="kube-state-metrics", type="used"}
+        topk by (cluster, namespace, resource, resourcequota) (1,
+          max without (instance, job, type) (
+            kube_resourcequota{job="kube-state-metrics", type="used"}
+          )
         )
         / on (cluster, namespace, resource, resourcequota) group_left()
-        (
+        topk by (cluster, namespace, resource, resourcequota) (1,
           max without (instance, job, type) (
             kube_resourcequota{job="kube-state-metrics", type="hard"}
           ) > 0
@@ -425,11 +429,13 @@ spec:
         runbook_url: https://runbooks.prometheus-operator.dev/runbooks/kubernetes/kubequotaexceeded
         summary: Namespace quota has exceeded the limits.
       expr: |
-        max without (instance, job, type) (
-          kube_resourcequota{job="kube-state-metrics", type="used"}
+        topk by (cluster, namespace, resource, resourcequota) (1,
+          max without (instance, job, type) (
+            kube_resourcequota{job="kube-state-metrics", type="used"}
+          )
         )
         / on (cluster, namespace, resource, resourcequota) group_left()
-        (
+        topk by (cluster, namespace, resource, resourcequota) (1,
           max without (instance, job, type) (
             kube_resourcequota{job="kube-state-metrics", type="hard"}
           ) > 0
@@ -648,6 +654,16 @@ spec:
       for: 15m
       labels:
         severity: critical
+    - alert: KubeAPIInstanceUnreachable
+      annotations:
+        description: A KubeAPI instance has been unreachable for more than 15 minutes.
+        runbook_url: https://runbooks.prometheus-operator.dev/runbooks/kubernetes/kubeapiinstanceunreachable
+        summary: KubeAPI instance is unreachable.
+      expr: |
+        up{job="apiserver"} == 0
+      for: 15m
+      labels:
+        severity: warning
     - alert: KubeAPITerminatedRequests
       annotations:
         description: The kubernetes apiserver has terminated {{ $value | humanizePercentage }} of its incoming requests on cluster {{ $labels.cluster }}.
@@ -830,6 +846,16 @@ spec:
       for: 15m
       labels:
         severity: warning
+    - alert: KubeletInstanceUnreachable
+      annotations:
+        description: A Kubelet instance has been unreachable for more than 15 minutes.
+        runbook_url: https://runbooks.prometheus-operator.dev/runbooks/kubernetes/kubeletinstanceunreachable
+        summary: Kubelet instance is unreachable.
+      expr: |
+        up{job="kubelet", metrics_path="/metrics"} == 0
+      for: 15m
+      labels:
+        severity: warning
     - alert: KubeletDown
       annotations:
         description: Kubelet has disappeared from Prometheus target discovery on cluster {{ $labels.cluster }}.
@@ -842,6 +868,40 @@ spec:
       for: 15m
       labels:
         severity: critical
+  - name: kubernetes-system-scheduler
+    rules:
+    - alert: KubeSchedulerInstanceUnreachable
+      annotations:
+        description: A KubeScheduler instance has been unreachable for more than 15 minutes.
+        runbook_url: https://runbooks.prometheus-operator.dev/runbooks/kubernetes/kubeschedulerinstanceunreachable
+        summary: KubeScheduler instance is unreachable.
+      expr: |
+        up{job="kube-scheduler"} == 0
+      for: 15m
+      labels:
+        severity: warning
+  - name: kubernetes-system-controller-manager
+    rules:
+    - alert: KubeControllerManagerDown
+      annotations:
+        description: KubeControllerManager has disappeared from Prometheus target discovery.
+        runbook_url: https://runbooks.prometheus-operator.dev/runbooks/kubernetes/kubecontrollermanagerdown
+        summary: Target disappeared from Prometheus target discovery.
+      expr: |
+        absent(up{job="kube-controller-manager"})
+      for: 15m
+      labels:
+        severity: critical
+    - alert: KubeControllerManagerInstanceUnreachable
+      annotations:
+        description: A KubeControllerManager instance has been unreachable for more than 15 minutes.
+        runbook_url: https://runbooks.prometheus-operator.dev/runbooks/kubernetes/kubecontrollermanagerinstanceunreachable
+        summary: KubeControllerManager instance is unreachable.
+      expr: |
+        up{job="kube-controller-manager"} == 0
+      for: 15m
+      labels:
+        severity: warning
   - interval: 3m
     name: kube-apiserver-availability.rules
     rules:
