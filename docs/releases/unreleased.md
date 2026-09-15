@@ -17,7 +17,7 @@ This release adds support for Kubernetes 1.36, updates all core components to th
 | `prometheus-adapter`  | [`v0.12.0`](https://github.com/kubernetes-sigs/prometheus-adapter/releases/tag/v0.12.0)                                                 | No update        |
 | `prometheus-operator` | [`v0.89.0`](https://github.com/prometheus-operator/prometheus-operator/releases/tag/v0.89.0)                                            | No update        |
 | `prometheus-operated` | [`v3.10.0`](https://github.com/prometheus/prometheus/releases/tag/v3.10.0)                                                              | No update        |
-| `x509-exporter`       | [`v4.1.0`](https://github.com/enix/x509-certificate-exporter/releases/tag/v4.1.0)                                                       | No update        |
+| `x509-exporter`       | [`v4.2.0`](https://github.com/enix/x509-certificate-exporter/releases/tag/v4.2.0)                                                       | v4.1.0           |
 | `mimir`               | [`v3.0.4`](https://github.com/grafana/mimir/releases/tag/mimir-3.0.4)                                                                   | No update        |
 | `minio`               | [`RELEASE.2026-07-17T12-07-51Z`](https://github.com/chainguard-forks/minio/releases/tag/RELEASE.2026-07-17T12-07-51Z) (chainguard-fork) | RELEASE.2026-05-20T23-44-52Z        |
 | `mc`                  | [`RELEASE.2025-08-13T08-35-41Z`](https://github.com/minio/mc/releases/tag/RELEASE.2025-08-13T08-35-41Z)                                 | No update        |
@@ -33,6 +33,20 @@ Added two new Prometheus alerts:
 - `MinioClusterErasureSetQuorumLost`, fired when an erasure set loses quorum and MinIO can no longer guarantee
   reads/writes for that pool.
 - `MinioKmsUnavailable`, fired when the KMS backend is offline and SSE-KMS operations fail.
+
+
+### x509-exporter
+
+Updated the chart, adding eight new default alerts:
+
+- `SourceDown`: a watched source (Secret/ConfigMap/file) is unhealthy or failed its initial sync — certificates are no longer being checked
+- `KubeTransportErrors` / `KubeTransportErrorsSustained`: sustained Kubernetes API LIST/WATCH/informer failures towards the control plane
+- `KeystorePassphraseFailures`: PKCS#12/JKS keystore decode failures with wrong or missing passphrase
+- `CertificateNotYetValid`: certificate NotBefore is in the future (requires `exposeNotBeforeMetric: true`)
+- `CertificateCollision`: certificate label collisions dropped a series (registry `Collision=Never`)
+- `CRLNeedsRefresh` / `CRLStale`: certificate revocation list nearing its `nextUpdate` or already stale
+
+Also improved existing alerts: `CertificateRenewal` no longer fires for already-expired certificates, and `CertificateExpiration` now distinguishes "expiring" from "already expired" in its description.
 
 
 ## Breaking Changes 💔

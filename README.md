@@ -40,7 +40,7 @@ The following packages are included in Monitoring Module:
 | [kube-state-metrics](katalog/kube-state-metrics)       | `2.19.0` | Service that generates metrics from Kubernetes API objects                                                                |
 | [node-exporter](katalog/node-exporter)                 | `1.10.2` | Prometheus exporter for hardware and OS metrics exposed by \*NIX kernels                                                  |
 | [prometheus-adapter](katalog/prometheus-adapter)       | `0.12.0` | Kubernetes resource metrics, custom metrics, and external metrics APIs implementation.                                    |
-| [x509-exporter](katalog/x509-exporter)                 | `4.1.0`  | Provides monitoring for certificates                                                                                      |
+| [x509-exporter](katalog/x509-exporter)                 | `4.2.0`  | Provides monitoring for certificates                                                                                      |
 | [mimir](katalog/mimir)                                 | `3.0.4`  | Mimir is an open source, horizontally scalable, highly available, multi-tenant TSDB for long-term storage for Prometheus. |
 | [haproxy](katalog/haproxy)                             | `N.A.`   | Grafana dashboards and Prometheus rules (alerts) for HAproxy.                                                             |
 
