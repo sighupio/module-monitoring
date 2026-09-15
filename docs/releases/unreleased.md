@@ -8,7 +8,7 @@ This release adds support for Kubernetes 1.36, updates all core components to th
 
 | Component             | Supported Version                                                                                                                       | Previous Version |
 |-----------------------|-----------------------------------------------------------------------------------------------------------------------------------------|------------------|
-| `alertmanager`        | [`v0.33.0`](https://github.com/prometheus/alertmanager/releases/tag/v0.33.0)                                                            | 0.31.1           |
+| `alertmanager`        | [`v0.33.0`](https://github.com/prometheus/alertmanager/releases/tag/v0.33.0)                                                            | v0.31.1          |
 | `blackbox-exporter`   | [`v0.28.0`](https://github.com/prometheus/blackbox_exporter/releases/tag/v0.28.0)                                                       | No update        |
 | `grafana`             | [`v13.0.2`](https://github.com/grafana/grafana/releases/tag/v13.0.2)                                                                    | v12.4.1          |
 | `kube-rbac-proxy`     | [`v0.22.0`](https://github.com/brancz/kube-rbac-proxy/releases/tag/v0.22.0)                                                             | v0.21.0          |
@@ -19,10 +19,21 @@ This release adds support for Kubernetes 1.36, updates all core components to th
 | `prometheus-operated` | [`v3.10.0`](https://github.com/prometheus/prometheus/releases/tag/v3.10.0)                                                              | No update        |
 | `x509-exporter`       | [`v4.1.0`](https://github.com/enix/x509-certificate-exporter/releases/tag/v4.1.0)                                                       | No update        |
 | `mimir`               | [`v3.0.4`](https://github.com/grafana/mimir/releases/tag/mimir-3.0.4)                                                                   | No update        |
-| `minio`               | [`RELEASE.2026-05-20T23-44-52Z`](https://github.com/chainguard-forks/minio/releases/tag/RELEASE.2026-05-20T23-44-52Z) (chainguard-fork) | No update        |
+| `minio`               | [`RELEASE.2026-07-17T12-07-51Z`](https://github.com/chainguard-forks/minio/releases/tag/RELEASE.2026-07-17T12-07-51Z) (chainguard-fork) | RELEASE.2026-05-20T23-44-52Z        |
 | `mc`                  | [`RELEASE.2025-08-13T08-35-41Z`](https://github.com/minio/mc/releases/tag/RELEASE.2025-08-13T08-35-41Z)                                 | No update        |
 
 > Please refer to the individual release notes to get detailed info on the releases.
+
+## New features 🎉
+
+### MinIO
+
+Added two new Prometheus alerts:
+
+- `MinioClusterErasureSetQuorumLost`, fired when an erasure set loses quorum and MinIO can no longer guarantee
+  reads/writes for that pool.
+- `MinioKmsUnavailable`, fired when the KMS backend is offline and SSE-KMS operations fail.
+
 
 ## Breaking Changes 💔
 
