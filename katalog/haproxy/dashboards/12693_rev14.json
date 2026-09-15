@@ -11394,7 +11394,7 @@
         "name": "host",
         "options": [],
         "query": {
-          "query": "label_values(haproxy_process_nbproc,instance)",
+          "query": "label_values(haproxy_process_nbproc{job=\"prometheus\"},instance)",
           "refId": "Prometheus-host-Variable-Query"
         },
         "refresh": 1,
@@ -11478,7 +11478,7 @@
         "name": "code",
         "options": [],
         "query": {
-          "query": "label_values({__name__=~\"haproxy_.*_http_responses_total\", instance=\"$host\"}, code)",
+          "query": "label_values({__name__=~\"haproxy_.*_http_responses_total\", job=\"prometheus\", instance=\"$host\"}, code)",
           "refId": "Prometheus-code-Variable-Query"
         },
         "refresh": 1,
