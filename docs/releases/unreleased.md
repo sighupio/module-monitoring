@@ -49,6 +49,13 @@ Updated the chart, adding eight new default alerts:
 Also improved existing alerts: `CertificateRenewal` no longer fires for already-expired certificates, and `CertificateExpiration` now distinguishes "expiring" from "already expired" in its description.
 
 
+## Bug Fixes 🐞
+
+### x509-exporter
+
+Fixed the `CertificateError` alert, which never fired because the underlying metric was not exposed.
+
+
 ## Breaking Changes 💔
 
 - **Dropped support for Kubernetes 1.32**: Clusters running Kubernetes `1.32` or older are no longer supported and should be upgraded before upgrading to this module version.
