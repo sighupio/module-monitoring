@@ -15,8 +15,8 @@ This release adds support for Kubernetes 1.36, updates all core components to th
 | `kube-state-metrics`  | [`v2.19.0`](https://github.com/kubernetes/kube-state-metrics/releases/tag/v2.19.0)                                                      | v2.18.0                    |
 | `node-exporter`       | [`v1.11.1`](https://github.com/prometheus/node_exporter/releases/tag/v1.11.1)                                                           | v1.10.2                      |
 | `prometheus-adapter`  | [`v0.12.0`](https://github.com/kubernetes-sigs/prometheus-adapter/releases/tag/v0.12.0)                                                 | No update                    |
-| `prometheus-operator` | [`v0.89.0`](https://github.com/prometheus-operator/prometheus-operator/releases/tag/v0.89.0)                                            | No update                    |
-| `prometheus-operated` | [`v3.10.0`](https://github.com/prometheus/prometheus/releases/tag/v3.10.0)                                                              | No update                    |
+| `prometheus-operator` | [`v0.92.0`](https://github.com/prometheus-operator/prometheus-operator/releases/tag/v0.92.0)                                            | v0.89.0                      |
+| `prometheus-operated` | [`v3.12.0`](https://github.com/prometheus/prometheus/releases/tag/v3.12.0)                                                              | v3.10.0                      |
 | `x509-exporter`       | [`v4.2.0`](https://github.com/enix/x509-certificate-exporter/releases/tag/v4.2.0)                                                       | v4.1.0           |
 | `mimir`               | [`v3.2.0`](https://github.com/grafana/mimir/releases/tag/mimir-3.2.0)                                                                   | v3.0.4           |
 | `minio`               | [`RELEASE.2026-07-17T12-07-51Z`](https://github.com/chainguard-forks/minio/releases/tag/RELEASE.2026-07-17T12-07-51Z) (chainguard-fork) | RELEASE.2026-05-20T23-44-52Z |
@@ -56,6 +56,19 @@ Updated the chart, adding eight new default alerts:
 - `CRLNeedsRefresh` / `CRLStale`: certificate revocation list nearing its `nextUpdate` or already stale
 
 Also improved existing alerts: `CertificateRenewal` no longer fires for already-expired certificates, and `CertificateExpiration` now distinguishes "expiring" from "already expired" in its description.
+
+
+### Prometheus
+
+Added five new control-plane alerts from upstream:
+
+- `KubeAPIInstanceUnreachable`: a kube-apiserver instance has been unreachable for more than 15 minutes
+- `KubeletInstanceUnreachable`: a kubelet instance has been unreachable for more than 15 minutes
+- `KubeSchedulerInstanceUnreachable`: a kube-scheduler instance has been unreachable for more than 15 minutes
+- `KubeControllerManagerDown`: the kube-controller-manager target has disappeared from Prometheus target discovery
+- `KubeControllerManagerInstanceUnreachable`: a kube-controller-manager instance has been unreachable for more than 15 minutes
+
+Improved existing rules: quota alerts (`KubeQuotaAlmostFull`, `KubeQuotaFullyUsed`, `KubeQuotaExceeded`) now deduplicate series with `topk by`, and the HPA/pod-owner joins are more robust in multi-cluster setups.
 
 
 ## Bug Fixes 🐞
