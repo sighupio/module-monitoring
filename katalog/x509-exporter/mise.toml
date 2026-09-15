@@ -1,19 +1,20 @@
-#!/bin/bash
-# Copyright (c) 2017-present SIGHUP s.r.l All rights reserved.
-# Use of this source code is governed by a BSD-style
-# license that can be found in the LICENSE file.
+[tasks.chart-version]
+run = '''
+helm repo add enix https://charts.enix.io
+helm repo update
+helm search repo enix/x509-certificate-exporter -l
+'''
 
-set -euo pipefail
-
-if [ -z "${X509_CHART_VERSION:-}" ]; then
-  echo "Usage: X509_CHART_VERSION=4.1.0 ./upgrade.sh"
-  exit 1
-fi
-echo "Using chart version ${X509_CHART_VERSION}"
+[tasks.upgrade]
+usage = '''
+arg "<chart_version>" help="x509 Exporter helm chart version"
+'''
+run = '''
+echo "Using chart version ${usage_chart_version}"
 
 rm -rf /tmp/x509-certificate-exporter
-helm pull enix/x509-certificate-exporter --version "${X509_CHART_VERSION}" --untar --untardir /tmp
-echo "Pulled helm chart ${X509_CHART_VERSION}"
+helm pull enix/x509-certificate-exporter --version "${usage_chart_version}" --untar --untardir /tmp
+echo "Pulled helm chart ${usage_chart_version}"
 
 helm lint /tmp/x509-certificate-exporter --values MAINTENANCE.values.yaml
 echo "Helm lint done"
@@ -24,7 +25,7 @@ helm template x509-certificate-exporter /tmp/x509-certificate-exporter \
 echo "Built chart template in deploy.yaml"
 
 mkdir -p config
-wget -q "https://raw.githubusercontent.com/enix/x509-certificate-exporter/refs/tags/v${X509_CHART_VERSION}/chart/grafana-dashboards/x509-certificate-exporter.json" \
+wget -q "https://raw.githubusercontent.com/enix/x509-certificate-exporter/refs/tags/v${usage_chart_version}/chart/grafana-dashboards/x509-certificate-exporter.json" \
   -O config/x509-certificate-exporter.json
 echo "Downloaded Grafana dashboard in config/x509-certificate-exporter.json"
 
@@ -41,8 +42,5 @@ yq -i 'with(select(.spec.selector.matchLabels) | .spec.selector.matchLabels; . =
 yq -i 'with(select(.kind == "Service") | .spec.selector; . = {"app": "x509-certificate-exporter"})' deploy.yaml
 echo "Patched manifests in deploy.yaml"
 
-if [[ "${X509_CHART_VERSION}" == "4.1.0" ]]; then
-  ./patch_4.1.0.sh
-fi
-
-mise run add-license
+mise run //:add-license
+'''
