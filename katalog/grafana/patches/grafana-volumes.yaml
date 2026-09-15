@@ -46,12 +46,10 @@ spec:
         - name: grafana-datasources-provisioning
           emptyDir: {}
         - name: grafana-storage
-          emptyDir:
-            medium: Memory
+          emptyDir: {}
         - name: tmp-plugins
           emptyDir:
             medium: Memory
         - name: grafana-plugins
-          emptyDir:
-            medium: Memory
+          emptyDir: {}
         - $patch: replace

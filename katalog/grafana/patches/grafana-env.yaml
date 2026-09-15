@@ -23,5 +23,5 @@ spec:
               value: "true"
             - name: GF_AUTH_ANONYMOUS_ORG_ROLE
               value: "Admin"
-            - name: GF_INSTALL_PLUGINS
-              value: "https://storage.googleapis.com/integration-artifacts/grafana-lokiexplore-app/release/2.5.1/any/grafana-lokiexplore-app-2.5.1.zip;grafana-lokiexplore-app"
+            - name: GF_PLUGINS_PREINSTALL
+              value: "grafana-lokiexplore-app@2.5.1@https://storage.googleapis.com/integration-artifacts/grafana-lokiexplore-app/release/2.5.1/any/grafana-lokiexplore-app-2.5.1.zip"
