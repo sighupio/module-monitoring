@@ -73,6 +73,11 @@ Also improved existing alerts: `CertificateRenewal` no longer fires for already-
 
 ## Bug Fixes 🐞
 
+### HAProxy
+
+- [[#268](https://github.com/sighupio/module-monitoring/pull/268)] Limits the HAProxy alerts and dashboard to the external L4 load balancer metrics, preventing them from also including HAProxy Ingress Controller metrics.
+
+
 ### x509-exporter
 
 Fixed the `CertificateError` alert, which never fired because the underlying metric was not exposed.

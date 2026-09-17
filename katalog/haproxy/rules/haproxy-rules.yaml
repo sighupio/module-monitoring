@@ -16,7 +16,7 @@ spec:
     - name: EmbeddedExporterV2
       rules:
         - alert: HaproxyHighHttp4xxErrorRateBackend
-          expr: '((sum by (proxy) (rate(haproxy_server_http_responses_total{code="4xx"}[1m])) / sum by (proxy) (rate(haproxy_server_http_responses_total[1m]))) * 100) > 5 and sum by (proxy) (rate(haproxy_server_http_responses_total[1m])) > 0'
+          expr: '((sum by (proxy) (rate(haproxy_server_http_responses_total{job="prometheus",code="4xx"}[1m])) / sum by (proxy) (rate(haproxy_server_http_responses_total{job="prometheus"}[1m]))) * 100) > 5 and sum by (proxy) (rate(haproxy_server_http_responses_total{job="prometheus"}[1m])) > 0'
           for: 1m
           labels:
             severity: critical
@@ -24,7 +24,7 @@ spec:
             summary: HAProxy high HTTP 4xx error rate backend (instance {{ $labels.instance }})
             description: "Too many HTTP requests with status 4xx (> 5%) on backend {{ $labels.proxy }}\n  VALUE = {{ $value }}\n  LABELS = {{ $labels }}"
         - alert: HaproxyHighHttp5xxErrorRateBackend
-          expr: '((sum by (proxy) (rate(haproxy_server_http_responses_total{code="5xx"}[1m])) / sum by (proxy) (rate(haproxy_server_http_responses_total[1m]))) * 100) > 5 and sum by (proxy) (rate(haproxy_server_http_responses_total[1m])) > 0'
+          expr: '((sum by (proxy) (rate(haproxy_server_http_responses_total{job="prometheus",code="5xx"}[1m])) / sum by (proxy) (rate(haproxy_server_http_responses_total{job="prometheus"}[1m]))) * 100) > 5 and sum by (proxy) (rate(haproxy_server_http_responses_total{job="prometheus"}[1m])) > 0'
           for: 1m
           labels:
             severity: critical
@@ -32,7 +32,7 @@ spec:
             summary: HAProxy high HTTP 5xx error rate backend (instance {{ $labels.instance }})
             description: "Too many HTTP requests with status 5xx (> 5%) on backend {{ $labels.proxy }}\n  VALUE = {{ $value }}\n  LABELS = {{ $labels }}"
         - alert: HaproxyHighHttp4xxErrorRateServer
-          expr: '((sum by (server) (rate(haproxy_server_http_responses_total{code="4xx"}[1m])) / sum by (server) (rate(haproxy_server_http_responses_total[1m]))) * 100) > 5 and sum by (server) (rate(haproxy_server_http_responses_total[1m])) > 0'
+          expr: '((sum by (server) (rate(haproxy_server_http_responses_total{job="prometheus",code="4xx"}[1m])) / sum by (server) (rate(haproxy_server_http_responses_total{job="prometheus"}[1m]))) * 100) > 5 and sum by (server) (rate(haproxy_server_http_responses_total{job="prometheus"}[1m])) > 0'
           for: 1m
           labels:
             severity: critical
@@ -40,7 +40,7 @@ spec:
             summary: HAProxy high HTTP 4xx error rate server (instance {{ $labels.instance }})
             description: "Too many HTTP requests with status 4xx (> 5%) on server {{ $labels.server }}\n  VALUE = {{ $value }}\n  LABELS = {{ $labels }}"
         - alert: HaproxyHighHttp5xxErrorRateServer
-          expr: '((sum by (server) (rate(haproxy_server_http_responses_total{code="5xx"}[1m])) / sum by (server) (rate(haproxy_server_http_responses_total[1m]))) * 100) > 5 and sum by (server) (rate(haproxy_server_http_responses_total[1m])) > 0'
+          expr: '((sum by (server) (rate(haproxy_server_http_responses_total{job="prometheus",code="5xx"}[1m])) / sum by (server) (rate(haproxy_server_http_responses_total{job="prometheus"}[1m]))) * 100) > 5 and sum by (server) (rate(haproxy_server_http_responses_total{job="prometheus"}[1m])) > 0'
           for: 1m
           labels:
             severity: critical
@@ -48,7 +48,7 @@ spec:
             summary: HAProxy high HTTP 5xx error rate server (instance {{ $labels.instance }})
             description: "Too many HTTP requests with status 5xx (> 5%) on server {{ $labels.server }}\n  VALUE = {{ $value }}\n  LABELS = {{ $labels }}"
         - alert: HaproxyServerResponseErrors
-          expr: '(sum by (server) (rate(haproxy_server_response_errors_total[1m])) / sum by (server) (rate(haproxy_server_http_responses_total[1m]))) * 100 > 5 and sum by (server) (rate(haproxy_server_http_responses_total[1m])) > 0'
+          expr: '(sum by (server) (rate(haproxy_server_response_errors_total{job="prometheus"}[1m])) / sum by (server) (rate(haproxy_server_http_responses_total{job="prometheus"}[1m]))) * 100 > 5 and sum by (server) (rate(haproxy_server_http_responses_total{job="prometheus"}[1m])) > 0'
           for: 1m
           labels:
             severity: critical
@@ -56,7 +56,7 @@ spec:
             summary: HAProxy server response errors (instance {{ $labels.instance }})
             description: "Too many response errors to {{ $labels.server }} server (> 5%).\n  VALUE = {{ $value }}\n  LABELS = {{ $labels }}"
         - alert: HaproxyBackendConnectionErrors
-          expr: '(sum by (proxy) (rate(haproxy_backend_connection_errors_total[1m]))) > 100'
+          expr: '(sum by (proxy) (rate(haproxy_backend_connection_errors_total{job="prometheus"}[1m]))) > 100'
           for: 1m
           labels:
             severity: critical
@@ -64,7 +64,7 @@ spec:
             summary: HAProxy backend connection errors (instance {{ $labels.instance }})
             description: "Too many connection errors to {{ $labels.proxy }} backend (> 100 req/s). Request throughput may be too high.\n  VALUE = {{ $value }}\n  LABELS = {{ $labels }}"
         - alert: HaproxyServerConnectionErrors
-          expr: '(sum by (proxy) (rate(haproxy_server_connection_errors_total[1m]))) > 100'
+          expr: '(sum by (proxy) (rate(haproxy_server_connection_errors_total{job="prometheus"}[1m]))) > 100'
           for: 0m
           labels:
             severity: critical
@@ -72,7 +72,7 @@ spec:
             summary: HAProxy server connection errors (instance {{ $labels.instance }})
             description: "Too many connection errors to {{ $labels.proxy }} (> 100 req/s). Request throughput may be too high.\n  VALUE = {{ $value }}\n  LABELS = {{ $labels }}"
         - alert: HaproxyBackendMaxActiveSession>80%
-          expr: '(haproxy_backend_current_sessions / haproxy_backend_limit_sessions * 100) > 80 and haproxy_backend_limit_sessions > 0'
+          expr: '(haproxy_backend_current_sessions{job="prometheus"} / haproxy_backend_limit_sessions{job="prometheus"} * 100) > 80 and haproxy_backend_limit_sessions{job="prometheus"} > 0'
           for: 2m
           labels:
             severity: warning
@@ -81,7 +81,7 @@ spec:
             description: "Session limit from backend {{ $labels.proxy }} reached 80% of limit - {{ $value | printf \"%.2f\"}}%\n  VALUE = {{ $value }}\n  LABELS = {{ $labels }}"
         # haproxy_backend_current_queue is a gauge (current queue depth), not a counter.
         - alert: HaproxyPendingRequests
-          expr: 'sum by (proxy) (haproxy_backend_current_queue) > 0'
+          expr: 'sum by (proxy) (haproxy_backend_current_queue{job="prometheus"}) > 0'
           for: 2m
           labels:
             severity: warning
@@ -89,7 +89,7 @@ spec:
             summary: HAProxy pending requests (instance {{ $labels.instance }})
             description: "Some HAProxy requests are pending on {{ $labels.proxy }} - {{ $value | printf \"%.2f\"}}\n  VALUE = {{ $value }}\n  LABELS = {{ $labels }}"
         - alert: HaproxyRetryHigh
-          expr: 'sum by (proxy) (rate(haproxy_backend_retry_warnings_total[1m])) > 10'
+          expr: 'sum by (proxy) (rate(haproxy_backend_retry_warnings_total{job="prometheus"}[1m])) > 10'
           for: 2m
           labels:
             severity: warning
@@ -97,7 +97,7 @@ spec:
             summary: HAProxy retry high (instance {{ $labels.instance }})
             description: "High rate of retry on {{ $labels.proxy }} - {{ $value | printf \"%.2f\"}}\n  VALUE = {{ $value }}\n  LABELS = {{ $labels }}"
         - alert: HaproxyHasNoAliveBackends
-          expr: 'haproxy_backend_active_servers + haproxy_backend_backup_servers == 0'
+          expr: 'haproxy_backend_active_servers{job="prometheus"} + haproxy_backend_backup_servers{job="prometheus"} == 0'
           for: 0m
           labels:
             severity: critical
@@ -105,7 +105,7 @@ spec:
             summary: HAproxy has no alive backends (instance {{ $labels.instance }})
             description: "HAProxy has no alive active or backup backends for {{ $labels.proxy }}\n  VALUE = {{ $value }}\n  LABELS = {{ $labels }}"
         - alert: HaproxyFrontendSecurityBlockedRequests
-          expr: 'sum by (proxy) (rate(haproxy_frontend_denied_connections_total[2m])) > 10'
+          expr: 'sum by (proxy) (rate(haproxy_frontend_denied_connections_total{job="prometheus"}[2m])) > 10'
           for: 2m
           labels:
             severity: warning
@@ -113,7 +113,7 @@ spec:
             summary: HAProxy frontend security blocked requests (instance {{ $labels.instance }})
             description: "HAProxy is blocking requests for security reason\n  VALUE = {{ $value }}\n  LABELS = {{ $labels }}"
         - alert: HaproxyServerHealthcheckFailure
-          expr: 'increase(haproxy_server_check_failures_total[1m]) > 2'
+          expr: 'increase(haproxy_server_check_failures_total{job="prometheus"}[1m]) > 2'
           for: 0m
           labels:
             severity: warning
