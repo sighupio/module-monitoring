@@ -10,7 +10,9 @@ Before running the script, check available versions:
 Then run the upgrade script:
 
 ```bash
-RULES_VERSION=2026-04-10.1 DASHBOARD_VERSION=14 ./upgrade.sh
+mise run upgrade <rules_version> <dashboard_version>
+# Example
+mise run upgrade 2026-09-07.1 14
 ```
 
 The script will:

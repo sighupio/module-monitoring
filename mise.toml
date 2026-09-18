@@ -21,7 +21,11 @@ stern = "1.33.0"    # For log monitoring during tests
 [monorepo]
 config_roots = [
     "katalog/grafana",
+    "katalog/haproxy",
     "katalog/kube-proxy-metrics",
+    "katalog/mimir",
+    "katalog/minio-ha",
+    "katalog/x509-exporter",
 ]
 
 # Development task definitions
