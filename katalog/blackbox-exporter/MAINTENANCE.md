@@ -17,3 +17,5 @@ To prepare a new release of this package:
 3. Sync the new image to our registry in the [`monitoring` images.yaml file container-image-sync repository](https://github.com/sighupio/container-image-sync/blob/main/modules/monitoring/images.yml).
 
 4. Update the `kustomization.yaml` file with the new image.
+
+> ℹ️ **Note**: `configmap-reload` uses the `v0.15.0-debian12` tag, a rebuild of upstream `v0.15.0` on distroless Debian 12 done in [container-image-sync](https://github.com/sighupio/container-image-sync/blob/main/modules/extra/images.yml), because the upstream image is based on Debian 11 and can no longer be patched for CVEs. When upstream releases a version based on Debian 12 or newer, switch back to the upstream tag.
