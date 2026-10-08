@@ -30,4 +30,5 @@ To prepare a new release of this package:
 - Windows and AIX dashboards are removed automatically by the `upgrade` task (JSON files and volume mounts).
 - Added default Kubernetes values for the readiness probe and introduced a liveness probe. The readiness probe defaults allow parameter customization, while the liveness probe was added to enable a more lenient approach to health checks and to recover from application hangs or failures. Both changes are applied using a Kustomize patch.
 - Added Grafana Logs Drilldown plugin (`grafana-lokiexplore-app`) via the `GF_PLUGINS_PREINSTALL` environment variable. The plugin version is managed by the `drilldown_logs_plugin_version` argument in the `upgrade` task.
+- Disabled server-side gzip (`[server] enable_gzip = false` in `config.yaml`) as a workaround for the upstream Grafana 13 memory leak / OOMKills (pgzip goroutine leak, see https://github.com/grafana/grafana/issues/123017). The explicit override can probably be removed once we upgrade to a Grafana release containing the upstream fix; at that point the memory limits (currently bumped to 512Mi/256Mi) can probably be lowered again too.
 
