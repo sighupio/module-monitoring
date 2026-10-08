@@ -16,4 +16,6 @@ stringData:
   grafana.ini: |
     [date_formats]
     default_timezone = UTC
+    [server]
+    enable_gzip = false
 type: Opaque
