@@ -1,0 +1,19 @@
+# Copyright (c) 2017-present SIGHUP s.r.l All rights reserved.
+# Use of this source code is governed by a BSD-style
+# license that can be found in the LICENSE file.
+
+apiVersion: v1
+kind: Service
+metadata:
+  labels:
+    k8s-app: kube-proxy-metrics
+    k8s-proxied-app: kube-proxy
+  name: kube-proxy-metrics
+spec:
+  ports:
+    - name: https
+      port: 18443
+      targetPort: https
+  selector:
+    k8s-app: kube-proxy-metrics
+    k8s-proxied-app: kube-proxy

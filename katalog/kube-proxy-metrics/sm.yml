@@ -1,26 +1,31 @@
-# Copyright (c) 2020 SIGHUP s.r.l All rights reserved.
+# Copyright (c) 2017-present SIGHUP s.r.l All rights reserved.
 # Use of this source code is governed by a BSD-style
 # license that can be found in the LICENSE file.
 
----
 apiVersion: monitoring.coreos.com/v1
 kind: ServiceMonitor
 metadata:
   labels:
     k8s-app: kube-proxy-metrics
+    k8s-proxied-app: kube-proxy
   name: kube-proxy-metrics
 spec:
   endpoints:
-  - bearerTokenFile: /var/run/secrets/kubernetes.io/serviceaccount/token
-    interval: 15s
-    port: https
-    scheme: https
-    tlsConfig:
-      insecureSkipVerify: true
+    - bearerTokenFile: /var/run/secrets/kubernetes.io/serviceaccount/token
+      interval: 15s
+      port: https
+      relabelings:
+        - action: replace
+          regex: (.*)
+          replacement: $1
+          sourceLabels:
+            - __meta_kubernetes_pod_node_name
+          targetLabel: instance
+      scheme: https
+      tlsConfig:
+        insecureSkipVerify: true
   jobLabel: k8s-proxied-app
-  namespaceSelector:
-    matchNames:
-    - monitoring
   selector:
     matchLabels:
       k8s-app: kube-proxy-metrics
+      k8s-proxied-app: kube-proxy

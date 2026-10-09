@@ -1,34 +1,48 @@
-# Copyright (c) 2020 SIGHUP s.r.l All rights reserved.
+# Copyright (c) 2017-present SIGHUP s.r.l All rights reserved.
 # Use of this source code is governed by a BSD-style
 # license that can be found in the LICENSE file.
 
 apiVersion: v1
+automountServiceAccountToken: false
 kind: ServiceAccount
 metadata:
+  labels:
+    k8s-app: kube-proxy-metrics
+    k8s-proxied-app: kube-proxy
   name: kube-proxy-metrics
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRole
+metadata:
+  labels:
+    k8s-app: kube-proxy-metrics
+    k8s-proxied-app: kube-proxy
+  name: kube-proxy-metrics
+rules:
+  - apiGroups:
+      - authentication.k8s.io
+    resources:
+      - tokenreviews
+    verbs:
+      - create
+  - apiGroups:
+      - authorization.k8s.io
+    resources:
+      - subjectaccessreviews
+    verbs:
+      - create
 ---
 apiVersion: rbac.authorization.k8s.io/v1
 kind: ClusterRoleBinding
 metadata:
+  labels:
+    k8s-app: kube-proxy-metrics
+    k8s-proxied-app: kube-proxy
   name: kube-proxy-metrics
 roleRef:
   apiGroup: rbac.authorization.k8s.io
   kind: ClusterRole
   name: kube-proxy-metrics
 subjects:
-- kind: ServiceAccount
-  name: kube-proxy-metrics
----
-apiVersion: rbac.authorization.k8s.io/v1
-kind: ClusterRole
-metadata:
-  name: kube-proxy-metrics
-rules:
-- apiGroups: ["authentication.k8s.io"]
-  resources:
-  - tokenreviews
-  verbs: ["create"]
-- apiGroups: ["authorization.k8s.io"]
-  resources:
-  - subjectaccessreviews
-  verbs: ["create"]
+  - kind: ServiceAccount
+    name: kube-proxy-metrics

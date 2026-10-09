@@ -6,11 +6,11 @@ apiVersion: kustomize.config.k8s.io/v1beta1
 kind: Kustomization
 namespace: monitoring
 images:
-- name: kube-rbac-proxy
+- name: quay.io/brancz/kube-rbac-proxy
   newName: registry.sighup.io/fury/brancz/kube-rbac-proxy
-  newTag: v0.22.0
 resources:
 - dashboards
 - deploy.yml
 - rbac.yml
+- service.yml
 - sm.yml

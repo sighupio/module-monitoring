@@ -1,10 +1,174 @@
 [tasks.upgrade]
+description = "Upgrade kube-proxy-metrics to the given kube-prometheus release"
 usage = '''
-arg "<rbac_proxy_version>" help="RBAC proxy version"
+arg "<kube_prometheus_version>" help="Kube Prometheus release"
 '''
 run = '''
-echo "Using image version ${usage_rbac_proxy_version}"
+echo "Using kube-prometheus version ${usage_kube_prometheus_version}"
 
-kustomize edit set image kube-rbac-proxy=registry.sighup.io/fury/brancz/kube-rbac-proxy:${usage_rbac_proxy_version}
-echo "Kube RBAC proxy updated to ${usage_rbac_proxy_version}"
+mise run upgrade-deploy "${usage_kube_prometheus_version}"
+mise run upgrade-service "${usage_kube_prometheus_version}"
+mise run upgrade-sm "${usage_kube_prometheus_version}"
+mise run upgrade-rbac "${usage_kube_prometheus_version}"
+
+mise run //:add-license
+'''
+
+[tasks.upgrade-deploy]
+description = "Upgrade the kube-proxy-metrics DaemonSet"
+usage = '''
+arg "<kube_prometheus_version>" help="Kube Prometheus release"
+'''
+run = '''
+wget -q "https://raw.githubusercontent.com/prometheus-operator/kube-prometheus/refs/tags/${usage_kube_prometheus_version}/manifests/nodeExporter-daemonset.yaml" -O deploy.yml
+echo "Downloaded DaemonSet"
+
+# Remove the namespace, set by kustomize
+yq -i 'del(.metadata.namespace)' deploy.yml
+
+# Set our DaemonSet name
+yq -i '.metadata.name = "kube-proxy-metrics"' deploy.yml
+
+# Set our labels, used by the Service and the ServiceMonitor
+yq -i '.metadata.labels = {"k8s-app": "kube-proxy-metrics", "k8s-proxied-app": "kube-proxy"}' deploy.yml
+
+# Set our selector, it is immutable and must not change on existing clusters
+yq -i '.spec.selector.matchLabels = {"k8s-app": "kube-proxy-metrics", "k8s-proxied-app": "kube-proxy"}' deploy.yml
+
+# Set our pod labels, also dropping the default-container annotation pointing to node-exporter
+yq -i '.spec.template.metadata = {"labels": {"k8s-app": "kube-proxy-metrics", "k8s-proxied-app": "kube-proxy"}}' deploy.yml
+
+# Remove the node-exporter container
+yq -i 'del(.spec.template.spec.containers[] | select(.name == "node-exporter"))' deploy.yml
+
+# Remove the node-exporter hostPath volumes
+yq -i 'del(.spec.template.spec.volumes)' deploy.yml
+
+# Remove hostPID, needed by node-exporter only
+yq -i 'del(.spec.template.spec.hostPID)' deploy.yml
+
+# Set our ServiceAccount
+yq -i '.spec.template.spec.serviceAccountName = "kube-proxy-metrics"' deploy.yml
+
+# Set our container name
+yq -i '(.spec.template.spec.containers[] | select(.name == "kube-rbac-proxy") | .name) = "kube-proxy-metrics"' deploy.yml
+
+# Listen on port 18443 on all node interfaces
+yq -i '(.spec.template.spec.containers[0].args[] | select(test("^--secure-listen-address="))) = "--secure-listen-address=0.0.0.0:18443"' deploy.yml
+
+# Proxy the kube-proxy metrics endpoint
+yq -i '(.spec.template.spec.containers[0].args[] | select(test("^--upstream="))) = "--upstream=http://127.0.0.1:10249/"' deploy.yml
+
+# Remove the IP env var, used by node-exporter only in --secure-listen-address
+yq -i 'del(.spec.template.spec.containers[0].env)' deploy.yml
+
+# Set our port, without hostPort
+yq -i '.spec.template.spec.containers[0].ports = [{"containerPort": 18443, "name": "https"}]' deploy.yml
+
+# Set our resources
+yq -i '.spec.template.spec.containers[0].resources = {"limits": {"cpu": "100m", "memory": "250Mi"}, "requests": {"cpu": "10m", "memory": "190Mi"}}' deploy.yml
+'''
+
+[tasks.upgrade-service]
+description = "Upgrade the kube-proxy-metrics Service"
+usage = '''
+arg "<kube_prometheus_version>" help="Kube Prometheus release"
+'''
+run = '''
+wget -q "https://raw.githubusercontent.com/prometheus-operator/kube-prometheus/refs/tags/${usage_kube_prometheus_version}/manifests/nodeExporter-service.yaml" -O service.yml
+echo "Downloaded Service"
+
+# Remove the namespace, set by kustomize
+yq -i 'del(.metadata.namespace)' service.yml
+
+# Set our Service name
+yq -i '.metadata.name = "kube-proxy-metrics"' service.yml
+
+# Set our labels, k8s-proxied-app is used by the ServiceMonitor as job label
+yq -i '.metadata.labels = {"k8s-app": "kube-proxy-metrics", "k8s-proxied-app": "kube-proxy"}' service.yml
+
+# Select our DaemonSet pods
+yq -i '.spec.selector = {"k8s-app": "kube-proxy-metrics", "k8s-proxied-app": "kube-proxy"}' service.yml
+
+# Remove clusterIP, it is immutable and must not change on existing clusters
+yq -i 'del(.spec.clusterIP)' service.yml
+
+# Set our port
+yq -i '.spec.ports = [{"name": "https", "port": 18443, "targetPort": "https"}]' service.yml
+'''
+
+[tasks.upgrade-sm]
+description = "Upgrade the kube-proxy-metrics ServiceMonitor"
+usage = '''
+arg "<kube_prometheus_version>" help="Kube Prometheus release"
+'''
+run = '''
+wget -q "https://raw.githubusercontent.com/prometheus-operator/kube-prometheus/refs/tags/${usage_kube_prometheus_version}/manifests/nodeExporter-serviceMonitor.yaml" -O sm.yml
+echo "Downloaded ServiceMonitor"
+
+# Remove the namespace, set by kustomize
+yq -i 'del(.metadata.namespace)' sm.yml
+
+# Set our ServiceMonitor name
+yq -i '.metadata.name = "kube-proxy-metrics"' sm.yml
+
+# Set our labels
+yq -i '.metadata.labels = {"k8s-app": "kube-proxy-metrics", "k8s-proxied-app": "kube-proxy"}' sm.yml
+
+# Use the k8s-proxied-app Service label as job label, so that job="kube-proxy" as used by the dashboard
+yq -i '.spec.jobLabel = "k8s-proxied-app"' sm.yml
+
+# Select our Service
+yq -i '.spec.selector.matchLabels = {"k8s-app": "kube-proxy-metrics", "k8s-proxied-app": "kube-proxy"}' sm.yml
+'''
+
+[tasks.upgrade-rbac]
+description = "Upgrade the kube-proxy-metrics RBAC"
+usage = '''
+arg "<kube_prometheus_version>" help="Kube Prometheus release"
+'''
+run = '''
+SA_FILE=$(mktemp -p /tmp)
+CR_FILE=$(mktemp -p /tmp)
+CRB_FILE=$(mktemp -p /tmp)
+
+wget -q "https://raw.githubusercontent.com/prometheus-operator/kube-prometheus/refs/tags/${usage_kube_prometheus_version}/manifests/nodeExporter-serviceAccount.yaml" -O "${SA_FILE}"
+wget -q "https://raw.githubusercontent.com/prometheus-operator/kube-prometheus/refs/tags/${usage_kube_prometheus_version}/manifests/nodeExporter-clusterRole.yaml" -O "${CR_FILE}"
+wget -q "https://raw.githubusercontent.com/prometheus-operator/kube-prometheus/refs/tags/${usage_kube_prometheus_version}/manifests/nodeExporter-clusterRoleBinding.yaml" -O "${CRB_FILE}"
+echo "Downloaded ServiceAccount, ClusterRole and ClusterRoleBinding"
+
+# Remove the ServiceAccount namespace, set by kustomize
+yq -i 'del(.metadata.namespace)' "${SA_FILE}"
+
+# Set our ServiceAccount name
+yq -i '.metadata.name = "kube-proxy-metrics"' "${SA_FILE}"
+
+# Set our ServiceAccount labels
+yq -i '.metadata.labels = {"k8s-app": "kube-proxy-metrics", "k8s-proxied-app": "kube-proxy"}' "${SA_FILE}"
+
+# Set our ClusterRole name
+yq -i '.metadata.name = "kube-proxy-metrics"' "${CR_FILE}"
+
+# Set our ClusterRole labels
+yq -i '.metadata.labels = {"k8s-app": "kube-proxy-metrics", "k8s-proxied-app": "kube-proxy"}' "${CR_FILE}"
+
+# Set our ClusterRoleBinding name
+yq -i '.metadata.name = "kube-proxy-metrics"' "${CRB_FILE}"
+
+# Set our ClusterRoleBinding labels
+yq -i '.metadata.labels = {"k8s-app": "kube-proxy-metrics", "k8s-proxied-app": "kube-proxy"}' "${CRB_FILE}"
+
+# Bind our ClusterRole
+yq -i '.roleRef.name = "kube-proxy-metrics"' "${CRB_FILE}"
+
+# Bind our ServiceAccount
+yq -i '.subjects[0].name = "kube-proxy-metrics"' "${CRB_FILE}"
+
+# Remove the ServiceAccount namespace in the subject, set by kustomize
+yq -i 'del(.subjects[0].namespace)' "${CRB_FILE}"
+
+# Merge the three resources in rbac.yml
+yq eval-all '.' "${SA_FILE}" "${CR_FILE}" "${CRB_FILE}" > rbac.yml
+
+rm -f "${SA_FILE}" "${CR_FILE}" "${CRB_FILE}"
 '''
