@@ -1,15 +1,14 @@
-# Copyright (c) 2020 SIGHUP s.r.l All rights reserved.
+# Copyright (c) 2017-present SIGHUP s.r.l All rights reserved.
 # Use of this source code is governed by a BSD-style
 # license that can be found in the LICENSE file.
 
----
 apiVersion: apps/v1
 kind: DaemonSet
 metadata:
-  name: kube-proxy-metrics
   labels:
     k8s-app: kube-proxy-metrics
     k8s-proxied-app: kube-proxy
+  name: kube-proxy-metrics
 spec:
   selector:
     matchLabels:
@@ -21,53 +20,47 @@ spec:
         k8s-app: kube-proxy-metrics
         k8s-proxied-app: kube-proxy
     spec:
-      tolerations:
-      - operator: Exists
-      serviceAccountName: kube-proxy-metrics
-      securityContext:
-        runAsNonRoot: true
-        runAsUser: 65532
-        runAsGroup: 65532
-      hostNetwork: true
+      automountServiceAccountToken: true
       containers:
-      - name: kube-proxy-metrics
-        image: kube-rbac-proxy
-        args:
-        - --secure-listen-address=0.0.0.0:18443
-        - --tls-cipher-suites=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256,TLS_ECDHE_ECDSA_WITH_AES_128_GCM_SHA256,TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384,TLS_ECDHE_ECDSA_WITH_AES_256_GCM_SHA384,TLS_ECDHE_RSA_WITH_CHACHA20_POLY1305,TLS_ECDHE_ECDSA_WITH_CHACHA20_POLY1305
-        - --upstream=http://127.0.0.1:10249/
-        ports:
-        - containerPort: 18443
-          name: https
-        resources:
-          limits:
-            cpu: 100m
-            memory: 250Mi
-          requests:
-            cpu: 10m
-            memory: 190Mi
-        securityContext:
-          allowPrivilegeEscalation: false
-          capabilities:
-            drop:
-            - ALL
-          readOnlyRootFilesystem: true
-          runAsGroup: 65532
-          runAsNonRoot: true
-          runAsUser: 65532
----
-apiVersion: v1
-kind: Service
-metadata:
-  labels:
-    k8s-app: kube-proxy-metrics
-    k8s-proxied-app: kube-proxy
-  name: kube-proxy-metrics
-spec:
-  ports:
-  - name: https
-    port: 18443
-    targetPort: https
-  selector:
-    k8s-app: kube-proxy-metrics
-    k8s-proxied-app: kube-proxy
+        - args:
+            - --secure-listen-address=0.0.0.0:18443
+            - --tls-cipher-suites=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256,TLS_ECDHE_ECDSA_WITH_AES_128_GCM_SHA256,TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384,TLS_ECDHE_ECDSA_WITH_AES_256_GCM_SHA384,TLS_ECDHE_RSA_WITH_CHACHA20_POLY1305,TLS_ECDHE_ECDSA_WITH_CHACHA20_POLY1305
+            - --upstream=http://127.0.0.1:10249/
+          image: quay.io/brancz/kube-rbac-proxy:v0.22.0
+          name: kube-proxy-metrics
+          ports:
+            - containerPort: 18443
+              name: https
+          resources:
+            limits:
+              cpu: 100m
+              memory: 250Mi
+            requests:
+              cpu: 10m
+              memory: 190Mi
+          securityContext:
+            allowPrivilegeEscalation: false
+            capabilities:
+              drop:
+                - ALL
+            readOnlyRootFilesystem: true
+            runAsGroup: 65532
+            runAsNonRoot: true
+            runAsUser: 65532
+            seccompProfile:
+              type: RuntimeDefault
+      hostNetwork: true
+      nodeSelector:
+        kubernetes.io/os: linux
+      priorityClassName: system-cluster-critical
+      securityContext:
+        runAsGroup: 65534
+        runAsNonRoot: true
+        runAsUser: 65534
+      serviceAccountName: kube-proxy-metrics
+      tolerations:
+        - operator: Exists
+  updateStrategy:
+    rollingUpdate:
+      maxUnavailable: 10%
+    type: RollingUpdate
