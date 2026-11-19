@@ -9,7 +9,7 @@
 </h1>
 <!-- markdownlint-enable MD033 -->
 
-![Release](https://img.shields.io/badge/Latest%20Release-v4.3.0-blue)
+![Release](https://img.shields.io/badge/Latest%20Release-v4.3.1-blue)
 ![License](https://img.shields.io/github/license/sighupio/module-monitoring?label=License)
 ![Slack](https://img.shields.io/badge/slack-@kubernetes/fury-yellow.svg?logo=slack&label=Slack)
 
@@ -37,7 +37,7 @@ The following packages are included in Monitoring Module:
 | [blackbox-exporter](katalog/blackbox-exporter)         | `0.28.0` | Prometheus exporter that allows blackbox probing of endpoints over HTTP, HTTPS, DNS, TCP, ICMP and gRPC.                  |
 | [grafana](katalog/grafana)                             | `13.0.2` | Grafana deployment to query and visualize metrics collected by Prometheus                                                 |
 | [kube-proxy-metrics](katalog/kube-proxy-metrics)       | `0.22.0` | RBAC proxy to securely expose kube-proxy metrics                                                                          |
-| [kube-state-metrics](katalog/kube-state-metrics)       | `2.19.0` | Service that generates metrics from Kubernetes API objects                                                                |
+| [kube-state-metrics](katalog/kube-state-metrics)       | `2.19.1` | Service that generates metrics from Kubernetes API objects                                                                |
 | [node-exporter](katalog/node-exporter)                 | `1.11.1` | Prometheus exporter for hardware and OS metrics exposed by \*NIX kernels                                                  |
 | [prometheus-adapter](katalog/prometheus-adapter)       | `0.12.0` | Kubernetes resource metrics, custom metrics, and external metrics APIs implementation.                                    |
 | [x509-exporter](katalog/x509-exporter)                 | `4.2.0`  | Provides monitoring for certificates                                                                                      |

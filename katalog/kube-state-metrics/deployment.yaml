@@ -9,7 +9,7 @@ metadata:
     app.kubernetes.io/component: exporter
     app.kubernetes.io/name: kube-state-metrics
     app.kubernetes.io/part-of: kube-prometheus
-    app.kubernetes.io/version: 2.19.0
+    app.kubernetes.io/version: 2.19.1
   name: kube-state-metrics
   namespace: monitoring
 spec:
@@ -27,7 +27,7 @@ spec:
         app.kubernetes.io/component: exporter
         app.kubernetes.io/name: kube-state-metrics
         app.kubernetes.io/part-of: kube-prometheus
-        app.kubernetes.io/version: 2.19.0
+        app.kubernetes.io/version: 2.19.1
     spec:
       automountServiceAccountToken: true
       containers:
@@ -37,7 +37,7 @@ spec:
         - --resources=certificatesigningrequests,configmaps,cronjobs,daemonsets,deployments,endpointslices,horizontalpodautoscalers,ingresses,jobs,leases,limitranges,mutatingwebhookconfigurations,namespaces,networkpolicies,nodes,persistentvolumeclaims,persistentvolumes,poddisruptionbudgets,pods,replicasets,replicationcontrollers,resourcequotas,secrets,services,statefulsets,storageclasses,validatingwebhookconfigurations,volumeattachments,endpoints
         - --telemetry-host=127.0.0.1
         - --telemetry-port=8082
-        image: registry.k8s.io/kube-state-metrics/kube-state-metrics:v2.19.0
+        image: registry.k8s.io/kube-state-metrics/kube-state-metrics:v2.19.1
         name: kube-state-metrics
         resources:
           limits:
