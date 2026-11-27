@@ -655,3 +655,20 @@ steps:
           - refs/tags/v**-rc**
         include:
           - refs/tags/v**
+
+  # The OCI tag is immutable and the GitHub release is not, so push it after the GitHub release.
+  - name: publish-module-to-registry
+    image: quay.io/sighup/sd-oci-push-plugin:1.4.0_4.53.6
+    pull: always
+    depends_on: [publish-prerelease, publish-stable]
+    settings:
+      repository: sd/modules/monitoring
+      artifact_type: module
+      username:
+        from_secret: sd_registry_username
+      password:
+        from_secret: sd_registry_password
+    when:
+      ref:
+        include:
+          - refs/tags/v**
